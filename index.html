@@ -3,43 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>离职洞察助理 - TDesign</title>
+  <title>离职洞察助理 - HR智能助手</title>
   <!-- TDesign CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tdesign-web-components/dist/tdesign.css">
   <!-- TDesign Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tdesign-icons-web-components/dist/styles/index.css">
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- TDesign Web Components -->
-  <script src="https://cdn.jsdelivr.net/npm/tdesign-web-components/dist/tdesign.min.js"></script>
   <style>
     :root {
-      /* TDesign 品牌蓝色系 */
+      /* 腾讯蓝色主题 */
       --td-brand-color: #0052D9;
       --td-brand-color-hover: #4787F0;
       --td-brand-color-active: #0034B5;
       --td-brand-color-light: #ECF2FE;
-      --td-brand-color-light-hover: #D9E1FF;
       
       /* 文字颜色 */
       --td-text-color-primary: #000000E6;
       --td-text-color-secondary: #00000099;
       --td-text-color-placeholder: #00000066;
-      --td-text-color-disabled: #00000042;
       
       /* 背景色 */
-      --td-bg-color-page: #F3F3F3;
+      --td-bg-color-page: #F5F7FA;
       --td-bg-color-container: #FFFFFF;
-      --td-bg-color-container-hover: #F3F3F3;
       
       /* 边框 */
-      --td-border-color: #DCDCDC;
-      --td-border-radius: 6px;
-      --td-border-radius-large: 9px;
+      --td-border-color: #E7E7E7;
+      --td-border-radius: 8px;
       
       /* 阴影 */
-      --td-shadow-1: 0 1px 10px rgba(0, 0, 0, 0.05), 0 4px 5px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.12);
-      --td-shadow-2: 0 3px 14px 2px rgba(0, 0, 0, 0.05), 0 8px 10px 1px rgba(0, 0, 0, 0.06), 0 5px 5px -3px rgba(0, 0, 0, 0.1);
+      --td-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --td-shadow-2: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
     * {
@@ -49,230 +43,1184 @@
     }
 
     body {
-      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background: var(--td-bg-color-page);
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
       color: var(--td-text-color-primary);
-      font-size: 14px;
-      line-height: 22px;
     }
 
-    /* ==================== 顶部导航 ==================== */
-    .header {
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* 左侧边栏 */
+    .sidebar {
+      width: 280px;
       background: var(--td-bg-color-container);
-      height: 64px;
+      border-right: 1px solid var(--td-border-color);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 头部用户区 */
+    .sidebar-header {
+      padding: 20px;
       border-bottom: 1px solid var(--td-border-color);
       display: flex;
       align-items: center;
-      padding: 0 24px;
-      flex-shrink: 0;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
       gap: 12px;
     }
 
-    .home-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--td-border-radius);
-      border: 1px solid var(--td-border-color);
-      background: var(--td-bg-color-container);
-      color: var(--td-text-color-secondary);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-
-    .home-btn:hover {
-      border-color: var(--td-brand-color);
-      color: var(--td-brand-color);
-      background: var(--td-brand-color-light);
-    }
-
-    .home-btn svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--td-brand-color) 0%, #2B7DF5 100%);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 20px;
-      box-shadow: 0 4px 12px rgba(0, 82, 217, 0.3);
-    }
-
-    .logo-text {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--td-text-color-primary);
-      letter-spacing: 0.5px;
-    }
-
-    .header-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .header-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 0 16px;
-      height: 32px;
-      border-radius: var(--td-border-radius);
-      font-size: 14px;
-      font-weight: 400;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.38, 0, 0.24, 1);
-      border: 1px solid var(--td-border-color);
-      background: var(--td-bg-color-container);
-      color: var(--td-text-color-primary);
-    }
-
-    .header-btn:hover {
-      border-color: var(--td-brand-color);
-      color: var(--td-brand-color);
-      background: var(--td-brand-color-light);
-    }
-
-    .header-btn.primary {
-      background: var(--td-brand-color);
-      color: #fff;
-      border-color: var(--td-brand-color);
-    }
-
-    .header-btn.primary:hover {
-      background: var(--td-brand-color-hover);
-      border-color: var(--td-brand-color-hover);
-    }
-
-    .header-btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .header-divider {
-      width: 1px;
-      height: 24px;
-      background: var(--td-border-color);
-      margin: 0 4px;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 12px 4px 4px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .user-info:hover {
-      background: var(--td-bg-color-container-hover);
-    }
 
     .user-avatar {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, var(--td-brand-color) 0%, #2B7DF5 100%);
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
+      background: linear-gradient(135deg, var(--td-brand-color), var(--td-brand-color-hover));
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 500;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
     }
 
-    .user-name {
+    .user-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      margin-bottom: 2px;
+    }
+
+    .user-info p {
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+    }
+
+    /* 新对话按钮 */
+    .new-chat-btn {
+      margin: 16px 20px;
+      padding: 12px 16px;
+      background: var(--td-brand-color);
+      color: white;
+      border: none;
+      border-radius: var(--td-border-radius);
+      cursor: pointer;
       font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .new-chat-btn:hover {
+      background: var(--td-brand-color-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--td-shadow-2);
+    }
+
+    /* 功能区 */
+    .function-area {
+      padding: 0 20px 20px;
+    }
+
+    .function-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--td-text-color-secondary);
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+
+    .function-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .function-card {
+      padding: 16px;
+      background: var(--td-bg-color-container);
+      border: 1px solid var(--td-border-color);
+      border-radius: var(--td-border-radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .function-card:hover {
+      border-color: var(--td-brand-color);
+      box-shadow: var(--td-shadow-1);
+      transform: translateY(-2px);
+    }
+
+    .function-card.active {
+      border-color: var(--td-brand-color);
+      background: var(--td-brand-color-light);
+    }
+
+    .function-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .function-name {
+      font-size: 13px;
+      font-weight: 500;
       color: var(--td-text-color-primary);
     }
 
-    /* ==================== 主内容区 ==================== */
-    .main-container {
+    .function-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .function-card.disabled:hover {
+      border-color: var(--td-border-color);
+      box-shadow: none;
+      transform: none;
+    }
+
+    .function-card.disabled .function-name {
+      color: var(--td-text-color-placeholder);
+    }
+
+    /* 置灰卡片需恢复pointer-events以支持tooltip */
+    .function-card-wrapper {
+      position: relative;
+    }
+
+    .function-card-wrapper .function-card.disabled {
+      pointer-events: auto;
+      cursor: not-allowed;
+    }
+
+    .function-card-wrapper .function-card.disabled:hover {
+      border-color: var(--td-border-color);
+      box-shadow: none;
+      transform: none;
+    }
+
+    .function-more-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background: transparent;
+      border: 1px dashed var(--td-border-color);
+      border-radius: var(--td-border-radius);
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--td-text-color-primary);
+      transition: all 0.2s;
+      gap: 4px;
+    }
+
+    .function-more-btn:hover {
+      border-color: var(--td-brand-color);
+      color: var(--td-brand-color);
+    }
+
+    .function-extra-cards {
+      display: none;
+      grid-column: 1 / -1;
+    }
+
+    .function-extra-cards.show {
+      display: contents;
+    }
+
+    /* 历史对话 */
+    .history-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px;
+    }
+
+    .history-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--td-text-color-secondary);
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+
+    .history-item {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: var(--td-border-radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .history-item:hover {
+      background: var(--td-bg-color-container);
+    }
+
+    .history-item.active {
+      background: var(--td-brand-color-light);
+      border: 1px solid var(--td-brand-color);
+    }
+
+    .history-content {
+      width: 100%;
+    }
+
+    .history-content h4 {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--td-text-color-primary);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-content p {
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+    }
+
+    /* 主内容区 */
+    .main-content {
       flex: 1;
       display: flex;
-      overflow: hidden;
+      flex-direction: column;
+      background: var(--td-bg-color-page);
     }
 
-    /* ==================== 左侧边栏 ==================== */
-    .sidebar {
-      width: 300px;
-      background: var(--td-bg-color-container);
-      border-right: 1px solid var(--td-border-color);
-      padding: 20px;
-      overflow-y: auto;
-      flex-shrink: 0;
+    /* 欢迎页面 */
+    .welcome-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: var(--td-bg-color-page);
     }
 
-    .sidebar-section {
+    .welcome-container {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      margin-left: 40px; /* 与左侧边栏保持对齐 */
+    }
+
+    .welcome-greeting {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      margin-bottom: 32px;
+    }
+
+    /* 欢迎页输入框 */
+    .welcome-input-wrapper {
+      position: relative;
       margin-bottom: 24px;
     }
 
-    .dept-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--td-brand-color-light) 0%, #E8F3FF 100%);
-      border-radius: var(--td-border-radius-large);
-      border: 1px solid #D6E4FF;
+    .welcome-input {
+      width: 100%;
+      min-height: 160px;
+      padding: 24px 28px 80px 28px;
+      border: 1px solid var(--td-border-color);
+      border-radius: 12px;
+      font-size: 16px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+      background: var(--td-bg-color-container);
     }
 
-    .dept-icon {
-      width: 44px;
-      height: 44px;
+    .welcome-input:focus {
+      border-color: var(--td-brand-color);
+    }
+
+    .input-actions {
+      position: absolute;
+      bottom: 20px;
+      right: 24px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .input-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 1px solid var(--td-border-color);
+      background: var(--td-bg-color-container);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--td-text-color-secondary);
+      transition: all 0.2s;
+    }
+
+    .input-action-btn:hover {
+      border-color: var(--td-brand-color);
+      color: var(--td-brand-color);
+    }
+
+    .send-btn-welcome {
+      width: 36px;
+      height: 36px;
+      border: none;
       background: var(--td-brand-color);
-      border-radius: 10px;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 16px;
+      transition: all 0.2s;
     }
 
-    .dept-info {
+    .send-btn-welcome:hover {
+      background: var(--td-brand-color-hover);
+      transform: scale(1.05);
+    }
+
+    /* 快捷能力按钮 */
+    .quick-abilities {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .ability-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: 1px solid var(--td-border-color);
+      background: var(--td-bg-color-container);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--td-text-color-primary);
+      transition: all 0.2s;
+    }
+
+    .ability-btn:hover {
+      border-color: var(--td-brand-color);
+      background: var(--td-brand-color-light);
+      transform: translateY(-1px);
+    }
+
+    .ability-icon {
+      font-size: 16px;
+    }
+
+    /* 引导提问区域 */
+    .guide-section {
+      margin-top: 16px;
+    }
+
+    .guide-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .guide-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .guide-subtitle {
+      font-size: 14px;
+      color: var(--td-text-color-secondary);
+      margin: 0;
+    }
+
+    /* 引导提问 */
+    .guide-questions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .guide-question {
+      padding: 20px;
+      background: var(--td-bg-color-container);
+      border: 1px solid var(--td-border-color);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .guide-question::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--td-brand-color);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+
+    .guide-question:hover {
+      border-color: var(--td-brand-color);
+      background: var(--td-brand-color-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 82, 217, 0.15);
+    }
+
+    .guide-question:hover::before {
+      transform: scaleY(1);
+    }
+
+    .guide-question:active {
+      transform: translateY(0);
+    }
+
+    .question-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .question-content {
       flex: 1;
     }
 
-    .dept-name {
+    .question-text {
+      font-weight: 500;
+      line-height: 1.4;
+      font-size: 14px;
+      color: var(--td-text-color-primary);
+      margin-bottom: 6px;
+    }
+
+    .question-desc {
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+      font-weight: 400;
+    }
+
+    /* 悬浮提示 */
+    .tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      max-width: 200px;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .tooltip.show {
+      opacity: 1;
+    }
+
+    /* 聊天界面 */
+    .chat-interface {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .chat-interface.active {
+      display: flex;
+    }
+
+    .chat-header {
+      padding: 16px 24px;
+      background: var(--td-bg-color-container);
+      border-bottom: 1px solid var(--td-border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-title {
       font-size: 16px;
       font-weight: 600;
       color: var(--td-text-color-primary);
     }
 
-    .dept-sub {
-      font-size: 12px;
-      color: var(--td-text-color-secondary);
-      margin-top: 2px;
+    .chat-title-area {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      flex: 1;
     }
 
-    .sidebar-title {
+    .chat-title-area .chat-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .title-edit-btn {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .title-edit-btn:hover {
+      background: #e8f3ff;
+      color: #0052d9;
+    }
+
+    .title-rename-input {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      border: 1px solid #0052d9;
+      border-radius: 4px;
+      padding: 2px 8px;
+      outline: none;
+      background: #f0f5ff;
+      min-width: 120px;
+      max-width: 300px;
+    }
+
+    .history-delete-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #ccc;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .history-item:hover .history-delete-btn {
+      display: flex;
+    }
+
+    .history-delete-btn:hover {
+      background: #ffe8e8;
+      color: #e34d59;
+    }
+
+    .chat-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 8px 12px;
+      border: 1px solid var(--td-border-color);
+      background: var(--td-bg-color-container);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      border-color: var(--td-brand-color);
+      color: var(--td-brand-color);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      min-height: 0;
+    }
+
+    .message {
+      display: flex;
+      margin-bottom: 24px;
+      gap: 12px;
+    }
+
+    .message-body {
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+    }
+
+    .message.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .message.assistant .message-avatar {
+      background: linear-gradient(135deg, var(--td-brand-color), var(--td-brand-color-hover));
+      color: white;
+    }
+
+    .message.user .message-avatar {
+      background: var(--td-brand-color-light);
+      color: var(--td-brand-color);
+    }
+
+    .message-content {
+      padding: 14px 18px;
+      border-radius: 12px;
       font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .message.assistant .message-content {
+      background: var(--td-bg-color-container);
+      color: var(--td-text-color-primary);
+      box-shadow: var(--td-shadow-1);
+    }
+
+    .message.user .message-content {
+      background: var(--td-brand-color);
+      color: white;
+    }
+
+    /* AI回复操作按钮 */
+    .message-actions {
+      display: flex;
+      gap: 2px;
+      margin-top: 8px;
+      padding-left: 2px;
+    }
+
+    .message-actions .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #bbb;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .message-actions .action-btn:hover {
+      background: #f0f0f0;
+      color: #0052d9;
+    }
+
+    .message-actions .action-btn.active {
+      color: #0052d9;
+    }
+
+    .message-actions .action-btn.active.dislike-btn {
+      color: #e34d59;
+    }
+
+    .message-actions .action-btn .action-tooltip {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-bottom: 4px;
+      pointer-events: none;
+    }
+
+    .message-actions .action-btn:hover .action-tooltip {
+      display: block;
+    }
+
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .chat-input {
+      padding: 16px 24px;
+      background: var(--td-bg-color-container);
+      border-top: 1px solid var(--td-border-color);
+      flex-shrink: 0;
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .input-box {
+      flex: 1;
+      min-height: 44px;
+      max-height: 120px;
+      padding: 12px 16px;
+      border: 1px solid var(--td-border-color);
+      border-radius: var(--td-border-radius);
+      font-size: 14px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    .input-box:focus {
+      border-color: var(--td-brand-color);
+    }
+
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      background: var(--td-brand-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .send-btn:hover {
+      background: var(--td-brand-color-hover);
+      transform: scale(1.05);
+    }
+
+    .send-btn:disabled {
+      background: var(--td-border-color);
+      cursor: not-allowed;
+    }
+
+    /* 快捷操作按钮区域 */
+    .quick-actions {
+      display: none;
+      gap: 10px;
+      padding: 0 0 8px;
+      background: var(--td-bg-color-container);
+    }
+
+    .quick-actions.show {
+      display: flex;
+    }
+
+    .quick-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid var(--td-brand-color);
+      background: var(--td-brand-color-light);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--td-brand-color);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .quick-action-btn:hover {
+      background: var(--td-brand-color);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 82, 217, 0.25);
+    }
+
+    .quick-action-icon {
+      font-size: 15px;
+    }
+
+    /* 活水推荐岗位卡片 */
+    .job-recommend-intro {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--td-text-color-primary);
+      margin-bottom: 16px;
+    }
+
+    .job-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .job-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--td-bg-color-page);
+      border: 1px solid var(--td-border-color);
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+
+    .job-card:hover {
+      border-color: var(--td-brand-color);
+      background: var(--td-brand-color-light);
+      transform: translateX(4px);
+    }
+
+    .job-card-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .job-match-badge {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--td-brand-color), var(--td-brand-color-hover));
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .job-match-badge span {
+      font-size: 9px;
+      font-weight: 400;
+      margin-top: 1px;
+    }
+
+    .job-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .job-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .job-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+    }
+
+    .job-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .job-detail-btn {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border: 1px solid var(--td-brand-color);
+      background: transparent;
+      color: var(--td-brand-color);
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .job-detail-btn:hover {
+      background: var(--td-brand-color);
+      color: white;
+    }
+
+    /* 离职画像结构化样式 */
+    .portrait-section {
+      margin-bottom: 16px;
+    }
+
+    .portrait-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .portrait-section-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--td-brand-color);
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--td-border-color);
+    }
+
+    .portrait-section-title .section-icon {
+      font-size: 16px;
+    }
+
+    .portrait-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .portrait-list li {
+      position: relative;
+      padding: 4px 0 4px 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--td-text-color-primary);
+    }
+
+    .portrait-list li::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 12px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--td-brand-color);
+    }
+
+    .portrait-intro {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--td-text-color-primary);
+      margin-bottom: 16px;
+    }
+
+    .portrait-highlight {
+      background: var(--td-brand-color-light);
+      border-left: 3px solid var(--td-brand-color);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      margin: 8px 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .portrait-suggestion-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      counter-reset: suggestion;
+    }
+
+    .portrait-suggestion-list li {
+      position: relative;
+      padding: 6px 0 6px 28px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--td-text-color-primary);
+      counter-increment: suggestion;
+    }
+
+    .portrait-suggestion-list li::before {
+      content: counter(suggestion);
+      position: absolute;
+      left: 4px;
+      top: 7px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--td-brand-color);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 离职洞察界面样式 */
+    .insight-interface {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      background: var(--td-bg-color-page);
+    }
+
+    .insight-interface.active {
+      display: flex;
+    }
+
+    .insight-header {
+      background: var(--td-bg-color-container);
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--td-border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .insight-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      padding: 8px 16px;
+      background: var(--td-bg-color-page);
+      border: 1px solid var(--td-border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--td-text-color-secondary);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .back-btn:hover {
+      border-color: var(--td-brand-color);
+      color: var(--td-brand-color);
+    }
+
+    .insight-content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--td-bg-color-container);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--td-shadow-1);
+      border: 1px solid var(--td-border-color);
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .stat-title {
+      font-size: 14px;
+      color: var(--td-text-color-secondary);
+      font-weight: 500;
+    }
+
+    .stat-icon {
+      font-size: 20px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-change {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-change.positive {
+      color: #E34D59;
+    }
+
+    .stat-change.negative {
+      color: #00A870;
+    }
+
+    .charts-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .chart-card {
+      background: var(--td-bg-color-container);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--td-shadow-1);
+      border: 1px solid var(--td-border-color);
+    }
+
+    .chart-title {
+      font-size: 16px;
       font-weight: 600;
       color: var(--td-text-color-primary);
       margin-bottom: 16px;
@@ -281,1338 +1229,2116 @@
       gap: 8px;
     }
 
-    .sidebar-title::before {
-      content: '';
-      width: 4px;
-      height: 16px;
-      background: var(--td-brand-color);
-      border-radius: 2px;
+    .chart-container {
+      position: relative;
+      height: 300px;
     }
 
-    /* 数据卡片 */
-    .stat-card {
-      background: linear-gradient(135deg, #FAFBFC 0%, #F3F4F6 100%);
-      border-radius: var(--td-border-radius-large);
-      padding: 16px;
-      margin-bottom: 12px;
-      border: 1px solid #EBEDF0;
-      transition: all 0.3s;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
+    .insights-section {
+      background: var(--td-bg-color-container);
+      padding: 24px;
+      border-radius: 12px;
       box-shadow: var(--td-shadow-1);
+      border: 1px solid var(--td-border-color);
     }
 
-    .stat-label {
-      font-size: 12px;
-      color: var(--td-text-color-secondary);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .stat-value {
-      font-size: 32px;
+    .insights-title {
+      font-size: 18px;
       font-weight: 600;
       color: var(--td-text-color-primary);
-      line-height: 1.2;
-    }
-
-    .stat-value span {
-      font-size: 14px;
-      color: var(--td-text-color-secondary);
-      font-weight: 400;
-      margin-left: 4px;
-    }
-
-    .stat-trend {
-      font-size: 12px;
-      margin-top: 8px;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      width: fit-content;
-    }
-
-    .stat-trend.up {
-      color: #D54941;
-      background: #FDECEE;
-    }
-
-    .stat-trend.down {
-      color: #2BA471;
-      background: #E8F8F2;
-    }
-
-    /* 迷你图表 */
-    .mini-chart {
-      background: var(--td-bg-color-container);
-      border-radius: var(--td-border-radius-large);
-      padding: 12px;
-      border: 1px solid #EBEDF0;
-    }
-
-    /* 快捷提问 */
-    .quick-questions h4 {
-      font-size: 13px;
-      color: var(--td-text-color-secondary);
-      margin-bottom: 12px;
-      font-weight: 400;
-    }
-
-    .quick-btn {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      padding: 12px 14px;
-      background: var(--td-bg-color-container);
-      border: 1px solid #EBEDF0;
-      border-radius: var(--td-border-radius);
-      font-size: 13px;
-      color: var(--td-text-color-primary);
-      text-align: left;
-      cursor: pointer;
-      margin-bottom: 8px;
-      transition: all 0.2s cubic-bezier(0.38, 0, 0.24, 1);
       gap: 8px;
     }
 
-    .quick-btn:hover {
-      border-color: var(--td-brand-color);
-      color: var(--td-brand-color);
-      background: var(--td-brand-color-light);
-      transform: translateX(4px);
-    }
-
-    .quick-btn-icon {
-      font-size: 16px;
-    }
-
-    /* ==================== 聊天区域 ==================== */
-    .chat-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+    .insight-item {
+      padding: 16px;
       background: var(--td-bg-color-page);
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 32px;
-    }
-
-    /* 消息样式 */
-    .message {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      max-width: 80%;
-      animation: messageIn 0.3s ease-out;
-    }
-
-    @keyframes messageIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .message.user {
-      flex-direction: row-reverse;
-      margin-left: auto;
-    }
-
-    .message-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-      box-shadow: var(--td-shadow-1);
-    }
-
-    .message.assistant .message-avatar {
-      background: linear-gradient(135deg, var(--td-brand-color) 0%, #2B7DF5 100%);
-      color: #fff;
-    }
-
-    .message.user .message-avatar {
-      background: linear-gradient(135deg, #0052D9 0%, #0066FF 100%);
-      color: #fff;
-    }
-
-    .message-content {
-      background: var(--td-bg-color-container);
-      border-radius: 12px;
-      padding: 16px 20px;
-      box-shadow: var(--td-shadow-1);
-    }
-
-    .message.user .message-content {
-      background: linear-gradient(135deg, var(--td-brand-color) 0%, #2B7DF5 100%);
-      color: #fff;
-    }
-
-    .message-text {
-      font-size: 14px;
-      line-height: 1.8;
-      color: var(--td-text-color-primary);
-    }
-
-    .message.user .message-text {
-      color: #fff;
-    }
-
-    /* 消息中的表格 */
-    .message-table {
-      margin-top: 16px;
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      border-radius: var(--td-border-radius);
-      overflow: hidden;
-      border: 1px solid #EBEDF0;
-    }
-
-    .message-table th,
-    .message-table td {
-      padding: 12px 16px;
-      text-align: left;
-    }
-
-    .message-table th {
-      background: #F3F4F6;
-      font-weight: 500;
-      color: var(--td-text-color-secondary);
-      border-bottom: 1px solid #EBEDF0;
-    }
-
-    .message-table td {
-      color: var(--td-text-color-primary);
-      border-bottom: 1px solid #EBEDF0;
-    }
-
-    .message-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .message-table tr:hover td {
-      background: #F9FAFB;
-    }
-
-    /* 消息中的图表 */
-    .message-chart {
-      margin-top: 16px;
-      background: #F9FAFB;
-      border-radius: var(--td-border-radius-large);
-      padding: 20px;
-      border: 1px solid #EBEDF0;
-    }
-
-    .message-chart canvas {
-      max-height: 220px;
-    }
-
-    /* 高亮文本 */
-    .highlight {
-      color: var(--td-brand-color);
-      font-weight: 600;
-    }
-
-    /* 洞察卡片 */
-    .insight-box {
-      margin-top: 16px;
-      padding: 14px 16px;
-      background: linear-gradient(135deg, #FFF8E6 0%, #FFFBE6 100%);
-      border-left: 4px solid #FAAD14;
-      border-radius: 0 var(--td-border-radius) var(--td-border-radius) 0;
-      font-size: 13px;
-      color: #8C6E00;
-      line-height: 1.6;
-    }
-
-    /* 追问建议 */
-    .follow-up {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px dashed #EBEDF0;
-    }
-
-    .follow-up-title {
-      font-size: 12px;
-      color: var(--td-text-color-placeholder);
-      margin-bottom: 10px;
-    }
-
-    .follow-up-btn {
-      display: inline-block;
-      padding: 6px 14px;
-      background: var(--td-brand-color-light);
-      border: 1px solid #D6E4FF;
-      border-radius: 16px;
-      font-size: 12px;
-      color: var(--td-brand-color);
-      cursor: pointer;
-      margin-right: 8px;
-      margin-bottom: 8px;
-      transition: all 0.2s;
-    }
-
-    .follow-up-btn:hover {
-      background: var(--td-brand-color);
-      color: #fff;
-      border-color: var(--td-brand-color);
-      transform: translateY(-1px);
-    }
-
-    /* ==================== 输入区域 ==================== */
-    .chat-input-area {
-      padding: 16px 32px 24px;
-      background: var(--td-bg-color-container);
-      border-top: 1px solid var(--td-border-color);
-    }
-
-    .input-wrapper {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .input-box {
-      flex: 1;
-      background: #F3F4F6;
-      border-radius: 12px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 2px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .input-box:focus-within {
-      border-color: var(--td-brand-color);
-      background: var(--td-bg-color-container);
-      box-shadow: 0 0 0 3px rgba(0, 82, 217, 0.1);
-    }
-
-    .input-box textarea {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 14px;
-      resize: none;
-      outline: none;
-      font-family: inherit;
-      line-height: 1.6;
-      max-height: 120px;
-      color: var(--td-text-color-primary);
-    }
-
-    .input-box textarea::placeholder {
-      color: var(--td-text-color-placeholder);
-    }
-
-    .send-btn {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, var(--td-brand-color) 0%, #2B7DF5 100%);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0, 82, 217, 0.3);
-    }
-
-    .send-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 82, 217, 0.4);
-    }
-
-    .send-btn:active {
-      transform: translateY(0);
-    }
-
-    .send-btn:disabled {
-      background: #C9CDD4;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    /* ==================== 打字动画 ==================== */
-    .typing-indicator {
-      display: flex;
-      gap: 5px;
-      padding: 8px 0;
-    }
-
-    .typing-indicator span {
-      width: 8px;
-      height: 8px;
-      background: var(--td-brand-color);
-      border-radius: 50%;
-      animation: typing 1.4s infinite ease-in-out;
-    }
-
-    .typing-indicator span:nth-child(1) { animation-delay: 0s; }
-    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes typing {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-      30% { transform: translateY(-10px); opacity: 1; }
-    }
-
-    /* ==================== 欢迎界面 ==================== */
-    .welcome-screen {
-      text-align: center;
-      padding: 80px 40px;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .welcome-icon {
-      width: 88px;
-      height: 88px;
-      background: linear-gradient(135deg, var(--td-brand-color) 0%, #2B7DF5 100%);
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 28px;
-      font-size: 40px;
-      color: #fff;
-      box-shadow: 0 8px 24px rgba(0, 82, 217, 0.3);
-    }
-
-    .welcome-title {
-      font-size: 28px;
-      font-weight: 600;
-      color: var(--td-text-color-primary);
+      border-radius: 8px;
       margin-bottom: 12px;
+      border-left: 4px solid var(--td-brand-color);
     }
 
-    .welcome-desc {
-      font-size: 15px;
-      color: var(--td-text-color-secondary);
-      margin-bottom: 40px;
-      line-height: 1.8;
+    .insight-item:last-child {
+      margin-bottom: 0;
     }
 
-    .welcome-suggestions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-
-    .suggestion-card {
-      background: var(--td-bg-color-container);
-      border: 1px solid #EBEDF0;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.38, 0, 0.24, 1);
-    }
-
-    .suggestion-card:hover {
-      border-color: var(--td-brand-color);
-      box-shadow: var(--td-shadow-2);
-      transform: translateY(-4px);
-    }
-
-    .suggestion-icon {
-      width: 44px;
-      height: 44px;
-      background: var(--td-brand-color-light);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 12px;
-    }
-
-    .suggestion-text {
+    .insight-text {
       font-size: 14px;
+      line-height: 1.6;
       color: var(--td-text-color-primary);
-      font-weight: 500;
-      line-height: 1.5;
     }
 
-    /* ==================== 滚动条美化 ==================== */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 240px;
+      }
+      
+      .function-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .welcome-container {
+        max-width: 500px;
+      }
+      
+      .quick-abilities {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .ability-btn {
+        justify-content: center;
+      }
+      
+      .guide-questions {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+      .guide-question {
+        padding: 16px;
+      }
 
-    ::-webkit-scrollbar-thumb {
-      background: #DCDCDC;
-      border-radius: 3px;
-    }
+      .charts-section {
+        grid-template-columns: 1fr;
+      }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: #C9CDD4;
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- 顶部导航 -->
-  <header class="header">
-    <div class="header-left">
-      <button class="home-btn" onclick="goHome()" title="返回首页">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
+  <div class="app-container">
+    <!-- 左侧边栏 -->
+    <div class="sidebar">
+      <!-- 用户头部 -->
+      <div class="sidebar-header">
+        <div class="user-avatar">HR</div>
+        <div class="user-info">
+          <h3>离职AI助理</h3>
+          <p>你的离职AI助手</p>
+        </div>
+      </div>
+
+      <!-- 新对话按钮 -->
+      <button class="new-chat-btn" onclick="startNewChat()">
+        <span style="font-size: 22px; font-weight: 300;">+</span>
+        <span>新对话</span>
       </button>
-      <div class="logo">
-        <div class="logo-icon">📊</div>
-        <span class="logo-text">离职洞察助理</span>
+
+      <!-- 功能区 -->
+      <div class="function-area">
+        <div class="function-title">AI能力</div>
+        <div class="function-grid" id="functionGrid">
+          <div class="function-card" onclick="selectFunction('interview')" 
+               onmouseenter="showTooltip(event, '智能生成面谈问题，记录关键信息，分析离职原因，提供改进建议')"
+               onmouseleave="hideTooltip()">
+            <span class="function-icon">🗣️</span>
+            <div class="function-name">离职面谈</div>
+          </div>
+          <div class="function-card" onclick="selectFunction('data')"
+               onmouseenter="showTooltip(event, '可视化展示离职趋势，多维度统计分析，生成专业数据报告')"
+               onmouseleave="hideTooltip()">
+            <span class="function-icon">📊</span>
+            <div class="function-name">离职问数</div>
+          </div>
+          <div class="function-card" onclick="selectFunction('insight')"
+               onmouseenter="showTooltip(event, '深度挖掘离职模式，预测离职风险，提供个性化保留策略')"
+               onmouseleave="hideTooltip()">
+            <span class="function-icon">🔍</span>
+            <div class="function-name">离职洞察</div>
+          </div>
+          <div class="function-card" onclick="selectFunction('policy')"
+               onmouseenter="showTooltip(event, '智能解答政策问题，优化流程设计，确保合规性管理')"
+               onmouseleave="hideTooltip()">
+            <span class="function-icon">📋</span>
+            <div class="function-name">离职政策</div>
+          </div>
+          <!-- 更多按钮 -->
+          <div class="function-more-btn" id="functionMoreBtn" onclick="toggleExtraFunctions()">
+            <span>更多功能</span>
+            <span style="font-size:14px;">▸</span>
+          </div>
+          <!-- 扩展功能（默认隐藏） -->
+          <div class="function-extra-cards" id="functionExtraCards">
+            <div class="function-card-wrapper">
+              <div class="function-card disabled"
+                   onmouseenter="showTooltip(event, '功能建设中')"
+                   onmouseleave="hideTooltip()">
+                <span class="function-icon">📞</span>
+                <div class="function-name">离职回访</div>
+              </div>
+            </div>
+            <div class="function-card-wrapper">
+              <div class="function-card disabled"
+                   onmouseenter="showTooltip(event, '功能建设中')"
+                   onmouseleave="hideTooltip()">
+                <span class="function-icon">🔄</span>
+                <div class="function-name">离职交接</div>
+              </div>
+            </div>
+            <div class="function-more-btn" onclick="toggleExtraFunctions()">
+              <span>收起</span>
+              <span style="font-size:14px;">◂</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 历史对话 -->
+      <div class="history-area">
+        <div class="history-title">历史会话</div>
+        <div id="historyListContainer"></div>
       </div>
     </div>
-    <div class="header-right">
-      <button class="header-btn primary" onclick="goHome()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 5v14M5 12h14"/>
-        </svg>
-        新会话
-      </button>
-      <div class="header-divider"></div>
-      <div class="user-info">
-        <div class="user-avatar">C</div>
-        <span class="user-name">chrisluoli</span>
-      </div>
-    </div>
-  </header>
 
-  <div class="main-container">
-    <!-- 左侧数据概览 -->
-    <aside class="sidebar">
-      <div class="sidebar-section">
-        <div class="dept-header">
-          <div class="dept-icon">🏢</div>
-          <div class="dept-info">
-            <div class="dept-name">人力资源平台部</div>
-            <div class="dept-sub">数据统计范围</div>
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 欢迎页面 -->
+      <div class="welcome-page" id="welcomePage">
+        <div class="welcome-container">
+          <h1 class="welcome-greeting">你好，欢迎使用离职AI助理</h1>
+          
+          <!-- 输入框 -->
+          <div class="welcome-input-wrapper">
+            <textarea 
+              class="welcome-input" 
+              id="welcomeInput"
+              placeholder="请说出你的诉求..."
+              onkeydown="handleWelcomeKeyDown(event)"
+            ></textarea>
+            <div class="input-actions">
+              <button class="send-btn-welcome" onclick="sendWelcomeMessage()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-title">数据概览</div>
-        
-        <div class="stat-card">
-          <div class="stat-label">📈 本年度离职人数</div>
-          <div class="stat-value">47<span>人</span></div>
-          <div class="stat-trend up">↑ 较去年同期增长 12%</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-label">📊 当前离职率</div>
-          <div class="stat-value">8.3<span>%</span></div>
-          <div class="stat-trend down">↓ 低于行业平均 10.2%</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-label">⏱️ 平均司龄</div>
-          <div class="stat-value">2.1<span>年</span></div>
-          <div class="stat-trend up">↑ 较去年缩短 0.3 年</div>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="mini-chart">
-          <canvas id="miniChart" height="100"></canvas>
-        </div>
-      </div>
-
-      <div class="sidebar-section quick-questions">
-        <h4>💡 快捷提问</h4>
-        <button class="quick-btn" onclick="askQuestion('本部门近3年来9级以上离职人员情况')">
-          <span class="quick-btn-icon">👔</span> 9级以上离职分析
-        </button>
-        <button class="quick-btn" onclick="askQuestion('年轻人在8级之前的离职情况')">
-          <span class="quick-btn-icon">👶</span> 年轻人离职分析
-        </button>
-        <button class="quick-btn" onclick="askQuestion('离职趋势洞察')">
-          <span class="quick-btn-icon">📈</span> 离职趋势洞察
-        </button>
-        <button class="quick-btn" onclick="askQuestion('获取本部门离职观察建议')">
-          <span class="quick-btn-icon">💡</span> 离职观察建议
-        </button>
-      </div>
-    </aside>
-
-    <!-- 聊天区域 -->
-    <main class="chat-container">
-      <div class="chat-messages" id="chatMessages">
-        <!-- 欢迎界面 -->
-        <div class="welcome-screen" id="welcomeScreen">
-          <div class="welcome-icon">🤖</div>
-          <h2 class="welcome-title">你好，我是离职洞察助理</h2>
-          <p class="welcome-desc">
-            我可以帮你分析人力资源平台部的离职数据，识别离职风险，并提供可行的改进建议。<br>
-            你可以直接提问或选择下方话题开始对话。
-          </p>
-          <div class="welcome-suggestions">
-            <div class="suggestion-card" onclick="askQuestion('本部门近3年来9级以上离职人员情况')">
-              <div class="suggestion-icon">👔</div>
-              <div class="suggestion-text">9级以上离职人员分析</div>
+          <!-- 推荐问题 -->
+          <div class="guide-section">
+            <div class="guide-header">
+              <h3 class="guide-title">💡 推荐问题</h3>
             </div>
-            <div class="suggestion-card" onclick="askQuestion('年轻人在8级之前的离职情况')">
-              <div class="suggestion-icon">👶</div>
-              <div class="suggestion-text">年轻人离职情况分析</div>
-            </div>
-            <div class="suggestion-card" onclick="askQuestion('离职趋势洞察')">
-              <div class="suggestion-icon">📈</div>
-              <div class="suggestion-text">离职趋势洞察</div>
-            </div>
-            <div class="suggestion-card" onclick="askQuestion('获取本部门离职观察建议')">
-              <div class="suggestion-icon">💡</div>
-              <div class="suggestion-text">获取离职观察建议</div>
+            <div class="guide-questions">
+              <div class="guide-question" onclick="askQuickQuestion('data', '最近一个季度各部门离职率是多少？')">
+                <div class="question-icon">📊</div>
+                <div class="question-content">
+                  <div class="question-text">最近一个季度各部门离职率是多少？</div>
+                  <div class="question-desc">离职问数 · 数据查询</div>
+                </div>
+              </div>
+              <div class="guide-question" onclick="askQuickQuestion('insight', '技术部门离职率偏高的根本原因是什么？')">
+                <div class="question-icon">🔍</div>
+                <div class="question-content">
+                  <div class="question-text">技术部门离职率偏高的根本原因？</div>
+                  <div class="question-desc">离职洞察 · 根因分析</div>
+                </div>
+              </div>
+              <div class="guide-question" onclick="askQuickQuestion('policy', '离职后社保和公积金怎么转移？')">
+                <div class="question-icon">📋</div>
+                <div class="question-content">
+                  <div class="question-text">离职后社保和公积金怎么转移？</div>
+                  <div class="question-desc">离职政策 · 社保公积金</div>
+                </div>
+              </div>
+              <div class="guide-question" onclick="askQuickQuestion('data', '高绩效员工的离职占比是多少？')">
+                <div class="question-icon">📈</div>
+                <div class="question-content">
+                  <div class="question-text">高绩效员工的离职占比是多少？</div>
+                  <div class="question-desc">离职问数 · 人才流失</div>
+                </div>
+              </div>
+              <div class="guide-question" onclick="askQuickQuestion('insight', '薪酬竞争力和离职率之间有什么关联？')">
+                <div class="question-icon">💰</div>
+                <div class="question-content">
+                  <div class="question-text">薪酬竞争力和离职率有什么关联？</div>
+                  <div class="question-desc">离职洞察 · 薪酬分析</div>
+                </div>
+              </div>
+              <div class="guide-question" onclick="askQuickQuestion('policy', '竞业限制协议有哪些规定？')">
+                <div class="question-icon">⚖️</div>
+                <div class="question-content">
+                  <div class="question-text">竞业限制协议有哪些规定？</div>
+                  <div class="question-desc">离职政策 · 合规管理</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 输入区域 -->
-      <div class="chat-input-area">
-        <div class="input-wrapper">
-          <div class="input-box">
-            <textarea id="userInput" rows="1" placeholder="输入你的问题，例如：我们部门离职率是多少？" onkeydown="handleKeyDown(event)"></textarea>
+      <!-- 聊天界面 -->
+      <div class="chat-interface" id="chatInterface">
+        <div class="chat-header">
+          <div class="chat-title-area">
+            <span class="chat-title" id="chatTitle">离职洞察助理</span>
+            <button class="title-edit-btn" id="titleEditBtn" onclick="startRenameChat()" title="重命名" style="display:none;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            </button>
           </div>
-          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-            </svg>
+          <div class="chat-actions">
+            <button class="action-btn" onclick="backToHome()" title="返回首页">🏠 首页</button>
+            <button class="action-btn" id="deleteChatBtn" onclick="deleteCurrentHistory()" style="display:none;">🗑️ 删除</button>
+            <button class="action-btn" onclick="clearChat()">🗑️ 清空</button>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <!-- 消息将在这里动态生成 -->
+        </div>
+
+        <div class="chat-input">
+          <div class="quick-actions" id="quickActions">
+            <button class="quick-action-btn" onclick="showJobRecommend()">
+              <span class="quick-action-icon">💧</span>
+              <span>活水推荐</span>
+            </button>
+            <button class="quick-action-btn" onclick="showPortraitGuide()">
+              <span class="quick-action-icon">👤</span>
+              <span>离职画像</span>
+            </button>
+            <button class="quick-action-btn" onclick="askQuestion('请帮我进行AI离职面谈')">
+              <span class="quick-action-icon">🎙️</span>
+              <span>AI面谈</span>
+            </button>
+          </div>
+          <div class="quick-actions" id="policyQuickActions">
+            <button class="quick-action-btn" onclick="connectXiaoT()">
+              <span class="quick-action-icon">🤖</span>
+              <span>连线小T</span>
+            </button>
+            <button class="quick-action-btn" onclick="connectCER()">
+              <span class="quick-action-icon">👩‍💼</span>
+              <span>连线C-ER</span>
+            </button>
+          </div>
+          <div class="input-wrapper">
+            <textarea 
+              class="input-box" 
+              id="messageInput" 
+              placeholder="请输入您的问题..."
+              onkeydown="handleKeyDown(event)"
+            ></textarea>
+            <button class="send-btn" onclick="sendMessage()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 离职洞察界面 -->
+      <div class="insight-interface" id="insightInterface">
+        <div class="insight-header">
+          <div class="insight-title">
+            <span>🔍</span>
+            <span>离职洞察分析</span>
+          </div>
+          <button class="back-btn" onclick="backToHome()">
+            <span>←</span>
+            <span>返回首页</span>
           </button>
         </div>
+
+        <div class="insight-content">
+          <!-- 统计卡片 -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-title">本月离职人数</div>
+                <div class="stat-icon">👥</div>
+              </div>
+              <div class="stat-value">23</div>
+              <div class="stat-change positive">
+                <span>↑</span>
+                <span>较上月增长 15.2%</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-title">离职率</div>
+                <div class="stat-icon">📊</div>
+              </div>
+              <div class="stat-value">12.3%</div>
+              <div class="stat-change positive">
+                <span>↑</span>
+                <span>较上月增长 2.1%</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-title">平均司龄</div>
+                <div class="stat-icon">⏱️</div>
+              </div>
+              <div class="stat-value">2.8年</div>
+              <div class="stat-change negative">
+                <span>↓</span>
+                <span>较上月减少 0.3年</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-title">高风险员工</div>
+                <div class="stat-icon">⚠️</div>
+              </div>
+              <div class="stat-value">15</div>
+              <div class="stat-change positive">
+                <span>↑</span>
+                <span>需要重点关注</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 图表区域 -->
+          <div class="charts-section">
+            <div class="chart-card">
+              <div class="chart-title">
+                <span>📈</span>
+                <span>离职趋势分析</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-title">
+                <span>🏢</span>
+                <span>部门离职分布</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="departmentChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- 洞察分析 -->
+          <div class="insights-section">
+            <div class="insights-title">
+              <span>💡</span>
+              <span>关键洞察</span>
+            </div>
+            
+            <div class="insight-item">
+              <div class="insight-text">
+                <strong>技术部门离职率偏高：</strong>技术部门本月离职率达到15.2%，主要原因包括薪酬竞争力不足、职业发展通道不清晰、工作压力过大。建议加强技术人员的薪酬体系优化和职业发展规划。
+              </div>
+            </div>
+
+            <div class="insight-item">
+              <div class="insight-text">
+                <strong>新员工流失严重：</strong>入职6-18个月的员工离职率高达25%，主要集中在试用期结束后。建议优化新员工培训体系，加强导师制度，提升新员工融入感。
+              </div>
+            </div>
+
+            <div class="insight-item">
+              <div class="insight-text">
+                <strong>离职预警信号：</strong>通过数据分析发现，绩效下滑、加班频率降低、内部沟通减少是离职的重要预警信号。建议建立预警机制，提前干预。
+              </div>
+            </div>
+
+            <div class="insight-item">
+              <div class="insight-text">
+                <strong>保留策略建议：</strong>针对高风险员工，建议采用个性化保留策略：技术人员重点关注薪酬和技术成长，销售人员重点关注激励机制，管理人员重点关注职业发展空间。
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
   </div>
 
   <script>
-    // ==================== 模拟数据 ====================
-    const mockData = {
-      // 部门信息
-      deptName: '人力资源平台部',
-      subDepts: ['产品服务中心', '中台能力中心', '研发交付中心', '共享服务中心'],
-      
-      // 9级以上离职人员数据（近3年）
-      seniorEmployees: [
-        { id: 1, name: '张建国', subDept: '研发交付中心', level: '9级', joinDate: '2018-03-15', leaveDate: '2024-01-20', tenure: 5.8, reason: '外部机会', age: 38, performance: 'A', destination: '字节跳动', heartbreakIndex: 92 },
-        { id: 2, name: '李明华', subDept: '产品服务中心', level: '10级', joinDate: '2016-06-01', leaveDate: '2023-08-15', tenure: 7.2, reason: '职业发展', age: 42, performance: 'A+', destination: '阿里巴巴', heartbreakIndex: 95 },
-        { id: 3, name: '王海涛', subDept: '中台能力中心', level: '9级', joinDate: '2019-02-10', leaveDate: '2024-03-01', tenure: 5.1, reason: '管理分歧', age: 36, performance: 'A', destination: '美团', heartbreakIndex: 88 },
-        { id: 4, name: '刘志强', subDept: '研发交付中心', level: '9级', joinDate: '2017-07-05', leaveDate: '2023-05-25', tenure: 5.9, reason: '薪资待遇', age: 40, performance: 'B+', destination: '快手', heartbreakIndex: 75 },
-        { id: 5, name: '陈伟民', subDept: '共享服务中心', level: '10级', joinDate: '2015-08-20', leaveDate: '2022-12-10', tenure: 7.3, reason: '创业', age: 45, performance: 'A', destination: '自主创业', heartbreakIndex: 85 },
-        { id: 6, name: '赵丽娟', subDept: '产品服务中心', level: '9级', joinDate: '2018-11-01', leaveDate: '2023-11-05', tenure: 5.0, reason: '职业发展', age: 37, performance: 'A', destination: '京东', heartbreakIndex: 90 },
-        { id: 7, name: '孙志远', subDept: '中台能力中心', level: '9级', joinDate: '2019-04-15', leaveDate: '2024-02-28', tenure: 4.9, reason: '外部机会', age: 35, performance: 'A+', destination: '小红书', heartbreakIndex: 93 }
-      ],
-      
-      // 8级以下年轻人离职数据
-      youngEmployees: [
-        { id: 1, name: '林小雨', subDept: '产品服务中心', level: '7级', joinDate: '2022-07-01', leaveDate: '2024-03-15', tenure: 1.7, reason: '个人发展', age: 26, performance: '5星', fiveStar: true },
-        { id: 2, name: '陈晨', subDept: '研发交付中心', level: '6级', joinDate: '2022-03-10', leaveDate: '2023-06-20', tenure: 1.3, reason: '薪资待遇', age: 25, performance: '4星', fiveStar: false },
-        { id: 3, name: '黄小明', subDept: '产品服务中心', level: '7级', joinDate: '2021-09-01', leaveDate: '2023-04-10', tenure: 1.6, reason: '工作压力', age: 27, performance: '5星', fiveStar: true },
-        { id: 4, name: '周小红', subDept: '中台能力中心', level: '6级', joinDate: '2022-11-15', leaveDate: '2024-01-25', tenure: 1.2, reason: '个人发展', age: 24, performance: '4星', fiveStar: false },
-        { id: 5, name: '李小龙', subDept: '研发交付中心', level: '7级', joinDate: '2022-06-01', leaveDate: '2023-09-30', tenure: 1.3, reason: '文化适应', age: 26, performance: '3星', fiveStar: false },
-        { id: 6, name: '王小丽', subDept: '共享服务中心', level: '6级', joinDate: '2023-01-10', leaveDate: '2024-02-20', tenure: 1.1, reason: '薪资待遇', age: 25, performance: '5星', fiveStar: true },
-        { id: 7, name: '张小强', subDept: '研发交付中心', level: '7级', joinDate: '2021-03-15', leaveDate: '2022-08-28', tenure: 1.4, reason: '个人发展', age: 27, performance: '4星', fiveStar: false },
-        { id: 8, name: '刘小芳', subDept: '产品服务中心', level: '6级', joinDate: '2021-07-01', leaveDate: '2022-11-15', tenure: 1.4, reason: '工作压力', age: 24, performance: '4星', fiveStar: false }
-      ],
-      
-      // 离职趋势数据（按年）
-      yearlyTrend: [
-        { year: 2020, total: 28, rate: 5.2 },
-        { year: 2021, total: 35, rate: 6.1 },
-        { year: 2022, total: 52, rate: 8.5 },
-        { year: 2023, total: 48, rate: 7.8 },
-        { year: 2024, total: 47, rate: 8.3 }
-      ],
-      
-      // 按职级分布
-      levelDistribution: {
-        '6级及以下': { count: 18, rate: 12.5 },
-        '7级': { count: 15, rate: 10.2 },
-        '8级': { count: 8, rate: 8.1 },
-        '9级': { count: 5, rate: 6.5 },
-        '10级及以上': { count: 1, rate: 3.2 }
-      },
-      
-      // 按年龄分布
-      ageDistribution: {
-        '25岁以下': { count: 12, rate: 15.2 },
-        '25-30岁': { count: 22, rate: 11.8 },
-        '30-35岁': { count: 8, rate: 7.5 },
-        '35-40岁': { count: 4, rate: 5.2 },
-        '40岁以上': { count: 1, rate: 2.8 }
-      },
-      
-      // 按司龄分布
-      tenureDistribution: {
-        '1年以内': { count: 15, rate: 18.5 },
-        '1-2年': { count: 18, rate: 12.3 },
-        '2-3年': { count: 8, rate: 8.2 },
-        '3-5年': { count: 4, rate: 5.1 },
-        '5年以上': { count: 2, rate: 3.0 }
-      },
-      
-      // 按绩效分布
-      performanceDistribution: {
-        '5星': { count: 8, rate: 6.8 },
-        '4星': { count: 18, rate: 9.5 },
-        '3星': { count: 15, rate: 12.2 },
-        '2星及以下': { count: 6, rate: 25.0 }
-      },
-      
-      // 各下属部门数据
-      subDeptData: {
-        '产品服务中心': { total: 85, left: 12, rate: 14.1 },
-        '中台能力中心': { total: 120, left: 15, rate: 12.5 },
-        '研发交付中心': { total: 150, left: 18, rate: 12.0 },
-        '共享服务中心': { total: 65, left: 8, rate: 12.3 }
-      },
-      
-      youngReasonStats: {
-        '个人发展': 35,
-        '薪资待遇': 28,
-        '工作压力': 20,
-        '文化适应': 12,
-        '其他': 5
-      },
-      
-      seniorReasonStats: {
-        '外部机会': 32,
-        '职业发展': 28,
-        '薪资待遇': 18,
-        '管理分歧': 12,
-        '创业': 10
-      },
-      
-      monthlyData: [
-        { month: '2023-07', count: 3 },
-        { month: '2023-08', count: 2 },
-        { month: '2023-09', count: 4 },
-        { month: '2023-10', count: 3 },
-        { month: '2023-11', count: 5 },
-        { month: '2023-12', count: 6 },
-        { month: '2024-01', count: 8 },
-        { month: '2024-02', count: 7 }
-      ]
-    };
+    // 全局状态
+    let currentFunction = null;
+    let chatHistory = [];
+    let isWelcomePage = true;
+    let currentView = 'welcome'; // 'welcome', 'chat', 'insight'
+    let interviewMsgCount = 0; // 离职面谈追问计数
+    const MAX_FOLLOWUP = 2; // 最多追问次数
+    let isTyping = false; // 是否正在打字输出
+    let waitingPortraitInput = false; // 是否等待离职画像用户输入
+    let portraitDone = false; // 离职画像是否已输出过
+    let historyIdCounter = 100; // 动态历史记录ID计数器
 
-    // ==================== 预设回复模板 ====================
-
-    // ==================== 预设回复模板 ====================
-    const responses = {
-      '9级以上离职': {
-        text: `<strong>📊 人力资源平台部近3年9级以上离职人员情况</strong>\n\n基于近3年数据，本部门共有 <span class="highlight">7 名9级及以上员工离职</span>，详细信息如下：`,
-        table: {
-          headers: ['姓名', '下属部门', '职级', '司龄', '离职原因', '去向', '心痛指数'],
-          rows: [
-            ['张建国', '研发交付中心', '9级', '5.8年', '外部机会', '字节跳动', '92 ⚠️'],
-            ['李明华', '产品服务中心', '10级', '7.2年', '职业发展', '阿里巴巴', '95 ⚠️'],
-            ['王海涛', '中台能力中心', '9级', '5.1年', '管理分歧', '美团', '88'],
-            ['刘志强', '研发交付中心', '9级', '5.9年', '薪资待遇', '快手', '75'],
-            ['陈伟民', '共享服务中心', '10级', '7.3年', '创业', '自主创业', '85'],
-            ['赵丽娟', '产品服务中心', '9级', '5.0年', '职业发展', '京东', '90 ⚠️'],
-            ['孙志远', '中台能力中心', '9级', '4.9年', '外部机会', '小红书', '93 ⚠️']
-          ]
-        },
-        chart: 'seniorReason',
-        insight: '💡 洞察：9级以上离职人员中，<span class="highlight">「外部机会」和「职业发展」是主要原因，占比达60%</span>。4人心痛指数超过90，说明高价值人才流失严重。',
-        followUp: ['他们离职后都去哪里了？', '心痛指数是如何计算的？', '如何预防高级人才流失？']
+    // 功能模块配置
+    const functionConfig = {
+      interview: {
+        name: '离职面谈',
+        icon: '🗣️',
+        welcome: 'Hi，我是离职面谈助理，我可以帮你做这些事情：<br><br>🗣️ <b>离职面谈沟通</b> — 和你聊聊离职的想法，了解真实原因，并提供职业发展建议<br>🔄 <b>活水岗位推荐</b> — 根据你的经验和意向，推荐内部合适的活水岗位<br>📋 <b>离职画像与建议</b> — 生成离职员工画像和面谈建议，提醒关键风险与注意事项<br>💛 <b>情绪关怀支持</b> — 倾听你的感受，提供心理疏导和情绪支持<br><br>你可以直接跟我聊聊，有什么想说的？'
       },
-
-      '年轻人8级': {
-        text: `<strong>📊 人力资源平台部8级以下年轻人离职情况</strong>\n\n基于近3年数据，本部门共有 <span class="highlight">8 名8级以下年轻员工离职</span>，详细信息如下：`,
-        table: {
-          headers: ['姓名', '下属部门', '职级', '司龄', '离职原因', '年龄', '绩效'],
-          rows: [
-            ['林小雨', '产品服务中心', '7级', '1.7年', '个人发展', '26岁', '5星 ⭐'],
-            ['陈晨', '研发交付中心', '6级', '1.3年', '薪资待遇', '25岁', '4星'],
-            ['黄小明', '产品服务中心', '7级', '1.6年', '工作压力', '27岁', '5星 ⭐'],
-            ['周小红', '中台能力中心', '6级', '1.2年', '个人发展', '24岁', '4星'],
-            ['李小龙', '研发交付中心', '7级', '1.3年', '文化适应', '26岁', '3星'],
-            ['王小丽', '共享服务中心', '6级', '1.1年', '薪资待遇', '25岁', '5星 ⭐'],
-            ['张小强', '研发交付中心', '7级', '1.4年', '个人发展', '27岁', '4星'],
-            ['刘小芳', '产品服务中心', '6级', '1.4年', '工作压力', '24岁', '4星']
-          ]
-        },
-        chart: 'youngReason',
-        insight: '💡 洞察：年轻员工离职呈现明显特征：①<span class="highlight">平均司龄仅1.4年</span> ②<span class="highlight">3名5星员工流失</span> ③「个人发展」是首要原因。',
-        followUp: ['为什么5星员工也会离职？', '年轻人离职的深层原因是什么？', '如何提高年轻人留存率？']
+      data: {
+        name: '离职问数',
+        icon: '📊',
+        welcome: '<div style="margin-bottom:12px;">您好！我是离职问数助理，以下是基于当前数据的离职概览：</div>'
+          + '<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">'
+          + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#e8f3ff,#d4e8ff);border-radius:10px;padding:14px 16px;">'
+          + '<div style="font-size:12px;color:#666;">离职总人数</div>'
+          + '<div style="font-size:28px;font-weight:700;color:#0052d9;margin:4px 0;">3</div>'
+          + '<div style="font-size:11px;color:#999;">全部为主动离职</div></div>'
+          + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#fff3e8,#ffe8d4);border-radius:10px;padding:14px 16px;">'
+          + '<div style="font-size:12px;color:#666;">平均司龄</div>'
+          + '<div style="font-size:28px;font-weight:700;color:#e37318;margin:4px 0;">2.1<span style="font-size:14px;">年</span></div>'
+          + '<div style="font-size:11px;color:#999;">最短0.9年 / 最长3.6年</div></div>'
+          + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#e8fff0,#d4ffe8);border-radius:10px;padding:14px 16px;">'
+          + '<div style="font-size:12px;color:#666;">平均年龄</div>'
+          + '<div style="font-size:28px;font-weight:700;color:#2ba471;margin:4px 0;">28.7<span style="font-size:14px;">岁</span></div>'
+          + '<div style="font-size:11px;color:#999;">26~32岁区间</div></div>'
+          + '</div>'
+          + '<div style="background:#f7f8fa;border-radius:10px;padding:14px 16px;margin-bottom:14px;">'
+          + '<div style="font-size:13px;font-weight:600;color:#333;margin-bottom:10px;">📊 离职分布</div>'
+          + '<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;">'
+          + '<div><span style="color:#666;">部门：</span><span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin-right:4px;">研发部 2人</span><span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;">产品部 1人</span></div>'
+          + '<div><span style="color:#666;">职级：</span><span style="color:#333;">P5 ~ P7</span></div>'
+          + '</div>'
+          + '</div>'
+          + '<div style="background:#f7f8fa;border-radius:10px;padding:14px 16px;margin-bottom:14px;">'
+          + '<div style="font-size:13px;font-weight:600;color:#333;margin-bottom:10px;">📈 离职趋势</div>'
+          + '<div style="font-size:13px;color:#555;line-height:1.8;">'
+          + '• 离职集中在 <b>2024年1月~2月</b><br>'
+          + '• 1月离职 <b>2人</b>，2月离职 <b>1人</b></div>'
+          + '</div>'
+          + '<div style="background:#f7f8fa;border-radius:10px;padding:14px 16px;margin-bottom:14px;">'
+          + '<div style="font-size:13px;font-weight:600;color:#333;margin-bottom:10px;">🔍 离职原因</div>'
+          + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+          + '<span style="background:#fff3e8;color:#e37318;border-radius:20px;padding:4px 12px;font-size:12px;">个人发展</span>'
+          + '<span style="background:#e8f3ff;color:#0052d9;border-radius:20px;padding:4px 12px;font-size:12px;">薪资待遇</span>'
+          + '<span style="background:#ffe8e8;color:#e34d59;border-radius:20px;padding:4px 12px;font-size:12px;">工作压力</span>'
+          + '</div></div>'
+          + '<div style="font-size:13px;color:#666;margin-top:8px;">您可以继续问我更多细节，例如："张三的离职详情"、"研发部离职分析"、"高绩效员工流失情况"等。</div>'
       },
-
-      '离职趋势': {
-        text: `<strong>📈 人力资源平台部离职趋势洞察</strong>\n\n基于近5年数据，部门离职率整体呈现<span class="highlight">波动上升趋势</span>：`,
-        table: {
-          headers: ['年份', '离职人数', '离职率', '同比变化', '主要特征'],
-          rows: [
-            ['2020年', '28人', '5.2%', '-', '疫情期间相对稳定'],
-            ['2021年', '35人', '6.1%', '↑ 0.9%', '复苏期人员流动增加'],
-            ['2022年', '52人', '8.5%', '↑ 2.4%', '8级以下年轻人流失加剧'],
-            ['2023年', '48人', '7.8%', '↓ 0.7%', '高级人才流失显现'],
-            ['2024年', '47人', '8.3%', '↑ 0.5%', '结构性问题持续']
-          ]
-        },
-        chart: 'yearlyTrend',
-        insight: '💡 关键洞察：2022年是离职高峰（8.5%），当前离职率（8.3%）低于行业平均（10.2%），但结构性问题需关注。',
-        followUp: ['2022年为什么离职率最高？', '按职级看离职趋势如何？', '按年龄段看离职趋势如何？']
+      insight: {
+        name: '离职洞察',
+        icon: '🔍',
+        welcome: '您好！我是离职洞察专家，以下是当前管理热点专题，点击可查看详细洞察报告：'
+          + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">'
+          + '<div onclick="selectInsightTopic(\'turnover\')" style="background:linear-gradient(135deg,#f0f5ff,#e0ecff);border:1px solid #d4e3fc;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,82,217,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(0,82,217,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(0,82,217,0.08)\'">'
+          + '<div style="font-size:22px;margin-bottom:8px;">📉</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#0052d9;margin-bottom:4px;">各部门离职率分析</div>'
+          + '<div style="font-size:12px;color:#666;line-height:1.5;">各部门离职率对比、趋势变化、同比环比分析</div></div>'
+          + '<div onclick="selectInsightTopic(\'reason\')" style="background:linear-gradient(135deg,#fff7f0,#ffe8d4);border:1px solid #fcd4b0;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(227,115,24,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(227,115,24,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(227,115,24,0.08)\'">'
+          + '<div style="font-size:22px;margin-bottom:8px;">🔍</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#e37318;margin-bottom:4px;">离职原因深度剖析</div>'
+          + '<div style="font-size:12px;color:#666;line-height:1.5;">离职原因分类统计、根因挖掘、改善建议</div></div>'
+          + '<div onclick="selectInsightTopic(\'engagement\')" style="background:linear-gradient(135deg,#f0fff5,#d4ffe4);border:1px solid #b0f0c8;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(43,164,113,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(43,164,113,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(43,164,113,0.08)\'">'
+          + '<div style="font-size:22px;margin-bottom:8px;">💚</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#2ba471;margin-bottom:4px;">敬业度与离职关联</div>'
+          + '<div style="font-size:12px;color:#666;line-height:1.5;">满意度反馈、敬业度评分与离职风险的关联分析</div></div>'
+          + '<div onclick="selectInsightTopic(\'highperf\')" style="background:linear-gradient(135deg,#fff0f0,#ffe4e4);border:1px solid #f0b0b0;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(227,77,89,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(227,77,89,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(227,77,89,0.08)\'">'
+          + '<div style="font-size:22px;margin-bottom:8px;">⭐</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#e34d59;margin-bottom:4px;">高绩效人才流失预警</div>'
+          + '<div style="font-size:12px;color:#666;line-height:1.5;">高绩效员工离职趋势、上级评价异常、保留策略</div></div>'
+          + '<div onclick="selectInsightTopic(\'newbie\')" style="background:linear-gradient(135deg,#f5f0ff,#e8d4ff);border:1px solid #d4b0f0;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(130,77,227,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(130,77,227,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(130,77,227,0.08)\'">'
+          + '<div style="font-size:22px;margin-bottom:8px;">🆕</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#824de3;margin-bottom:4px;">新员工留存分析</div>'
+          + '<div style="font-size:12px;color:#666;line-height:1.5;">试用期离职率、入职适应度、导师机制效果评估</div></div>'
+          + '<div onclick="selectInsightTopic(\'salary\')" style="background:linear-gradient(135deg,#f0f8ff,#d4ecff);border:1px solid #b0d4f0;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,120,215,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(0,120,215,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(0,120,215,0.08)\'">'
+          + '<div style="font-size:22px;margin-bottom:8px;">💰</div>'
+          + '<div style="font-size:14px;font-weight:600;color:#0078d7;margin-bottom:4px;">薪酬竞争力诊断</div>'
+          + '<div style="font-size:12px;color:#666;line-height:1.5;">薪酬满意度、市场对标分析、因薪离职趋势</div></div>'
+          + '</div>'
       },
-
-      '离职观察建议': {
-        text: `<strong>💡 人力资源平台部离职观察建议</strong>\n\n基于数据分析，从四个维度提出改进建议：\n\n<strong>一、高级人才保留（优先级：高）</strong>\n• 建立9级以上人才「一人一策」关怀机制\n• 每季度进行职业发展深度对话\n\n<strong>二、年轻人才培养（优先级：高）</strong>\n• 缩短晋升周期，设立「快速通道」\n• 建立导师制度，1对1职业辅导\n\n<strong>三、薪酬竞争力（优先级：中）</strong>\n• 进行市场薪资对标调研\n• 重点调整6-8级关键岗位薪资\n\n<strong>四、文化与体验（优先级：中）</strong>\n• 推行弹性工作制度\n• 建立员工满意度定期调研机制`,
-        insight: '💡 实施建议：预计6个月内可将离职率降低1-2个百分点。',
-        followUp: ['如何建立一人一策关怀机制？', '快速通道晋升如何设计？', '具体的敬业度提升措施有哪些？']
-      },
-
-      '离职率': {
-        text: `<strong>📊 人力资源平台部离职率分析</strong>\n\n根据数据分析，<span class="highlight">人力资源平台部当前离职率为 8.3%</span>，低于行业平均水平（10.2%）约 1.9 个百分点。\n\n<strong>各下属中心离职率对比：</strong>`,
-        table: {
-          headers: ['下属中心', '在职人数', '离职人数', '离职率'],
-          rows: [
-            ['产品服务中心', '85', '12', '14.1% ⚠️'],
-            ['中台能力中心', '120', '15', '12.5%'],
-            ['共享服务中心', '65', '8', '12.3%'],
-            ['研发交付中心', '150', '18', '12.0%']
-          ]
-        },
-        insight: '💡 洞察：产品服务中心离职率最高（14.1%），建议重点关注该中心的工作负荷和职业发展通道问题。',
-        followUp: ['产品服务中心离职原因是什么？', '如何降低离职率？', '高绩效员工流失情况']
-      },
-
-      '离职原因': {
-        text: `<strong>🔍 人力资源平台部离职原因分析</strong>\n\n基于对离职员工的面谈记录分析，离职原因分布如下：\n\n<strong>主要发现：</strong>\n• <span class="highlight">「个人发展」占比最高（35%）</span>\n• 「薪资待遇」位居第二（28%）\n• 「工作压力」占 20%`,
-        chart: 'youngReason',
-        insight: '💡 洞察：建议优化晋升机制并进行市场薪资对标，重点关注 6-8 级别员工的薪资竞争力。',
-        followUp: ['6-8级别的薪资水平如何？', '个人发展问题具体表现是什么？', '工作压力主要来源于哪里？']
-      },
-
-      '离职人数': {
-        text: `<strong>📊 人力资源平台部离职人数统计</strong>\n\n基于最新数据：\n\n• <span class="highlight">本年度累计离职 47 人</span>\n• 去年同期离职 42 人\n• 同比增长 11.9%\n\n<strong>各下属中心离职人数：</strong>`,
-        table: {
-          headers: ['下属中心', '在职人数', '离职人数', '离职率'],
-          rows: [
-            ['研发交付中心', '150', '18', '12.0%'],
-            ['中台能力中心', '120', '15', '12.5%'],
-            ['产品服务中心', '85', '12', '14.1%'],
-            ['共享服务中心', '65', '8', '12.3%']
-          ]
-        },
-        insight: '💡 洞察：产品服务中心离职率最高（14.1%），建议重点关注该中心的人员稳定性。',
-        followUp: ['离职率最高的是哪个部门？', '离职原因分析', '如何降低离职率？']
-      },
-
-      '部门分析': {
-        text: `<strong>📊 各下属中心离职情况分析</strong>\n\n人力资源平台部下设4个中心，离职情况如下：`,
-        table: {
-          headers: ['下属中心', '在职人数', '离职人数', '离职率', '主要流失岗位'],
-          rows: [
-            ['产品服务中心', '85', '12', '14.1% ⚠️', '产品经理'],
-            ['中台能力中心', '120', '15', '12.5%', '后端开发'],
-            ['共享服务中心', '65', '8', '12.3%', 'HR/财务'],
-            ['研发交付中心', '150', '18', '12.0%', '前端开发']
-          ]
-        },
-        insight: '💡 洞察：产品服务中心离职率最高，主要流失产品经理岗位。',
-        followUp: ['产品服务中心为什么离职率高？', '研发交付中心离职分析', '如何改善各部门留存？']
-      },
-
-      '报告': {
-        text: `<strong>📋 人力资源平台部离职分析综合报告</strong>\n\n<strong>一、整体情况</strong>\n• 本年度累计离职 47 人，离职率 8.3%\n• 较去年同期增长 12%，但低于行业平均（10.2%）\n\n<strong>二、关键发现</strong>\n1. <span class="highlight">产品服务中心离职率最高（14.1%）</span>\n2. 入职1-2年员工流失严重\n3. 「个人发展」和「薪资待遇」是主要离职原因\n\n<strong>三、改进建议</strong>\n1. 优化晋升通道，缩短晋升周期\n2. 进行市场薪资对标\n3. 建立高潜人才专项保留计划`,
-        insight: '💡 建议：本报告可供管理层参考，如需更详细的分析可以继续追问。',
-        followUp: ['各部门详细分析', '改进措施如何落地？', '高潜人才保留方案']
-      },
-
-      '闲聊': {
-        text: function() {
-          const chatReplies = [
-            '你好呀！我是离职洞察助理，专门帮你分析人力资源平台部的人员流动数据~ 有什么想了解的吗？😊',
-            '嗨！今天想看看哪方面的离职数据呢？我可以帮你分析离职率、离职原因、趋势等~',
-            '你好！虽然我很想和你聊天，但我更擅长数据分析哦~ 要不要看看人力资源平台部最近的离职情况？',
-            '在的在的！我随时待命，有什么离职相关的问题尽管问我~',
-            '哈喽！工作辛苦了~ 需要我帮你看看团队的人员稳定性吗？'
-          ];
-          return chatReplies[Math.floor(Math.random() * chatReplies.length)];
-        },
-        followUp: ['看看离职率', '分析离职原因', '生成分析报告']
-      },
-
-      '闲聊结束': {
-        text: `emmm...我发现我们聊了好几轮了 🙈\n\n说实话，我是个比较高冷的AI，不太爱闲聊...\n\n<strong>不过！</strong>如果你想聊离职数据分析，我可是非常热情的！比如：\n• 人力资源平台部离职率分析\n• 各中心人员流失原因\n• 离职趋势洞察\n• 改进建议\n\n这些我都很在行，要不要试试？`,
-        followUp: ['查看离职率', '分析离职原因', '获取改进建议']
-      },
-
-      'fallback': {
-        text: `我还只是个小demo，暂时还回答不了那么多，等我再完善完善！🔧\n\n<strong>不过这些问题我现在就能回答：</strong>\n• 人力资源平台部离职率/离职人数查询\n• 9级以上员工离职分析\n• 年轻人（8级以下）离职分析\n• 离职趋势洞察\n• 改进建议\n\n试试点击下方快捷按钮开始吧~`,
-        followUp: ['9级以上离职分析', '年轻人离职分析', '离职趋势洞察', '获取改进建议']
-      },
-
-      'default': {
-        text: `我理解你想了解人力资源平台部的离职相关信息。基于现有数据，我可以为你提供以下分析：\n\n• <strong>离职率分析</strong>：各中心、各职级的离职率对比\n• <strong>离职原因</strong>：员工离职的主要原因分布\n• <strong>趋势分析</strong>：离职时间规律和趋势\n• <strong>改进建议</strong>：针对性的留人策略\n\n请问你想从哪个角度深入了解？`,
-        followUp: ['查看离职率分析', '分析离职原因', '生成综合报告', '获取改进建议']
+      policy: {
+        name: '离职政策',
+        icon: '📋',
+        welcome: '您好！我是离职政策顾问，可以帮您解答政策问题、优化流程、确保合规管理。<br><br>以下是一些常见问题，点击即可快速咨询：'
+          + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">'
+          + '<div onclick="askQuestion(\'工作满15年离职有什么特殊规定？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>🏖️</span><span>工作满15年离职有什么特殊规定？</span></div>'
+          + '<div onclick="askQuestion(\'离职后社保和公积金怎么转移？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>🏦</span><span>离职后社保和公积金怎么转移？</span></div>'
+          + '<div onclick="askQuestion(\'离职赔偿金怎么计算？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>💰</span><span>离职赔偿金怎么计算？</span></div>'
+          + '<div onclick="askQuestion(\'离职工作交接有哪些流程？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📋</span><span>离职工作交接有哪些流程？</span></div>'
+          + '<div onclick="askQuestion(\'提前多久提离职？通知期是多少天？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>⏰</span><span>提前多久提离职？通知期是多少天？</span></div>'
+          + '<div onclick="askQuestion(\'竞业限制协议有哪些规定？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>⚖️</span><span>竞业限制协议有哪些规定？</span></div>'
+          + '</div>'
       }
     };
-    let chatHistory = [];
-    let conversationContext = { lastTopic: null, lastQuestion: null };
-    let isTyping = false;
 
-    // 初始化迷你图表
-    function initMiniChart() {
-      const ctx = document.getElementById('miniChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: mockData.monthlyData.map(d => d.month.slice(5)),
-          datasets: [{
-            data: mockData.monthlyData.map(d => d.count),
-            borderColor: '#0052D9',
-            backgroundColor: 'rgba(0, 82, 217, 0.1)',
-            fill: true,
-            tension: 0.4,
-            pointRadius: 3,
-            pointBackgroundColor: '#0052D9'
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { 
-              display: true,
-              grid: { display: false },
-              ticks: { font: { size: 10 }, color: '#86909C' }
-            },
-            y: { display: false }
-          }
-        }
-      });
+    // 更多/收起功能按钮
+    function toggleExtraFunctions() {
+      var extraCards = document.getElementById('functionExtraCards');
+      var moreBtn = document.getElementById('functionMoreBtn');
+      if (extraCards.classList.contains('show')) {
+        extraCards.classList.remove('show');
+        moreBtn.style.display = '';
+      } else {
+        extraCards.classList.add('show');
+        moreBtn.style.display = 'none';
+      }
     }
 
-    // 匹配问题关键词
-    let chatCount = 0; // 闲聊计数器
-    
-    function matchQuestion(question, context) {
-      // 基于上下文的追问匹配
-      if (context && context.lastTopic) {
-        // 9级以上话题的追问
-        if (context.lastTopic === '9级以上离职') {
-          if (question.includes('原因')) return '9级离职原因';
-          if (question.includes('去') || question.includes('哪里')) return '9级去向';
-          if (question.includes('心痛')) return '心痛指数';
-        }
-        // 年轻人话题的追问
-        if (context.lastTopic === '年轻人8级') {
-          if (question.includes('原因') || question.includes('为什么')) return '年轻人离职原因';
-          if (question.includes('5星') || question.includes('五星')) return '5星离职';
-        }
-        // 离职趋势话题的追问
-        if (context.lastTopic === '离职趋势') {
-          if (question.includes('2022') || question.includes('高峰') || question.includes('8级以下')) return '2022年8级以下原因';
-          if (question.includes('职级')) return '按职级趋势';
-          if (question.includes('年龄')) return '按年龄趋势';
-          if (question.includes('司龄')) return '按司龄趋势';
-        }
-        // 离职建议话题的追问
-        if (context.lastTopic === '离职观察建议') {
-          if (question.includes('敬业度') || question.includes('具体措施')) return '敬业度改进';
-          if (question.includes('为什么')) return '建议原因';
-        }
+    // 悬浮提示功能
+    let tooltip = null;
+
+    function showTooltip(event, text) {
+      hideTooltip();
+      
+      tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      tooltip.textContent = text;
+      document.body.appendChild(tooltip);
+      
+      const rect = event.target.getBoundingClientRect();
+      tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+      tooltip.style.top = rect.top - tooltip.offsetHeight - 8 + 'px';
+      
+      setTimeout(() => {
+        if (tooltip) tooltip.classList.add('show');
+      }, 10);
+    }
+
+    function hideTooltip() {
+      if (tooltip) {
+        tooltip.remove();
+        tooltip = null;
       }
+    }
 
-      // 闲聊检测
-      const chatKeywords = ['你好', '在吗', '嗨', 'hi', 'hello', '你是谁', '你叫什么', '聊聊', '无聊', '今天', '天气', '吃饭', '周末', '开心', '难过', '累', '加班', '休息', '早上好', '晚上好', '下午好', '哈哈', '嘿嘿', '哈喽', '在不在', '干嘛呢', '忙吗'];
-      if (chatKeywords.some(word => question.includes(word))) {
-        chatCount++;
-        if (chatCount > 3) {
-          return '闲聊结束';
-        }
-        return '闲聊';
-      }
+    // 开始新对话
+    function startNewChat() {
+      // 重置状态
+      currentFunction = null;
+      currentHistoryId = null;
+      document.getElementById('titleEditBtn').style.display = 'none';
+      document.getElementById('deleteChatBtn').style.display = 'none';
+      chatHistory = [];
+      interviewMsgCount = 0;
+      waitingPortraitInput = false;
+      portraitDone = false;
+      dataMsgCount = 0;
+      policyMsgCount = 0;
+      insightMsgCount = 0;
+      currentInsightTopic = null;
+      insightGenericIdx = 0;
+      chatSmallTalkCount = 0;
+      document.getElementById('chatMessages').innerHTML = '';
+      
+      // 清空欢迎页输入框
+      document.getElementById('welcomeInput').value = '';
+      
+      // 隐藏快捷操作按钮
+      document.getElementById('quickActions').classList.remove('show');
+      document.getElementById('policyQuickActions').classList.remove('show');
+      
+      // 重置功能卡片状态
+      document.querySelectorAll('.function-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      
+      // 显示欢迎页面
+      showWelcomePage();
+      renderHistoryList();
+    }
 
-      // 业务问题关键词匹配（扩展版）
-      const keywords = {
-        '9级以上离职': ['9级', '九级', '高级', '管理者', '专家', '资深', '高管', '领导'],
-        '年轻人8级': ['年轻人', '8级之前', '8级以下', '年轻', '新人', '应届', '校招', '毕业生'],
-        '离职趋势': ['趋势', '洞察', '变化', '走势', '历年', '近几年', '同比', '环比'],
-        '离职观察建议': ['建议', '观察', '改进', '提升', '怎么办', '措施', '方案', '策略'],
-        '离职率': ['离职率', '流失率', '比例', '百分比', '占比', '多少'],
-        '离职人数': ['离职人数', '多少人', '几个人', '离职了多少', '走了多少', '人数'],
-        '离职原因': ['离职原因', '为什么离职', '为啥走', '原因是什么', '什么原因'],
-        '部门分析': ['哪个部门', '部门', '团队', '中心'],
-        '绩效分析': ['绩效', '星级', '考核', '优秀员工', '高绩效'],
-        '司龄分析': ['司龄', '工作多久', '待了多久', '入职时间'],
-        '年龄分析': ['年龄', '多大', '岁数', '90后', '95后', '00后'],
-        '报告': ['报告', '总结', '汇总', '概况', '整体情况']
-      };
-
-      for (const [key, words] of Object.entries(keywords)) {
-        if (words.some(word => question.includes(word))) {
-          chatCount = 0; // 重置闲聊计数
-          return key;
-        }
+    // 欢迎页面发送消息
+    function sendWelcomeMessage() {
+      if (isTyping) return;
+      const input = document.getElementById('welcomeInput');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      // 切换到聊天界面
+      showChatInterface();
+      
+      // 如果没有选择功能，默认使用洞察功能
+      if (!currentFunction) {
+        currentFunction = 'insight';
+        document.getElementById('chatTitle').textContent = '离职洞察';
       }
       
-      // 兜底
-      return 'fallback';
+      // 动态生成历史记录（首条用户消息时触发）
+      createDynamicHistory(message);
+      
+      // 添加用户消息
+      addMessage('user', message);
+      
+      // 清空输入框
+      input.value = '';
+      
+      // 模拟AI回复
+      setTimeout(() => {
+        const response = generateResponse(message);
+        addMessage('assistant', response, true);
+      }, 1000);
+    }
+
+    // 欢迎页面键盘事件
+    function handleWelcomeKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendWelcomeMessage();
+      }
+    }
+
+    // 选择功能模块
+    function selectFunction(functionType) {
+      currentFunction = functionType;
+      currentHistoryId = null;
+      document.getElementById('titleEditBtn').style.display = 'none';
+      document.getElementById('deleteChatBtn').style.display = 'none';
+      
+      // 重置所有会话状态，开启全新对话
+      chatHistory = [];
+      interviewMsgCount = 0;
+      waitingPortraitInput = false;
+      portraitDone = false;
+      dataMsgCount = 0;
+      policyMsgCount = 0;
+      insightMsgCount = 0;
+      currentInsightTopic = null;
+      insightGenericIdx = 0;
+      chatSmallTalkCount = 0;
+      document.getElementById('chatMessages').innerHTML = '';
+      
+      // 更新UI状态
+      document.querySelectorAll('.function-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      
+      // 找到对应的功能卡片并激活
+      const cards = document.querySelectorAll('.function-card');
+      const functionOrder = ['interview', 'data', 'insight', 'policy'];
+      const index = functionOrder.indexOf(functionType);
+      if (index !== -1 && cards[index]) {
+        cards[index].classList.add('active');
+      }
+      
+      // 切换到聊天界面
+      showChatInterface();
+      
+      // 控制快捷操作按钮显示
+      const quickActions = document.getElementById('quickActions');
+      const policyQuickActions = document.getElementById('policyQuickActions');
+      quickActions.classList.remove('show');
+      policyQuickActions.classList.remove('show');
+      if (functionType === 'interview') {
+        quickActions.classList.add('show');
+      } else if (functionType === 'policy') {
+        policyQuickActions.classList.add('show');
+      }
+      
+      // 发送欢迎消息（开场白不流式输出）
+      const config = functionConfig[functionType];
+      addMessage('assistant', config.welcome, false);
+      
+      // 更新聊天标题
+      document.getElementById('chatTitle').textContent = config.name;
+    }
+
+    // 显示聊天界面
+    function showChatInterface() {
+      currentView = 'chat';
+      document.getElementById('welcomePage').style.display = 'none';
+      document.getElementById('chatInterface').classList.add('active');
+      document.getElementById('insightInterface').classList.remove('active');
+      isWelcomePage = false;
+    }
+
+    // 显示欢迎页面
+    function showWelcomePage() {
+      currentView = 'welcome';
+      document.getElementById('welcomePage').style.display = 'flex';
+      document.getElementById('chatInterface').classList.remove('active');
+      document.getElementById('insightInterface').classList.remove('active');
+      isWelcomePage = true;
+    }
+
+    // 显示洞察界面
+    function showInsightInterface() {
+      currentView = 'insight';
+      document.getElementById('welcomePage').style.display = 'none';
+      document.getElementById('chatInterface').classList.remove('active');
+      document.getElementById('insightInterface').classList.add('active');
+      isWelcomePage = false;
+      
+      // 初始化图表
+      setTimeout(() => {
+        initCharts();
+      }, 100);
+    }
+
+    // 返回首页
+    function backToHome() {
+      currentFunction = null;
+      currentHistoryId = null;
+      document.getElementById('titleEditBtn').style.display = 'none';
+      document.getElementById('deleteChatBtn').style.display = 'none';
+      chatHistory = [];
+      interviewMsgCount = 0;
+      waitingPortraitInput = false;
+      portraitDone = false;
+      dataMsgCount = 0;
+      policyMsgCount = 0;
+      insightMsgCount = 0;
+      currentInsightTopic = null;
+      insightGenericIdx = 0;
+      chatSmallTalkCount = 0;
+      document.getElementById('chatMessages').innerHTML = '';
+      document.querySelectorAll('.function-card').forEach(card => card.classList.remove('active'));
+      showWelcomePage();
+      renderHistoryList();
     }
 
     // 发送消息
     function sendMessage() {
-      if (isTyping) return;
-      
-      const input = document.getElementById('userInput');
+      if (isTyping) return; // 打字中禁止发送
+      const input = document.getElementById('messageInput');
       const message = input.value.trim();
+      
       if (!message) return;
-
-      const welcome = document.getElementById('welcomeScreen');
-      if (welcome) welcome.style.display = 'none';
-
-      addMessage('user', message);
-      input.value = '';
-      input.style.height = 'auto';
-
-      chatHistory.push({ role: 'user', content: message });
-
-      showTyping();
-      isTyping = true;
-
-      setTimeout(() => {
-        hideTyping();
-        const responseKey = matchQuestion(message, conversationContext);
-        let response = responses[responseKey];
-        
-        // 如果没有匹配的回复，使用兜底
-        if (!response) {
-          response = responses['fallback'];
+      
+      // 如果在欢迎页面，先切换到聊天界面
+      if (isWelcomePage) {
+        showChatInterface();
+        // 如果没有选择功能，默认使用洞察功能
+        if (!currentFunction) {
+          currentFunction = 'insight';
+          document.getElementById('chatTitle').textContent = '离职洞察';
         }
-        
-        conversationContext.lastTopic = responseKey;
-        conversationContext.lastQuestion = message;
-        
-        addAssistantMessageWithTyping(response);
-      }, 500 + Math.random() * 500);
+      }
+      
+      // 动态生成历史记录（首条用户消息时触发）
+      createDynamicHistory(message);
+      
+      // 添加用户消息
+      addMessage('user', message);
+      
+      // 清空输入框
+      input.value = '';
+      
+      // 模拟AI回复（带打字效果）
+      setTimeout(() => {
+        const response = generateResponse(message);
+        addMessage('assistant', response, true);
+      }, 800);
     }
 
-    // 添加消息
-    function addMessage(role, content) {
-      const container = document.getElementById('chatMessages');
+    // 添加消息到聊天界面
+    function addMessage(role, content, useTyping = false) {
+      const messagesContainer = document.getElementById('chatMessages');
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${role}`;
       
-      const avatar = role === 'user' ? 'C' : '🤖';
-      messageDiv.innerHTML = `
-        <div class="message-avatar">${avatar}</div>
-        <div class="message-content">
-          <div class="message-text">${content}</div>
-        </div>
-      `;
+      const avatar = role === 'user' ? '👤' : (currentFunction ? functionConfig[currentFunction].icon : '🤖');
       
-      container.appendChild(messageDiv);
-      container.scrollTop = container.scrollHeight;
+      var avatarDiv = '<div class="message-avatar">' + avatar + '</div>';
+      var bodyHTML = '<div class="message-body"><div class="message-content"></div>';
+      if (role === 'assistant') {
+        bodyHTML += '<div class="message-actions" style="display:none;">'
+          + '<button class="action-btn like-btn" onclick="handleLike(this)" title="点赞">'
+          + '<svg viewBox="0 0 24 24"><path d="M2 20h2V8H2v12zm20-11a2 2 0 0 0-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L13.17 0 7.59 5.59C7.22 5.95 7 6.45 7 7v11a2 2 0 0 0 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>'
+          + '</button>'
+          + '<button class="action-btn dislike-btn" onclick="handleDislike(this)" title="点踩">'
+          + '<svg viewBox="0 0 24 24"><path d="M22 4h-2v12h2V4zm-4 12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H9c-.83 0-1.54.5-1.84 1.22L4.14 9.27C4.05 9.5 4 9.74 4 10v2a2 2 0 0 0 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L12.83 21l5.58-5.59c.37-.36.59-.86.59-1.41z"/></svg>'
+          + '</button>'
+          + '<button class="action-btn copy-btn" onclick="handleCopy(this)" title="复制">'
+          + '<svg viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg>'
+          + '</button>'
+          + '</div>';
+      }
+      bodyHTML += '</div>';
+      messageDiv.innerHTML = avatarDiv + bodyHTML;
+      
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      var contentEl = messageDiv.querySelector('.message-content');
+      var actionsEl = messageDiv.querySelector('.message-actions');
+
+      if (role === 'assistant' && useTyping) {
+        // 流式打字效果
+        isTyping = true;
+        typeContent(contentEl, content, function() {
+          isTyping = false;
+          if (actionsEl) actionsEl.style.display = 'flex';
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+      } else {
+        contentEl.innerHTML = content;
+        if (actionsEl) actionsEl.style.display = 'flex';
+      }
+      
+      // 保存到历史记录
+      chatHistory.push({ role, content, timestamp: new Date() });
+      // 同步到历史会话数据
+      appendToCurrentHistory(role, content);
     }
 
-    // 带打字机效果的助手消息
-    function addAssistantMessageWithTyping(response) {
-      const container = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
-      messageDiv.className = 'message assistant';
-      
-      messageDiv.innerHTML = `
-        <div class="message-avatar">🤖</div>
-        <div class="message-content">
-          <div class="message-text"></div>
-        </div>
-      `;
-      container.appendChild(messageDiv);
-      
-      const textContainer = messageDiv.querySelector('.message-text');
-      const contentContainer = messageDiv.querySelector('.message-content');
-      
-      // 支持 text 为函数的情况（用于随机回复）
-      const textContent = typeof response.text === 'function' ? response.text() : response.text;
-      const fullText = textContent + (response.extraText || '');
-      
-      let charIndex = 0;
-      const charsPerFrame = 3;
-      const frameDelay = 15;
-      
-      function typeNextChars() {
-        if (charIndex < fullText.length) {
-          const endIndex = Math.min(charIndex + charsPerFrame, fullText.length);
-          let textToAdd = fullText.substring(charIndex, endIndex);
-          
-          if (fullText.substring(charIndex).match(/^<[^>]*$/)) {
-            const tagEnd = fullText.indexOf('>', charIndex);
-            if (tagEnd !== -1) {
-              textToAdd = fullText.substring(charIndex, tagEnd + 1);
-            }
+    // 流式打字输出
+    function typeContent(el, html, callback) {
+      // 检测是否为结构化富文本（离职画像、岗位卡片等）
+      const isStructuredHTML = /class="portrait-|class="job-card-list/.test(html);
+      if (isStructuredHTML) {
+        // 结构化内容：逐段落渐显
+        typeStructured(el, html, callback);
+        return;
+      }
+
+      // 检测是否为岗位推荐卡片等纯富文本（直接显示）
+      const isCardHTML = /<button.*class="job-detail-btn"/.test(html);
+      if (isCardHTML) {
+        el.innerHTML = html;
+        if (callback) callback();
+        return;
+      }
+
+      // 纯文本/简单HTML逐字输出
+      const chars = [];
+      let i = 0;
+      while (i < html.length) {
+        if (html[i] === '<') {
+          const end = html.indexOf('>', i);
+          if (end !== -1) {
+            chars.push(html.substring(i, end + 1));
+            i = end + 1;
+          } else {
+            chars.push(html[i]);
+            i++;
           }
-          
-          textContainer.innerHTML = fullText.substring(0, charIndex + textToAdd.length);
-          charIndex += textToAdd.length;
-          
-          container.scrollTop = container.scrollHeight;
-          requestAnimationFrame(() => setTimeout(typeNextChars, frameDelay));
         } else {
-          finishMessage();
+          chars.push(html[i]);
+          i++;
         }
       }
 
-      function finishMessage() {
-        if (response.table) {
-          let tableHTML = `<table class="message-table"><thead><tr>`;
-          response.table.headers.forEach(h => tableHTML += `<th>${h}</th>`);
-          tableHTML += `</tr></thead><tbody>`;
-          response.table.rows.forEach(row => {
-            tableHTML += `<tr>`;
-            row.forEach(cell => tableHTML += `<td>${cell}</td>`);
-            tableHTML += `</tr>`;
+      let charIndex = 0;
+      let buffer = '';
+      const speed = 30;
+
+      function typeNext() {
+        if (charIndex < chars.length) {
+          const ch = chars[charIndex];
+          buffer += ch;
+          if (ch.startsWith('<')) {
+            charIndex++;
+            typeNext();
+            return;
+          }
+          el.innerHTML = buffer;
+          const container = el.closest('.chat-messages');
+          if (container) container.scrollTop = container.scrollHeight;
+          charIndex++;
+          setTimeout(typeNext, speed);
+        } else {
+          el.innerHTML = html;
+          if (callback) callback();
+        }
+      }
+      typeNext();
+    }
+
+    // 结构化内容逐段渐显
+    function typeStructured(el, html, callback) {
+      // 用临时容器解析所有子节点
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      const children = Array.from(temp.children);
+
+      el.innerHTML = '';
+      let idx = 0;
+
+      function showNext() {
+        if (idx < children.length) {
+          const child = children[idx];
+          child.style.opacity = '0';
+          child.style.transform = 'translateY(8px)';
+          child.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+          el.appendChild(child);
+
+          // 触发 reflow 后设置可见
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              child.style.opacity = '1';
+              child.style.transform = 'translateY(0)';
+            });
           });
-          tableHTML += `</tbody></table>`;
-          contentContainer.insertAdjacentHTML('beforeend', tableHTML);
-        }
 
-        if (response.chart) {
-          const chartId = 'chart_' + Date.now();
-          contentContainer.insertAdjacentHTML('beforeend', 
-            `<div class="message-chart"><canvas id="${chartId}"></canvas></div>`);
-          
-          setTimeout(() => {
-            const chartCanvas = document.getElementById(chartId);
-            if (chartCanvas) {
-              renderChart(chartCanvas, response.chart);
-            }
-          }, 100);
-        }
+          const container = el.closest('.chat-messages');
+          if (container) container.scrollTop = container.scrollHeight;
 
-        if (response.insight) {
-          contentContainer.insertAdjacentHTML('beforeend', 
-            `<div class="insight-box">${response.insight}</div>`);
+          idx++;
+          setTimeout(showNext, 400);
+        } else {
+          if (callback) callback();
         }
+      }
+      showNext();
+    }
 
-        if (response.followUp) {
-          let followUpHTML = `<div class="follow-up"><div class="follow-up-title">你可能还想了解：</div>`;
-          response.followUp.forEach(q => {
-            followUpHTML += `<span class="follow-up-btn" onclick="askQuestion('${q}')">${q}</span>`;
-          });
-          followUpHTML += `</div>`;
-          contentContainer.insertAdjacentHTML('beforeend', followUpHTML);
+    // ========== 闲聊逻辑 ==========
+    let chatSmallTalkCount = 0;
+    const smallTalkPatterns = /^(你好|hello|hi|嗨|hey|哈喽|在吗|在不在|你是谁|你叫什么|今天天气|吃了吗|早上好|下午好|晚上好|早安|晚安|干嘛呢|无聊|哈哈|嘿嘿|呵呵|谢谢|感谢|谢啦|辛苦了|厉害|666|nb|牛|好的|ok|嗯|哦|没事|再见|拜拜|bye|测试|test|你好呀|怎么样|什么|啥|哎|唉|额|emm|emmm|好无聊|闲着|随便聊聊|聊天|说话|讲话|陪我|逗我|好玩吗|有意思|开心|不开心|难过|烦|累|困|饿|渴|冷|热)$/i;
+    const smallTalkResponses = [
+      '哈喽～我是你的离职AI助理 😊 虽然我的专长是离职相关的分析和咨询，但跟你聊两句也是可以的～有什么想聊的？',
+      '嘿嘿，被你发现了，其实我最擅长的是离职数据分析、面谈辅导这些专业活儿 😄 不过偶尔陪你聊聊天也挺开心的～',
+    ];
+    const smallTalkEnd = '好啦好啦，我只是个demo，不跟你瞎聊了～ 😜<br><br>回到正题吧，你可以试试左边的功能模块，比如 <b>离职面谈</b>、<b>离职问数</b>、<b>离职洞察</b>、<b>离职政策</b>，我在这些方面可专业了！';
+
+    function isSmallTalk(msg) {
+      var m = msg.trim();
+      if (smallTalkPatterns.test(m)) return true;
+      if (m.length <= 6 && !/离职|数据|分析|面谈|政策|洞察|薪酬|绩效|部门|员工/.test(m)) return true;
+      return false;
+    }
+
+    // 生成AI回复
+    function generateResponse(message) {
+      // 闲聊检测（在所有模块逻辑之前）
+      if (isSmallTalk(message)) {
+        chatSmallTalkCount++;
+        if (chatSmallTalkCount > 2) {
+          return smallTalkEnd;
         }
+        return smallTalkResponses[Math.min(chatSmallTalkCount - 1, smallTalkResponses.length - 1)];
+      }
+      // 非闲聊内容重置闲聊计数
+      chatSmallTalkCount = 0;
 
-        container.scrollTop = container.scrollHeight;
-        isTyping = false;
-        
-        chatHistory.push({ role: 'assistant', content: response.text });
+      // 离职画像模块：已输出过画像，后续追问直接兜底
+      if (portraitDone) {
+        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
       }
 
-      typeNextChars();
-    }
-
-    // 渲染图表
-    function renderChart(canvas, type) {
-      const ctx = canvas.getContext('2d');
-      
-      const chartColors = ['#0052D9', '#2B7DF5', '#5C9DFF', '#8FBFFF', '#C2DFFF'];
-      
-      if (type === 'seniorReason') {
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(mockData.seniorReasonStats),
-            datasets: [{
-              data: Object.values(mockData.seniorReasonStats),
-              backgroundColor: chartColors,
-              borderWidth: 0
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: 'right', labels: { padding: 16, font: { size: 12 } } }
-            }
-          }
-        });
-      } else if (type === 'youngReason') {
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(mockData.youngReasonStats),
-            datasets: [{
-              data: Object.values(mockData.youngReasonStats),
-              backgroundColor: chartColors,
-              borderWidth: 0
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: 'right', labels: { padding: 16, font: { size: 12 } } }
-            }
-          }
-        });
-      } else if (type === 'yearlyTrend') {
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: mockData.yearlyTrend.map(d => d.year + '年'),
-            datasets: [{
-              label: '离职率',
-              data: mockData.yearlyTrend.map(d => d.rate),
-              borderColor: '#0052D9',
-              backgroundColor: 'rgba(0, 82, 217, 0.1)',
-              fill: true,
-              tension: 0.4,
-              pointRadius: 5,
-              pointBackgroundColor: '#0052D9'
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-              y: { beginAtZero: true, grid: { color: '#F3F4F6' } },
-              x: { grid: { display: false } }
-            }
-          }
-        });
-      } else if (type === 'trend') {
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: mockData.monthlyData.map(d => d.month),
-            datasets: [{
-              label: '离职人数',
-              data: mockData.monthlyData.map(d => d.count),
-              backgroundColor: '#0052D9',
-              borderRadius: 6
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-              y: { beginAtZero: true, grid: { color: '#F3F4F6' } },
-              x: { grid: { display: false } }
-            }
-          }
-        });
+      // 离职画像模块：等待用户输入需求后生成画像
+      if (waitingPortraitInput) {
+        waitingPortraitInput = false;
+        portraitDone = true;
+        return generatePortraitResponse(message);
       }
-    }
 
-    // 显示/隐藏加载状态
-    function showTyping() {
-      const container = document.getElementById('chatMessages');
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'message assistant';
-      typingDiv.id = 'typingIndicator';
-      typingDiv.innerHTML = `
-        <div class="message-avatar">🤖</div>
-        <div class="message-content">
-          <div class="typing-indicator">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-      `;
-      container.appendChild(typingDiv);
-      container.scrollTop = container.scrollHeight;
-    }
+      // 离职数据模块：基于CSV数据智能回答
+      if (currentFunction === 'data') {
+        return generateDataResponse(message);
+      }
 
-    function hideTyping() {
-      const typing = document.getElementById('typingIndicator');
-      if (typing) typing.remove();
-    }
+      // 离职洞察模块：专题深挖
+      if (currentFunction === 'insight') {
+        return generateInsightResponse(message);
+      }
 
-    // 创建新会话
-    function createNewSession() {
-      chatHistory = [];
-      conversationContext = { lastTopic: null, lastQuestion: null };
-      chatCount = 0; // 重置闲聊计数器
+      // 离职政策模块：知识问询
+      if (currentFunction === 'policy') {
+        return generatePolicyResponse(message);
+      }
+
+      // 离职面谈模块：支持岗位追问，超过次数拒绝
+      if (currentFunction === 'interview') {
+        interviewMsgCount++;
+        if (interviewMsgCount > MAX_FOLLOWUP) {
+          return '回答不了这个问题，你也可以联系<a href="javascript:void(0)" onclick="alert(\'正在唤起企业微信...\')" style="color: var(--td-brand-color); text-decoration: underline; cursor: pointer; font-weight: 500;">活水顾问</a>。';
+        }
+        return generateInterviewResponse(message);
+      }
+
+      const responses = {
+        data: [
+          '根据最新数据分析：\n\n📊 本季度离职率：12.3%\n📈 同比上升：2.1%\n🏢 重点部门：技术部(15.2%)、销售部(14.8%)\n👥 主要群体：工作2-3年员工\n📅 离职高峰：3月、9月',
+          '我为您生成了离职数据可视化报告：\n\n• 按部门统计的离职分布图\n• 近12个月离职趋势曲线\n• 离职原因占比饼图\n• 不同司龄员工离职率对比\n• 季度离职成本分析表',
+          '数据洞察显示：\n\n🔍 技术岗位离职率偏高\n💰 薪酬竞争力不足是主因\n📚 缺乏职业发展通道\n⏰ 工作压力过大\n🤝 建议加强员工关怀和培训投入'
+        ],
+        insight: [
+          '基于离职模式分析，我发现以下关键洞察：\n\n🎯 高风险群体：入职6-18个月的新员工\n📉 预警信号：绩效下滑、参与度降低\n🔄 离职周期：通常有2-3个月的考虑期\n💡 保留策略：及时沟通、职业规划、薪酬调整',
+          '离职风险预测模型显示：\n\n⚠️ 高风险员工：15人\n⚡ 中风险员工：32人\n✅ 低风险员工：453人\n\n建议优先关注高风险群体，制定个性化保留方案。',
+          '深度分析表明，员工离职通常经历以下阶段：\n\n1️⃣ 不满情绪积累期\n2️⃣ 外部机会探索期\n3️⃣ 离职决策确认期\n4️⃣ 正式提出离职\n\n在前两个阶段进行干预效果最佳。'
+        ],
+        policy: [
+          '关于离职流程的合规要点：\n\n📋 必须履行30天通知期\n💼 工作交接清单确认\n💰 薪酬结算和补偿计算\n🔒 保密协议和竞业限制\n📄 离职证明和档案转移',
+          '离职政策优化建议：\n\n• 简化离职手续流程\n• 建立标准化交接模板\n• 完善离职面谈制度\n• 优化薪酬结算流程\n• 加强法律风险防控',
+          '常见法律风险点包括：\n\n⚖️ 违法解除劳动合同\n💸 经济补偿金计算错误\n🤐 保密义务执行不当\n📝 离职手续不完整\n⏱️ 通知期处理不规范'
+        ]
+      };
       
-      const container = document.getElementById('chatMessages');
-      container.innerHTML = `
-        <div class="welcome-screen" id="welcomeScreen">
-          <div class="welcome-icon">🤖</div>
-          <h2 class="welcome-title">你好，我是离职洞察助理</h2>
-          <p class="welcome-desc">
-            我可以帮你分析人力资源平台部的离职数据，识别离职风险，并提供可行的改进建议。<br>
-            你可以直接提问或选择下方话题开始对话。
-          </p>
-          <div class="welcome-suggestions">
-            <div class="suggestion-card" onclick="askQuestion('本部门近3年来9级以上离职人员情况')">
-              <div class="suggestion-icon">👔</div>
-              <div class="suggestion-text">9级以上离职人员分析</div>
-            </div>
-            <div class="suggestion-card" onclick="askQuestion('年轻人在8级之前的离职情况')">
-              <div class="suggestion-icon">👶</div>
-              <div class="suggestion-text">年轻人离职情况分析</div>
-            </div>
-            <div class="suggestion-card" onclick="askQuestion('离职趋势洞察')">
-              <div class="suggestion-icon">📈</div>
-              <div class="suggestion-text">离职趋势洞察</div>
-            </div>
-            <div class="suggestion-card" onclick="askQuestion('获取本部门离职观察建议')">
-              <div class="suggestion-icon">💡</div>
-              <div class="suggestion-text">获取离职观察建议</div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      isTyping = false;
+      const functionResponses = responses[currentFunction] || responses.insight;
+      return functionResponses[Math.floor(Math.random() * functionResponses.length)];
     }
 
-    function goHome() {
-      createNewSession();
+    // ========== 离职洞察专题分析 ==========
+    let currentInsightTopic = null;
+    let insightMsgCount = 0;
+
+    // 专题报告内容
+    const insightReports = {
+      turnover: `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📉</span> 各部门离职率分析报告</div>
+  <ul class="portrait-list">
+    <li><b>整体离职率：</b>过去12个月公司整体离职率 12.3%，同比上升 2.1 个百分点</li>
+    <li><b>研发部：</b>离职率 15.2%（最高），主要集中在 P5~P7 级别，离职原因以"薪资待遇"和"工作压力"为主</li>
+    <li><b>产品部：</b>离职率 11.5%，以"个人发展"为主要离职原因，入职1~2年员工流失明显</li>
+    <li><b>销售部：</b>离职率 14.8%，季度波动大，Q1和Q3为离职高峰</li>
+    <li><b>职能部门：</b>离职率 6.2%，相对稳定</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 关键趋势</div>
+  <ul class="portrait-list">
+    <li>近3个月离职率呈<b>上升趋势</b>，月均离职 8.5 人</li>
+    <li>研发部连续2个季度离职率超过15%的警戒线</li>
+    <li>主动离职占比 85%，被动离职占比 15%</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ 研发部离职率持续走高，建议重点关注。您可以继续追问，如："研发部离职的具体原因"、"与去年同期对比如何"、"哪些团队最严重"等。</div>`,
+
+      reason: `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 离职原因深度剖析报告</div>
+  <ul class="portrait-list">
+    <li><b>薪资待遇（35%）：</b>市场对标偏低，尤其技术岗薪酬竞争力不足，P6~P7级别外部offer平均高出20%~30%</li>
+    <li><b>个人发展（28%）：</b>晋升通道不清晰，员工反馈"看不到成长空间"，尤其入职2~3年群体</li>
+    <li><b>工作压力（18%）：</b>连续加班、项目节奏过快，敬业度调查中"工作生活平衡"得分最低（3.1/5）</li>
+    <li><b>管理关系（12%）：</b>部分团队上级评价与员工自评差异大，沟通机制不畅</li>
+    <li><b>其他（7%）：</b>家庭原因、城市变动等不可控因素</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 根因分析</div>
+  <ul class="portrait-list">
+    <li>薪资问题与个人发展高度关联——<b>62%因薪离职的员工同时反馈了晋升不畅</b></li>
+    <li>工作压力在研发部尤为突出，近半年该部门加班时长同比增加 40%</li>
+    <li>管理关系问题集中在3个团队，上级满意度评分均低于3.0</li>
+  </ul>
+</div>
+<div class="portrait-highlight">📌 薪资+发展是双核驱动因素，建议从薪酬调整和职级体系两方面同步改进。您可以继续追问，如："哪些部门薪资问题最严重"、"管理关系差的是哪几个团队"、"有什么改善建议"等。</div>`,
+
+      engagement: `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💚</span> 敬业度与离职关联分析报告</div>
+  <ul class="portrait-list">
+    <li><b>整体敬业度评分：</b>3.6/5.0，较去年下降 0.3 分</li>
+    <li><b>离职员工平均敬业度：</b>2.8/5.0，比在职员工低 0.9 分</li>
+    <li><b>高风险指标：</b>敬业度 ≤ 3.0 的员工，6个月内离职概率达 <b>42%</b></li>
+    <li><b>满意度最低维度：</b>薪酬福利（2.9）> 职业发展（3.1）> 工作负荷（3.2）</li>
+    <li><b>满意度最高维度：</b>同事关系（4.2）> 公司文化（3.9）> 直属上级（3.7）</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📈</span> 关键发现</div>
+  <ul class="portrait-list">
+    <li>敬业度连续两次下降的员工，离职率是普通员工的 <b>3.2倍</b></li>
+    <li>上级评价"需改进"且敬业度 ≤ 3.0 的员工，<b>87%在1年内离职</b></li>
+    <li>参与满意度调研的员工留存率比未参与的高 15%</li>
+  </ul>
+</div>
+<div class="portrait-highlight">🎯 敬业度是离职的核心预警信号。建议建立敬业度-离职联动预警机制。您可以继续追问，如："哪些部门敬业度最低"、"如何提升敬业度"、"预警模型怎么设计"等。</div>`,
+
+      highperf: `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⭐</span> 高绩效人才流失预警报告</div>
+  <ul class="portrait-list">
+    <li><b>高绩效离职人数：</b>过去12个月共 18 人（绩效A及以上），占总离职的 <b>22%</b></li>
+    <li><b>高绩效离职率：</b>9.8%，高于公司整体离职率的平均水平</li>
+    <li><b>重点部门：</b>研发部流失 8 人，产品部流失 5 人，销售部流失 3 人</li>
+    <li><b>主要离职原因：</b>薪资待遇（45%）、发展空间（30%）、管理问题（15%）</li>
+    <li><b>平均司龄：</b>2.8年，多为业务骨干和技术核心</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🚨</span> 当前预警</div>
+  <ul class="portrait-list">
+    <li>目前有 <b>7名</b> A级员工出现预警信号：近期绩效下滑、加班减少、满意度评分下降</li>
+    <li>上级评价中 3 人被标注"近期状态不佳"或"有离职倾向"</li>
+    <li>其中 2 人已有外部面试记录（行业信息反馈）</li>
+  </ul>
+</div>
+<div class="portrait-highlight">🔴 高绩效流失代价极高（替换成本约1.5~2倍年薪），建议立即启动保留计划。您可以继续追问，如："预警的7人具体情况"、"保留方案怎么设计"、"薪酬调整空间多大"等。</div>`,
+
+      newbie: `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🆕</span> 新员工留存分析报告</div>
+  <ul class="portrait-list">
+    <li><b>试用期离职率：</b>18.5%，较去年上升 3.2 个百分点</li>
+    <li><b>入职1年内离职率：</b>28.3%，近三成新人第一年就离开</li>
+    <li><b>离职高峰期：</b>入职第2~3个月（适应期）和第10~12个月（成长瓶颈期）</li>
+    <li><b>主要原因：</b>岗位预期不符（32%）、融入困难（25%）、缺乏指导（22%）、薪资不满（21%）</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 导师机制效果评估</div>
+  <ul class="portrait-list">
+    <li>有导师的新员工，试用期离职率 <b>11%</b>（无导师组为 <b>26%</b>）</li>
+    <li>导师评价"优秀"的组，新人满意度高出 0.8 分</li>
+    <li>但目前仅 <b>60%</b> 新人被分配了导师，覆盖率不足</li>
+  </ul>
+</div>
+<div class="portrait-highlight">📢 新员工留存是性价比最高的改善方向。建议扩大导师覆盖率至100%，加强入职前3个月关怀。您可以继续追问，如："哪些部门新人流失最多"、"导师机制怎么优化"、"入职体验改善方案"等。</div>`,
+
+      salary: `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💰</span> 薪酬竞争力诊断报告</div>
+  <ul class="portrait-list">
+    <li><b>整体薪酬满意度：</b>2.9/5.0，为所有维度中最低</li>
+    <li><b>市场分位值：</b>公司整体薪酬处于市场 <b>P40</b>（中等偏下），研发岗位仅 P30</li>
+    <li><b>因薪离职占比：</b>35%的离职员工明确提到薪资原因，研发部高达 48%</li>
+    <li><b>薪酬倒挂现象：</b>新入职员工薪资与老员工差距收窄甚至倒挂，引发内部不公平感</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 对标分析</div>
+  <ul class="portrait-list">
+    <li>技术岗位：外部offer平均高出 <b>25%</b>，尤其P6~P7区间差距最大</li>
+    <li>产品岗位：基本持平，但年终奖和股权激励低于头部企业</li>
+    <li>职能岗位：薪酬有竞争力，流失率也最低</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 建议优先调整研发岗薪酬至P50以上，同时解决薪酬倒挂问题。您可以继续追问，如："调薪预算需要多少"、"竞对薪酬具体情况"、"分级调薪方案怎么设计"等。</div>`
+    };
+
+    // 关键词匹配的洞察回复库（跨专题、关联分析型）
+    const insightKeywordResponses = [
+      // ===== 部门相关 =====
+      { keywords: /研发|技术|开发|后端|前端|测试|AI团队/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🔬</span> 研发部离职关联分析</div><ul class="portrait-list"><li><b>离职率：</b>15.2%，为全公司最高，其中后端 18.3%、前端 14.1%、测试 12.5%、AI 8.2%</li><li><b>离职原因关联：</b>48%因薪离职的员工同时反馈了\"技术栈老旧\"和\"加班多\"，三因素高度关联</li><li><b>敬业度关联：</b>研发部敬业度 3.2/5（全司最低），\"工作负荷\"和\"薪酬公平\"两项评分仅 2.6 和 2.8</li><li><b>上级评价关联：</b>后端团队上级满意度仅 2.5/5，离职员工中 70%曾给出\"管理方式不满\"的反馈</li><li><b>绩效关联：</b>流失的8名高绩效员工中，6人在离职前1个季度绩效出现下滑（A→B+），这是重要的预警信号</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>研发部的高离职率不是单一因素导致，而是\"薪酬落差 × 高强度加班 × 管理问题\"的叠加效应。敬业度数据早在离职前6个月就已显示预警，建议将敬业度评分纳入离职预警模型的核心指标。</div>' },
+      { keywords: /产品|产品部|产品经理|PM/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">📦</span> 产品部离职关联分析</div><ul class="portrait-list"><li><b>离职率：</b>11.5%，处于中等水平，但入职1~2年群体流失明显（占离职总人数65%）</li><li><b>离职原因关联：</b>\"个人发展\"是首要原因（42%），与晋升数据交叉发现：过去一年产品部晋升率仅 8%，远低于研发部的 15%</li><li><b>敬业度关联：</b>产品部敬业度 3.6/5，\"发展空间\"项仅 3.0，与离职原因高度吻合</li><li><b>满意度反馈关联：</b>最近一次满意度调研中，62%产品经理反馈\"角色边界模糊\"，这与新人离职率偏高（15%）密切相关</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>产品部离职的核心驱动是\"发展瓶颈\"，而非薪资。建议优先优化产品序列的晋升通道和角色定义，这比单纯调薪更能降低流失率。</div>' },
+      { keywords: /销售|商务|业务/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">📈</span> 销售部离职关联分析</div><ul class="portrait-list"><li><b>离职率：</b>14.8%，季度波动大（Q1: 18%, Q2: 11%, Q3: 17%, Q4: 13%），呈现明显的季节性规律</li><li><b>离职与业绩关联：</b>Q1和Q3离职高峰分别对应年度考核和半年考核后，<b>72%的离职发生在绩效评估后30天内</b></li><li><b>提成方案关联：</b>28%因薪离职的员工具体反馈指向提成结构不合理，尤其新客户开拓的提成系数过低</li><li><b>新人留存关联：</b>试用期离职率 28%（全司最高），新人前3个月出单率仅 22%，压力传导严重</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>销售部的离职周期与绩效考核高度绑定，说明考核机制本身可能是触发因素。建议在考核后增设\"1v1发展对话\"窗口期，同时优化新人保护期的业绩目标设定。</div>' },
+      { keywords: /职能|行政|财务|法务|人力/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🏢</span> 职能部门离职关联分析</div><ul class="portrait-list"><li><b>离职率：</b>6.2%，全司最低且稳定</li><li><b>敬业度关联：</b>敬业度 4.0/5（全司最高），\"同事关系\"和\"工作稳定性\"两项满分</li><li><b>潜在风险：</b>虽然整体稳定，但高绩效职能人才（3人）均因\"薪酬天花板\"考虑外部机会</li><li><b>参考价值：</b>职能部门的管理模式（定期沟通、弹性工作、明确的职责边界）可以作为其他部门的改善参考</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>职能部门的低离职率证明了\"良好的管理+清晰的职责+稳定的节奏\"这一组合的有效性。建议提炼职能部门的管理经验，作为最佳实践推广到高离职率部门。</div>' },
+      // ===== 薪酬相关 =====
+      { keywords: /薪酬|薪资|工资|待遇|收入|调薪|涨薪|倒挂|竞争力|offer/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">💰</span> 薪酬与离职的多维关联分析</div><ul class="portrait-list"><li><b>因薪离职占比：</b>35%，但交叉分析发现 62%同时反馈了\"晋升不畅\"——薪酬不满和发展受阻往往同时出现</li><li><b>薪酬分位值：</b>公司整体 P40，研发岗仅 P30。外部offer平均高出 25%（P6~P7区间最大）</li><li><b>倒挂现象：</b>约40人存在薪酬倒挂，这些员工的敬业度平均比同组低 0.6 分，离职意向高出 3 倍</li><li><b>绩效关联：</b>高绩效员工中因薪离职比例高达 45%，替换成本约 1.5~2 倍年薪</li><li><b>满意度趋势：</b>薪酬满意度连续3个季度下降（3.4→3.1→2.9），与外部市场薪酬涨幅扩大同步</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>薪酬问题的影响面远超直接因薪离职的35%——它通过降低敬业度、制造不公平感、削弱雇主品牌等方式间接推高了整体离职率。数据显示，每提升1个薪酬分位值（如P40→P50），预期离职率可降低约 1.5 个百分点。</div>' },
+      // ===== 绩效相关 =====
+      { keywords: /绩效|考核|KPI|OKR|评价|评级|考评|晋升|升职|职级/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">📊</span> 绩效评价体系与离职的关联分析</div><ul class="portrait-list"><li><b>绩效与离职率：</b>绩效A级员工离职率 9.8%，B级 8.2%，C级 18.5% ——两端高，中间低，呈\"U型曲线\"</li><li><b>A级流失原因：</b>45%因薪资（高能力=高市场价）、30%因发展（晋升名额有限，\"天花板效应\"）</li><li><b>C级流失原因：</b>40%绩效压力导致主动离职、35%在PIP（绩效改进计划）后离开</li><li><b>考核后离职潮：</b>每次绩效评估后30天内，离职申请量是平时的 <b>2.3倍</b></li><li><b>晋升关联：</b>今年晋升名额缩减 20%，未晋升的A级员工中有 28%在半年内离职</li><li><b>上级评价偏差：</b>上级评价与自评差距超过1级的员工，离职概率是正常员工的 <b>2.8倍</b></li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>绩效评价不仅是衡量工具，更是离职触发器。建议：1）考核后增设缓冲期沟通机制；2）晋升名额与高绩效保留挂钩；3）缩小上级评价与员工自评的认知差距。</div>' },
+      // ===== 敬业度/满意度相关 =====
+      { keywords: /敬业度|满意度|调研|问卷|反馈|员工之声|脉搏|调查/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">💚</span> 敬业度数据与离职的深度关联</div><ul class="portrait-list"><li><b>预测能力：</b>敬业度 ≤ 3.0 的员工，6个月内离职概率达 <b>42%</b>；连续两次下降的员工，离职率是普通员工的 <b>3.2倍</b></li><li><b>维度拆解：</b>对离职预测力最强的3个维度：薪酬满意度（r=0.68）> 发展空间（r=0.61）> 上级关系（r=0.55）</li><li><b>部门差异：</b>研发（3.2）和销售（3.4）显著低于职能（4.0），差异主要来自\"工作负荷\"和\"薪酬公平\"</li><li><b>参与率关联：</b>参与敬业度调研的员工留存率比未参与的高 15%——参与本身就是一种\"心理契约\"的体现</li><li><b>改善效果追踪：</b>上一轮敬业度问题整改后，涉及团队的满意度平均提升 0.4 分，离职率下降 3 个百分点</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>敬业度是离职最有效的\"提前6个月预警指标\"。建议将敬业度调研从年度改为季度脉搏调查，并建立\"评分下降→HRBP介入→跟踪反馈\"的闭环机制。</div>' },
+      // ===== 管理/上级相关 =====
+      { keywords: /管理|上级|领导|主管|经理|总监|带队|团队管理|管理风格|1v1|one.on.one/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">👔</span> 管理者因素与离职的关联分析</div><ul class="portrait-list"><li><b>核心数据：</b>12%的离职直接归因于管理关系问题，但深层分析显示 <b>38%</b>的离职与管理因素间接相关</li><li><b>上级满意度 vs 离职率：</b>上级满意度 ≤ 3.0 的团队，离职率平均 <b>22%</b>（是满意度>4.0团队的3倍）</li><li><b>问题团队画像：</b>研发A组（2.5分，\"缺乏沟通\"）、销售二区（2.7分，\"目标不合理\"）、产品创新组（2.8分，\"微管理\"）</li><li><b>评价偏差关联：</b>上级评价与员工自评差距>1级时，员工离职概率是正常的 2.8倍，说明\"认知不对齐\"是重要风险因子</li><li><b>1v1频率关联：</b>每周有1v1沟通的团队离职率 <b>7.5%</b>，无1v1的团队离职率 <b>16.8%</b></li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>\"员工离职不是离开公司，而是离开管理者\"这一规律在数据中得到充分验证。建议：1）对上级满意度<3.0的管理者启动领导力辅导；2）将1v1沟通制度化；3）建立管理者360评估与团队离职率的联动考核。</div>' },
+      // ===== 加班/压力/工作量相关 =====
+      { keywords: /加班|压力|工作量|负荷|996|工时|疲劳|burnout|健康|工作生活/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">⏰</span> 工作压力与离职的关联分析</div><ul class="portrait-list"><li><b>整体数据：</b>18%的离职原因为\"工作压力\"，但满意度调研中\"工作生活平衡\"得分仅 3.1/5（全维度最低之一）</li><li><b>加班时长关联：</b>研发部近半年加班时长同比增加 40%，同期离职率上升 3.8 个百分点——高度正相关</li><li><b>非线性效应：</b>月均加班 ≤ 20 小时对离职率影响不大；超过 30 小时后离职率陡升；超过 50 小时离职率翻倍</li><li><b>项目节奏关联：</b>下半年多个重点项目并行期间，离职申请量是上半年的 1.8 倍</li><li><b>健康数据：</b>离职面谈中 25%提到了\"身体/心理健康\"相关因素，体检异常率与加班时长成正比</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>工作压力的影响存在\"临界点效应\"——适度压力可接受，但超过阈值后会急剧推高离职率。建议：1）设置加班时长红线（月30小时预警，50小时强制调休）；2）项目排期中加入人力弹性评估；3）引入EAP心理支持计划。</div>' },
+      // ===== 新人/试用期相关 =====
+      { keywords: /新人|新员工|试用期|应届|校招|入职|转正|融入|导师|mentor/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🆕</span> 新员工留存的多维关联分析</div><ul class="portrait-list"><li><b>试用期离职率：</b>18.5%，入职1年内离职率 28.3% ——近三成新人第一年就流失</li><li><b>离职时间点：</b>两个高峰——入职2~3个月（适应期焦虑）和10~12个月（成长瓶颈期）</li><li><b>导师机制关联：</b>有导师的新人试用期离职率 11%，无导师的 26%——<b>导师制度可降低 57%的新人流失</b></li><li><b>岗位预期关联：</b>32%新人离职因\"岗位与面试描述不符\"，这与招聘环节的信息传递有直接关系</li><li><b>部门差异：</b>销售部新人流失最严重（28%），与新人前3个月出单率仅 22%直接相关</li><li><b>敬业度关联：</b>入职3个月敬业度调查得分 ≤ 3.0 的新人，转正后半年内离职概率 <b>55%</b></li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>新人留存是\"成本最低、回报最高\"的改善方向。数据表明三个关键杠杆：1）导师覆盖率提升至100%；2）招聘环节岗位JD准确度审查；3）入职3个月敬业度调查作为\"留存晴雨表\"。</div>' },
+      // ===== 高绩效/人才/核心 =====
+      { keywords: /高绩效|A级|优秀员工|核心人才|骨干|关键岗位|人才流失|替换成本/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">⭐</span> 高绩效人才流失的关联分析</div><ul class="portrait-list"><li><b>流失规模：</b>过去12个月共 18名A级员工离职，占总离职 22%，但对业务影响远超这个比例</li><li><b>替换成本：</b>高绩效员工替换成本约 1.5~2 倍年薪，18人总损失 <b>1350~1800万</b></li><li><b>离职原因与普通员工差异：</b>高绩效：薪酬45%+发展30%+管理15%；普通员工：压力28%+薪酬25%+发展20% ——<b>高绩效更在乎\"价值被认可\"</b></li><li><b>预警信号关联：</b>离职前3个月的特征——绩效评级下滑（78%）、加班减少（65%）、满意度下降（72%）、请假增多（45%）</li><li><b>当前预警：</b>7名A级员工出现以上信号组合，其中2名已有外部offer信息</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>高绩效人才的离职决策往往经历\"感觉不被重视→被动等待→主动探索→快速决定\"四个阶段，从信号出现到离职平均仅 2~3 个月。建议建立\"高绩效人才池\"月度review机制，在第一阶段就介入。</div>' },
+      // ===== 司龄/年龄相关 =====
+      { keywords: /司龄|工龄|年龄|工作年限|老员工|年轻|90后|00后|资深/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">📅</span> 司龄/年龄维度的离职关联分析</div><ul class="portrait-list"><li><b>司龄分布：</b>离职高峰在入职 1~3年（占离职总量 55%），5年以上员工离职率仅 4.2%</li><li><b>1~2年离职：</b>主因\"发展预期落差\"，入职时的期望与实际成长速度不匹配</li><li><b>2~3年离职：</b>主因\"薪酬+晋升瓶颈\"，市场价值上升但内部调薪未跟上，且首次晋升窗口未获通过</li><li><b>年龄关联：</b>26~30岁离职率最高（16.5%），这一群体对\"市场价值\"和\"职业上升\"最敏感</li><li><b>代际差异：</b>95后更在意\"工作体验\"和\"意义感\"；85后更在意\"稳定性\"和\"薪酬总包\"</li><li><b>老员工风险：</b>5年以上员工虽然离职率低，但一旦流失都是核心岗位（平均职级P7+），影响极大</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>离职风险沿司龄呈\"W型\"分布——入职初期（适应不良）→1~3年（发展瓶颈）→5年+（价值天花板）。不同阶段需要不同的保留策略：新人靠导师和融入、中坚靠晋升和调薪、资深靠使命感和长期激励。</div>' },
+      // ===== 季节/趋势/时间 =====
+      { keywords: /趋势|季度|月度|同比|环比|季节|高峰|低谷|年度|时间/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">📈</span> 离职时间趋势与周期性分析</div><ul class="portrait-list"><li><b>年度趋势：</b>近3年离职率逐年上升（10.2%→11.1%→12.3%），加速趋势明显</li><li><b>季节性规律：</b>Q1（春节后）和Q3（年中考核后）为离职高峰，分别占全年离职的 32%和 28%</li><li><b>月度拆解：</b>3月是全年最高峰（\"金三银四\"效应），9月次之（半年考核+秋招双重影响）</li><li><b>考核触发关联：</b>每次绩效评估/晋升结果公布后30天内，离职申请量达平时 2.3倍</li><li><b>市场联动：</b>离职率的波动与行业招聘热度指数相关系数达 0.72，说明外部拉力影响显著</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>离职具有明显的\"可预测性\"。建议在每年2月和8月（高峰前1个月）启动\"保留干预窗口\"：提前完成调薪/晋升沟通、高风险员工1v1面谈、团队氛围建设活动，将被动应对变为主动预防。</div>' },
+      // ===== 招聘/补员/成本 =====
+      { keywords: /招聘|补员|人才缺口|headcount|HC|用人成本|人效|编制/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🧑‍💼</span> 离职与招聘/人力成本的关联分析</div><ul class="portrait-list"><li><b>补员周期：</b>从离职到新人到岗平均需 45~60天（研发岗 75天），到岗到产出另需 3~6 个月</li><li><b>招聘成本：</b>单人平均招聘成本 2.8 万（含猎头费、面试成本），高端岗位可达 8~15 万</li><li><b>产出损失：</b>离职到新人胜任的空窗期，按人均产值计算月均损失约 3~5 万/人</li><li><b>连锁反应：</b>一人离职后，团队剩余成员人均负荷增加 18%，如果3个月内未补员，将触发\"离职连锁效应\"</li><li><b>总经济成本：</b>年度离职82人，综合成本（招聘+培训+产出损失+管理精力）约 <b>2400~3600万</b></li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>离职的真实成本远超直接可见部分。每降低1%离职率，预计可节省 <b>300~450万/年</b>。投资于保留（调薪、发展、管理提升）的ROI远高于事后补员。建议向管理层呈报\"保留投资 vs 替换成本\"的对比分析。</div>' },
+      // ===== 文化/氛围 =====
+      { keywords: /文化|氛围|价值观|归属感|认同|企业文化|组织|团建/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🏠</span> 组织文化与离职的关联分析</div><ul class="portrait-list"><li><b>文化认同评分：</b>在职员工 3.9/5，离职员工回访仅 2.8/5 ——差距达 1.1 分</li><li><b>归属感关联：</b>\"归属感\"评分 ≤ 3.0 的员工，12个月内离职概率 <b>35%</b>（是归属感>4.0员工的4倍）</li><li><b>同事关系：</b>\"同事关系\"是满意度最高维度（4.2/5），说明团队层面的连接是最大的留人因素</li><li><b>远程办公关联：</b>完全远程的员工归属感低 0.5 分，但离职率仅低2% ——说明灵活度的补偿效应</li><li><b>入职体验关联：</b>入职第1个月\"文化融入\"评分与1年留存率相关系数达 0.58</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>文化和归属感是\"隐形留人因素\"，它不会让人主动留下，但缺失时会显著推高离职率。建议加强团队级（而非公司级）的文化建设，因为数据显示\"同事关系\"的留人效果远强于\"公司文化认同\"。</div>' },
+      // ===== 预警/风险/预测 =====
+      { keywords: /预警|风险|预测|模型|早期|信号|离职倾向|离职意向/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🚨</span> 离职风险预警模型分析</div><ul class="portrait-list"><li><b>当前高风险：</b>15人（综合评分≥70），中风险 32人（50~69），低风险 453人（<50）</li><li><b>模型核心指标（权重60%）：</b>敬业度趋势（连续下降 +25分）、绩效评级变化（下滑1级 +20分）、薪酬分位值（<P30 +15分）</li><li><b>辅助指标（权重30%）：</b>加班时长异常减少（+10分）、系统活跃度降低（+8分）、上级评价负面关键词（+12分）</li><li><b>触发指标（权重10%）：</b>简历更新/领英活跃（+8分）、请假频率异常（+5分）</li><li><b>模型准确率：</b>回测过去12个月的离职数据，预测准确率达 <b>78%</b>（提前3个月预警）</li><li><b>干预效果：</b>对预警员工启动保留干预后，实际离职率从预测的42%降至 <b>18%</b></li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>预警模型最大的价值是\"争取时间窗口\"。数据显示，在员工进入\"主动探索外部机会\"阶段前介入，保留成功率达 65%；一旦进入\"确认离职\"阶段，保留成功率骤降至 15%。建议将预警系统从事后分析升级为实时监控。</div>' },
+      // ===== 行业/市场/竞对 =====
+      { keywords: /行业|市场|竞对|竞争对手|外部|对标|benchmark|头部|互联网/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🌐</span> 外部市场环境与离职的关联分析</div><ul class="portrait-list"><li><b>行业离职率：</b>互联网行业平均 15.8%，我司 12.3% 低于行业均值，但差距在收窄</li><li><b>市场招聘热度：</b>与离职率的相关系数达 0.72，说明外部拉力是重要驱动因素</li><li><b>竞对挖角分析：</b>离职员工去向中，头部竞对A占 28%、竞对B占 22%、其他公司占 35%、创业/转型占 15%</li><li><b>薪酬差距：</b>技术岗P6~P7级，竞对offer平均高出 25%；产品岗基本持平；职能岗我司有优势</li><li><b>非薪酬因素：</b>35%的离职员工提到竞对的\"技术影响力\"、\"项目前景\"、\"上升空间\"更有吸引力</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>外部市场是不可控变量，但我们可以控制\"相对吸引力\"。数据表明薪酬只是门槛条件，真正拉开差距的是\"发展前景\"和\"技术挑战\"。建议在雇主品牌建设中强化技术影响力，同时保持薪酬不低于P50的底线。</div>' },
+      // ===== 保留/策略/方案/建议 =====
+      { keywords: /保留|留人|方案|策略|建议|怎么办|如何|措施|改善|优化|提升/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🎯</span> 综合保留策略建议（基于全维度数据分析）</div><ul class="portrait-list"><li><b>数据驱动的优先级排序：</b>根据关联分析，影响力最大的四个杠杆依次为：薪酬竞争力（影响35%离职）> 发展通道（28%）> 管理质量（20%）> 工作体验（17%）</li></ul></div><div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🔴</span> 短期（1~3个月）—— 止血</div><ul class="portrait-list"><li>对7名高风险A级员工启动紧急保留面谈</li><li>解决40人的薪酬倒挂问题（预算约280万/年）</li><li>对管理满意度<3.0的3个团队管理者启动辅导</li></ul></div><div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🟡</span> 中期（3~6个月）—— 修复</div><ul class="portrait-list"><li>研发岗薪酬对标调整至P50+（预算约520万/年）</li><li>优化晋升机制，恢复合理的晋升节奏</li><li>导师制度覆盖率从60%提升至100%</li><li>建立季度敬业度脉搏调查和预警联动机制</li></ul></div><div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🟢</span> 长期（6~12个月）—— 体系化</div><ul class="portrait-list"><li>建立离职预警实时监控系统</li><li>推行长期激励计划（RSU/期权覆盖核心人才）</li><li>管理者考核加入\"团队离职率\"和\"敬业度\"指标</li><li>全面升级入职体验和新人30-60-90天关怀体系</li></ul></div><div class="portrait-highlight">💡 <b>投入产出分析：</b>综合保留投入约 <b>1200万/年</b>，预期可将离职率从12.3%降至8%左右，避免的替换成本和产出损失约 <b>2800~3600万/年</b>，ROI约 <b>2.3~3倍</b>。</div>' },
+      // ===== 培训/学习/成长 =====
+      { keywords: /培训|学习|成长|发展|职业规划|通道|技能|能力/, response: '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">📚</span> 员工发展与离职的关联分析</div><ul class="portrait-list"><li><b>发展满意度：</b>3.1/5，排名倒数第二，仅高于薪酬满意度</li><li><b>离职关联：</b>28%的离职原因指向\"个人发展\"，但深度分析发现这通常包含三层含义——晋升（40%）、技能成长（35%）、视野拓展（25%）</li><li><b>培训参与关联：</b>年度培训时长>40小时的员工，离职率 <b>7.8%</b>；<20小时的离职率 <b>14.5%</b></li><li><b>内部转岗关联：</b>申请过内部转岗但未成功的员工，6个月内离职率高达 <b>38%</b></li><li><b>技术栈关联：</b>使用\"老旧技术栈\"的团队（自评），离职率比使用\"前沿技术\"的团队高 8 个百分点</li></ul></div><div class="portrait-highlight">💡 <b>关联洞察：</b>\"发展\"不只是晋升，员工更在意\"能力是否在增长\"。建议：1）建立清晰的双通道（管理+专业）职级体系；2）为转岗未成功者提供替代发展计划；3）技术栈升级与人才保留策略同步规划。</div>' },
+    ];
+
+    // 通用的兜底回复池（当无法匹配关键词时，给出有引导性的分析框架）
+    const insightGenericResponses = [
+      '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🔗</span> 数据关联分析</div><p style="line-height:1.8;color:#555;">基于您的问题，我从多个数据源交叉分析了相关性：</p><ul class="portrait-list"><li><b>离职数据层：</b>离职率 12.3%，主动离职占 85%，研发部和销售部是重灾区</li><li><b>敬业度层：</b>整体 3.6/5，薪酬和发展维度拖分最严重，且与离职率呈强负相关</li><li><b>绩效评价层：</b>高绩效和低绩效员工的离职率均高于中间层，呈\"U型\"分布</li><li><b>管理评价层：</b>上级满意度低的团队离职率是高满意度团队的 3 倍</li></ul></div><div class="portrait-highlight">💡 这些数据之间存在深层关联。您想从哪个维度继续深挖？比如：<br>• \"薪酬和敬业度的关联具体是怎样的？\"<br>• \"研发部的问题根源在哪里？\"<br>• \"有什么综合改善方案？\"</div>',
+      '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">📊</span> 多维交叉分析</div><p style="line-height:1.8;color:#555;">让我从\"离职数据 × 满意度反馈 × 上级评价 × 绩效\"四个维度进行交叉分析：</p><ul class="portrait-list"><li><b>高离职 + 低满意度：</b>研发部（15.2%离职 × 3.2敬业度）——双重预警，需最优先处理</li><li><b>高离职 + 高满意度：</b>销售部（14.8%离职 × 3.4敬业度）——离职可能受外部市场驱动为主</li><li><b>低离职 + 低满意度：</b>无此类部门——说明满意度确实是离职的领先指标</li><li><b>低离职 + 高满意度：</b>职能部门（6.2%离职 × 4.0敬业度）——标杆部门，可提炼最佳实践</li></ul></div><div class="portrait-highlight">💡 交叉分析揭示了一个重要规律：<b>满意度是离职的\"充分条件\"但非\"必要条件\"</b>——满意度低几乎必然带来高离职，但满意度高也不能完全防止离职（外部拉力因素）。您想继续探索哪个方向？</div>',
+      '<div class="portrait-section"><div class="portrait-section-title"><span class="section-icon">🧩</span> 因果链路分析</div><p style="line-height:1.8;color:#555;">基于多源数据的因果推断分析：</p><ul class="portrait-list"><li><b>根因层（组织级）：</b>薪酬体系滞后于市场 → 晋升名额缩减 → 管理者能力参差</li><li><b>传导层（体验级）：</b>薪酬不公平感 → 发展预期下降 → 工作投入度降低 → 敬业度评分下滑</li><li><b>表现层（行为级）：</b>绩效下滑 → 加班减少 → 请假增多 → 简历更新 → 提出离职</li><li><b>影响层（结果级）：</b>核心岗位空缺 → 团队负荷增加 → 连锁离职风险 → 业务交付受影响</li></ul></div><div class="portrait-highlight">💡 离职从来不是单点事件，而是一个\"系统性的因果链\"。最有效的干预点是<b>传导层</b>——在员工\"感受\"发生变化但尚未转化为\"行为\"之前介入。您还想了解哪个环节的更多细节？</div>'
+    ];
+
+    let insightGenericIdx = 0;
+
+    function selectInsightTopic(topic) {
+      currentInsightTopic = topic;
+      insightMsgCount = 0;
+      var topicNames = {
+        turnover: '各部门离职率分析',
+        reason: '离职原因深度剖析',
+        engagement: '敬业度与离职关联',
+        highperf: '高绩效人才流失预警',
+        newbie: '新员工留存分析',
+        salary: '薪酬竞争力诊断'
+      };
+      addMessage('user', '查看专题：' + topicNames[topic]);
+      setTimeout(function() {
+        addMessage('assistant', insightReports[topic], true);
+      }, 600);
     }
 
-    function askQuestion(question) {
+    function generateInsightResponse(message) {
+      insightMsgCount++;
+      if (insightMsgCount > 8) {
+        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
+      }
+
+      var msg = message.toLowerCase ? message.toLowerCase() : message;
+
+      // 1. 先按关键词匹配，找到最相关的回复
+      var matchedResponses = [];
+      for (var i = 0; i < insightKeywordResponses.length; i++) {
+        if (insightKeywordResponses[i].keywords.test(msg)) {
+          matchedResponses.push(insightKeywordResponses[i].response);
+        }
+      }
+
+      // 如果匹配到了，返回第一个匹配（最相关的）
+      if (matchedResponses.length > 0) {
+        // 如果匹配到多个，优先返回之前没用过的
+        return matchedResponses[0];
+      }
+
+      // 2. 没有匹配到具体关键词，使用通用的关联分析兜底
+      var resp = insightGenericResponses[insightGenericIdx % insightGenericResponses.length];
+      insightGenericIdx++;
+      return resp;
+    }
+
+    // ========== 离职政策知识问询 ==========
+    let policyMsgCount = 0;
+
+    function generatePolicyResponse(message) {
+      policyMsgCount++;
+      if (policyMsgCount > 4) {
+        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
+      }
+
+      const msg = message;
+
+      // 1. 15年退休
+      if (/15年|十五年|退休|退休金|养老|工龄/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏖️</span> 关于工龄满15年与退休相关政策</div>
+  <ul class="portrait-list">
+    <li>根据《劳动合同法》第十四条，<b>劳动者在用人单位连续工作满十五年，且距法定退休年龄不足五年的</b>，用人单位应当与其订立无固定期限劳动合同</li>
+    <li>法定退休年龄：男性60周岁，女性管理/技术岗55周岁，女性生产岗50周岁（注：国家延迟退休政策正在逐步推进，具体以最新政策为准）</li>
+    <li>符合上述条件的员工，<b>用人单位不得随意解除劳动合同</b>，否则属于违法解除，需支付双倍经济补偿金</li>
+    <li>养老保险累计缴满15年是领取退休金的最低条件，但缴费年限越长、缴费基数越高，退休后领取的养老金越多</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 如果员工已在公司工作满15年且接近退休年龄，建议HR在处理相关事务时务必谨慎，确保不违反无固定期限劳动合同的签订义务，必要时咨询法务。</div>`;
+      }
+
+      // 2. 社保公积金转移
+      if (/社保|公积金|转移|五险一金|保险|医保|住房/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏦</span> 离职社保与公积金转移指南</div>
+  <ul class="portrait-list">
+    <li><b>社保转移：</b>员工离职后，公司在当月或次月办理社保减员，社保账户自动封存</li>
+    <li><b>跨省转移：</b>需在新参保地提出转移申请，原参保地出具《参保缴费凭证》，新参保地审核通过后办理转入，一般需要45个工作日</li>
+    <li><b>同城转移：</b>新单位直接办理社保增员即可，无需额外手续，账户自动接续</li>
+    <li><b>公积金转移：</b>离职后公积金账户封存，入职新单位后可办理账户转移；如暂未就业，账户保留不影响余额</li>
+    <li><b>公积金提取：</b>满足以下条件之一可提取：购房、租房、离退休、出境定居、完全丧失劳动能力等。非本地户籍离职后可申请全额提取</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 所需材料清单</div>
+  <ul class="portrait-list">
+    <li>身份证原件及复印件</li>
+    <li>离职证明</li>
+    <li>社保卡 / 医保卡</li>
+    <li>《基本养老保险参保缴费凭证》（跨省转移时需要）</li>
+    <li>新单位劳动合同（公积金转移时需要）</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 建议员工在离职前确认社保缴纳到哪个月，避免出现断缴。社保断缴可能影响购房资格、医保报销等权益，建议尽快入职新单位或以灵活就业身份自行缴纳。</div>`;
+      }
+
+      // 3. 离职赔偿
+      if (/赔偿|补偿|补偿金|经济补偿|N\+1|2N|违法解除|辞退|裁员|开除/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💰</span> 离职经济补偿金政策</div>
+  <ul class="portrait-list">
+    <li><b>经济补偿金（N）：</b>按员工在本单位工作的年限，每满一年支付一个月工资；六个月以上不满一年的按一年计算；不满六个月的支付半个月工资</li>
+    <li><b>N+1 补偿：</b>用人单位未提前30天书面通知解除合同时，需额外支付1个月工资作为代通知金，即"N+1"</li>
+    <li><b>2N 赔偿金：</b>用人单位违法解除劳动合同的，需按经济补偿标准的<b>二倍</b>支付赔偿金</li>
+    <li><b>月工资计算基数：</b>指劳动合同解除前十二个月的平均工资（含奖金、津贴等），上限为当地职工月平均工资的三倍</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 常见补偿场景</div>
+  <ul class="portrait-list">
+    <li><b>协商解除（公司提出）：</b>支付 N 或协商金额</li>
+    <li><b>无过失性辞退（不胜任/医疗期满等）：</b>支付 N+1（或提前30天通知则 N）</li>
+    <li><b>经济性裁员：</b>支付 N</li>
+    <li><b>违法解除：</b>支付 2N</li>
+    <li><b>员工主动辞职：</b>一般无补偿（除非因公司过错，如未按时发薪、未缴社保）</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ 经济补偿金计算涉及法律细节较多，建议具体案例务必与法务部门确认，避免因计算错误引发劳动仲裁风险。</div>`;
+      }
+
+      // 4. 离职工作交接
+      if (/交接|工作交接|移交|交接单|交接清单|接手|手续/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📝</span> 离职工作交接规范</div>
+  <ul class="portrait-list">
+    <li><b>交接时间：</b>一般在正式离职前 5-10 个工作日开始，确保交接充分完整</li>
+    <li><b>交接对象：</b>由直属上级指定交接人，如暂无接手人，交由直属上级或部门负责人代管</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 标准交接清单</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>项目/业务交接：</b>进行中的项目清单、进度说明、关键节点、对接人信息、待办事项</li>
+    <li><b>文档资料交接：</b>工作文档、设计稿、需求文档、会议纪要等，统一归档至团队共享空间</li>
+    <li><b>账号权限交接：</b>系统账号、服务器权限、第三方平台账号等，列明清单并逐一转交或注销</li>
+    <li><b>资产归还：</b>电脑、显示器、工卡、钥匙等公司资产，经IT和行政确认签收</li>
+    <li><b>财务结算：</b>报销单据清算、借款归还、备用金交还等</li>
+    <li><b>客户/供应商对接：</b>重要客户关系告知和转交，确保业务连续性</li>
+  </ol>
+</div>
+<div class="portrait-highlight">💡 建议使用公司标准化的《离职交接表》模板，双方签字确认后各留一份存档，作为交接完成的凭证。交接不完整可能影响离职证明的开具时间。</div>`;
+      }
+
+      // 5. 离职期限/通知期
+      if (/期限|通知期|30天|三十天|提前|多久|几天|多长时间|什么时候能走|离职日期/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📅</span> 离职通知期相关规定</div>
+  <ul class="portrait-list">
+    <li><b>正式员工：</b>根据《劳动合同法》第三十七条，劳动者提前<b>30日</b>以书面形式通知用人单位，可以解除劳动合同</li>
+    <li><b>试用期员工：</b>提前<b>3日</b>通知用人单位即可解除劳动合同</li>
+    <li><b>通知起算日：</b>从提交书面离职申请（邮件/系统提交）的次日开始计算</li>
+    <li><b>协商缩短：</b>经双方协商一致，可以缩短通知期，建议以书面形式确认</li>
+    <li><b>公司提出解除：</b>公司单方面解除需提前30天通知，或额外支付1个月工资作为代通知金</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 特殊情况说明</div>
+  <ul class="portrait-list">
+    <li>员工未提前30天通知即离职的，公司有权要求赔偿因此造成的直接经济损失</li>
+    <li>通知期内员工仍需正常出勤和履行工作职责</li>
+    <li>年假未休完的，可在通知期内安排休假，或按照法定标准折算工资</li>
+    <li>通知期最后一天为正式离职日，公司应在该日前完成离职手续办理</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 建议员工提交离职申请时保留书面凭证（如邮件截图、系统记录），以便后续确认离职日期和避免争议。</div>`;
+      }
+
+      // 6. 竞业限制
+      if (/竞业|竞业限制|竞业协议|竞业补偿|同业禁止|竞业禁止|保密/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔒</span> 竞业限制政策解读</div>
+  <ul class="portrait-list">
+    <li><b>适用对象：</b>高级管理人员、高级技术人员和其他负有保密义务的人员</li>
+    <li><b>限制期限：</b>竞业限制期限最长不超过<b>2年</b>（自劳动合同解除或终止之日起计算）</li>
+    <li><b>限制范围：</b>不得到与本单位生产或经营同类产品、从事同类业务的有竞争关系的其他单位任职，也不得自己开业生产或经营同类产品、从事同类业务</li>
+    <li><b>竞业补偿金：</b>用人单位需在竞业限制期内<b>按月支付</b>经济补偿，标准一般不低于劳动者离职前12个月平均工资的30%，且不低于当地最低工资标准</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚖️</span> 权利与义务</div>
+  <ul class="portrait-list">
+    <li><b>公司义务：</b>按时支付竞业补偿金，连续3个月未支付的，劳动者可请求解除竞业限制约定</li>
+    <li><b>员工义务：</b>遵守竞业限制约定，违反的需按约定向用人单位支付违约金</li>
+    <li><b>公司可放弃：</b>用人单位可在竞业限制期内通知员工解除竞业限制，但需额外支付3个月竞业补偿金</li>
+    <li><b>违约金标准：</b>由双方在协议中约定，司法实践中一般参考已支付补偿金的2-3倍</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ 竞业限制协议需在员工入职或离职时签订，未签订的不产生竞业限制效力。已签订但公司未支付补偿金的，员工可主张解除。建议涉及竞业限制的个案务必与法务确认。</div>`;
+      }
+
+      // 通用兜底
+      return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 离职政策知识库</div>
+  <ul class="portrait-list">
+    <li>目前我可以为您解答以下方面的离职政策问题：</li>
+  </ul>
+</div>
+<div class="portrait-highlight">你可以试着这样问我：<br>• "工作满15年离职有什么特殊规定？"<br>• "离职后社保和公积金怎么转移？"<br>• "离职赔偿金怎么计算？"<br>• "离职工作交接有哪些流程？"<br>• "提前多久提离职？通知期是多少天？"<br>• "竞业限制协议有哪些规定？"</div>`;
+    }
+
+    // 离职面谈智能回复（支持岗位追问）
+    // 离职数据源（基于CSV模板）
+    const resignationData = [
+      { name: '张三', empId: 'EMP001', dept: '产品部', level: 'P6', joinDate: '2021-03-15', leaveDate: '2024-01-20', age: 28, gender: '男', reason: '个人发展', performance: 'B+', type: '主动' },
+      { name: '李四', empId: 'EMP002', dept: '研发部', level: 'P7', joinDate: '2020-06-01', leaveDate: '2024-01-15', age: 32, gender: '女', reason: '薪资待遇', performance: 'A', type: '主动' },
+      { name: '王五', empId: 'EMP003', dept: '研发部', level: 'P5', joinDate: '2023-02-10', leaveDate: '2024-02-01', age: 26, gender: '男', reason: '工作压力', performance: 'B', type: '主动' }
+    ];
+
+    let dataMsgCount = 0; // 离职数据追问计数
+
+    // 离职数据智能回答
+    function generateDataResponse(message) {
+      dataMsgCount++;
+      if (dataMsgCount > 3) {
+        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
+      }
+
+      const msg = message.toLowerCase();
+
+      // 查询具体某人
+      const personMatch = resignationData.find(p => msg.includes(p.name));
+      if (personMatch) {
+        const tenure = ((new Date(personMatch.leaveDate) - new Date(personMatch.joinDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1);
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👤</span> ${personMatch.name}的离职信息</div>
+  <ul class="portrait-list">
+    <li><b>工号：</b>${personMatch.empId}</li>
+    <li><b>部门：</b>${personMatch.dept}｜<b>职级：</b>${personMatch.level}</li>
+    <li><b>年龄：</b>${personMatch.age}岁｜<b>性别：</b>${personMatch.gender}</li>
+    <li><b>入职日期：</b>${personMatch.joinDate}｜<b>离职日期：</b>${personMatch.leaveDate}</li>
+    <li><b>在职时长：</b>${tenure} 年</li>
+    <li><b>绩效等级：</b>${personMatch.performance}</li>
+    <li><b>离职原因：</b>${personMatch.reason}</li>
+    <li><b>离职类型：</b>${personMatch.type}离职</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 ${personMatch.name}因"${personMatch.reason}"主动离职，绩效为${personMatch.performance}，在职${tenure}年。${personMatch.performance >= 'A' ? '属于高绩效人才流失，建议重点复盘。' : '建议关注该岗位后续补充情况。'}</div>`;
+      }
+
+      // 部门相关
+      if (msg.includes('部门') || msg.includes('分布') || msg.includes('哪个部门') || msg.includes('研发') || msg.includes('产品')) {
+        const deptCount = {};
+        resignationData.forEach(p => { deptCount[p.dept] = (deptCount[p.dept] || 0) + 1; });
+        const deptLines = Object.entries(deptCount).map(([d, c]) => `<li><b>${d}：</b>${c} 人（占比 ${(c / resignationData.length * 100).toFixed(0)}%）</li>`).join('\n    ');
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏢</span> 按部门统计离职分布</div>
+  <ul class="portrait-list">
+    ${deptLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 分析</div>
+  <ul class="portrait-list">
+    <li>研发部离职占比最高（2人），需重点关注技术人才保留</li>
+    <li>产品部也有核心人员流失，建议排查团队管理因素</li>
+  </ul>
+</div>`;
+      }
+
+      // 离职原因
+      if (msg.includes('原因') || msg.includes('为什么') || msg.includes('走') || msg.includes('离开')) {
+        const reasonCount = {};
+        resignationData.forEach(p => { reasonCount[p.reason] = (reasonCount[p.reason] || 0) + 1; });
+        const reasonLines = Object.entries(reasonCount).map(([r, c]) => `<li><b>${r}：</b>${c} 人</li>`).join('\n    ');
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 离职原因分析</div>
+  <ul class="portrait-list">
+    ${reasonLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 建议</div>
+  <ul class="portrait-list">
+    <li>离职原因分散，涵盖个人发展、薪资待遇、工作压力三个维度</li>
+    <li>"薪资待遇"导致的 A 级绩效员工流失需高度警惕</li>
+    <li>建议定期开展员工满意度调研，及早识别风险信号</li>
+  </ul>
+</div>`;
+      }
+
+      // 绩效相关
+      if (msg.includes('绩效') || msg.includes('表现') || msg.includes('优秀') || msg.includes('高绩效')) {
+        const perfLines = resignationData.map(p => `<li><b>${p.name}（${p.dept}）：</b>绩效 ${p.performance}，因"${p.reason}"离职</li>`).join('\n    ');
+        const highPerf = resignationData.filter(p => p.performance >= 'A');
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📈</span> 离职员工绩效分布</div>
+  <ul class="portrait-list">
+    ${perfLines}
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ 在 ${resignationData.length} 名离职员工中，${highPerf.length} 人为 A 级及以上高绩效员工，高绩效流失率为 ${(highPerf.length / resignationData.length * 100).toFixed(0)}%，需引起重视。</div>`;
+      }
+
+      // 总览 / 默认
+      if (msg.includes('总') || msg.includes('概况') || msg.includes('多少') || msg.includes('全部') || msg.includes('情况') || msg.includes('汇总') || msg.includes('数据') || dataMsgCount === 1) {
+        const deptCount = {};
+        resignationData.forEach(p => { deptCount[p.dept] = (deptCount[p.dept] || 0) + 1; });
+        const deptSummary = Object.entries(deptCount).map(([d, c]) => `${d} ${c}人`).join('、');
+        const avgAge = (resignationData.reduce((s, p) => s + p.age, 0) / resignationData.length).toFixed(1);
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 离职数据总览</div>
+  <ul class="portrait-list">
+    <li><b>离职总人数：</b>${resignationData.length} 人</li>
+    <li><b>离职类型：</b>全部为主动离职</li>
+    <li><b>部门分布：</b>${deptSummary}</li>
+    <li><b>平均年龄：</b>${avgAge} 岁</li>
+    <li><b>职级范围：</b>P5 ~ P7</li>
+    <li><b>时间区间：</b>2024年1月 ~ 2024年2月</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 关键发现</div>
+  <ul class="portrait-list">
+    <li>离职集中在 2024 年初，可能与年终奖发放节点有关</li>
+    <li>研发部流失较多，且包含 1 名 A 级高绩效员工（李四，P7）</li>
+    <li>离职员工整体偏年轻化，平均年龄仅 ${avgAge} 岁，26-32 岁区间</li>
+    <li>离职原因多样，个人发展、薪资待遇、工作压力各占约三分之一</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 你可以继续问我具体某个人的情况、按部门统计、离职原因分析、绩效分布等，我会基于数据为你解答。</div>`;
+      }
+
+      // 兜底
+      return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 当前数据概要</div>
+  <ul class="portrait-list">
+    <li>共 ${resignationData.length} 条离职记录（张三、李四、王五）</li>
+    <li>涉及产品部和研发部，职级 P5-P7</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 你可以试着这样问我：<br>• "张三的离职情况是什么？"<br>• "各部门离职分布怎样？"<br>• "离职原因有哪些？"<br>• "高绩效员工流失情况如何？"</div>`;
+    }
+
+    // 离职面谈智能回复（支持岗位追问）
+    function generateInterviewResponse(message) {
+      const msg = message.toLowerCase();
+
+      // 岗位相关追问
+      const jobKeywords = ['产品经理', '数据分析', '运营', '项目管理', '策略分析', 'AI产品', '岗位', '推荐', '匹配', '活水', '详情', '薪资', '薪酬', '待遇', '工作内容', '职责', '要求', '团队', '负责人', '部门'];
+      const isJobRelated = jobKeywords.some(kw => msg.includes(kw));
+
+      if (isJobRelated) {
+        const jobResponses = [
+          '这个岗位目前团队规模在15人左右，业务发展势头不错，负责人也很重视人才培养。如果你感兴趣，我可以帮你预约一次和负责人的非正式沟通，先了解下团队氛围和具体方向，你觉得怎么样？',
+          '这个岗位的核心职责是推动业务增长策略的落地，对数据分析和跨部门协作能力要求较高，和你目前的技能储备非常契合。薪酬方面会根据你的职级和经验综合评定，整体竞争力不错的。',
+          '好问题！这个团队的工作节奏相对合理，加班不算多，团队氛围偏扁平化。负责人风格是给空间、重结果。如果你看重工作生活平衡，这个岗位会是不错的选择。',
+          '根据你的经历来看，这个岗位的匹配度确实很高。建议你可以先看看岗位详情，如果有兴趣我们可以安排一次线下交流，让你更全面地了解这个机会。',
+          '这个部门去年业绩增长了30%+，今年还在扩招，发展空间很大。而且部门内部有完善的晋升通道，从专家到管理双通道都有清晰的路径。'
+        ];
+        return jobResponses[Math.floor(Math.random() * jobResponses.length)];
+      }
+
+      // 离职原因相关
+      const reasonKeywords = ['原因', '为什么', '离职', '不满', '压力', '发展', '薪资低', '加班', '不开心', '想走'];
+      const isReasonRelated = reasonKeywords.some(kw => msg.includes(kw));
+
+      if (isReasonRelated) {
+        const reasonResponses = [
+          '谢谢你的坦诚分享。你提到的这些问题我都记录下来了。其实很多同事都有类似的感受，公司也在积极改善中。在做最终决定之前，要不要先看看内部有没有更适合你的机会？',
+          '我理解你的感受，这些确实是影响工作体验的重要因素。不过在正式离职之前，我建议可以先考虑下内部转岗的可能性，换个环境也许会有不一样的体验。要不要我帮你看看活水岗位？',
+          '你说的这些情况我都理解。每个人对职业发展的期望不同，关键是找到真正适合自己的方向。如果你愿意，我可以帮你做一个更全面的职业分析，看看内部有没有更匹配的发展路径。'
+        ];
+        return reasonResponses[Math.floor(Math.random() * reasonResponses.length)];
+      }
+
+      // 通用回复
+      const generalResponses = [
+        '我理解你的想法。作为离职小助理，我的目标是帮你找到最适合的选择。你可以继续跟我聊聊你的想法，或者点击下方的「活水推荐」看看有没有感兴趣的内部岗位。',
+        '好的，我记下了。如果你想了解更多关于内部转岗的信息，随时可以问我。也可以直接点击「活水推荐」查看AI为你匹配的岗位。',
+        '感谢你的分享！不管最终决定如何，我都希望能帮到你。你还有什么想了解的吗？比如活水岗位、离职流程，或者其他任何问题都可以问我。'
+      ];
+      return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+    }
+
+    // 离职画像引导
+    function showPortraitGuide() {
       if (isTyping) return;
-      document.getElementById('userInput').value = question;
-      sendMessage();
+      addMessage('user', '请帮我生成离职画像分析');
+      waitingPortraitInput = true;
+
+      setTimeout(() => {
+        const guideText = '你可以告诉我你要和谁进行离职面谈，具体想要了解他的哪些方面的内容，我可以结合你的需求提供。比如：我想重点了解张三过去是否一直在做重要的战场，绩效和全面反馈的全面情况。';
+        addMessage('assistant', guideText, true);
+      }, 800);
     }
 
+    // 根据用户输入生成离职画像数据
+    function generatePortraitResponse(message) {
+      // 提取用户提到的人名
+      const nameMatch = message.match(/[\u4e00-\u9fa5]{2,3}(?=的|过去|是否|绩效|情况|表现|能力|最近|近期)/);
+      const name = nameMatch ? nameMatch[0] : '该员工';
+
+      return `<div class="portrait-intro">根据系统数据，我为你整理了<b>${name}</b>的综合画像分析报告，以下内容涵盖基本信息、绩效趋势、项目经历、多维反馈及面谈建议，供你在离职面谈前参考：</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 基本信息</div>
+  <ul class="portrait-list">
+    <li>姓名：${name}，当前职级 9 级（高级），司龄 4 年 3 个月</li>
+    <li>所属部门：平台产品部 — 用户增长组</li>
+    <li>岗位角色：高级产品经理，直属上级为用户增长组负责人王磊</li>
+    <li>入职时间：2021 年 11 月，期间经历过 1 次内部转岗（从基础产品组调至用户增长组）</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 绩效表现</div>
+  <ul class="portrait-list">
+    <li>近 4 个考核周期绩效评级：★★★★（优秀）→ ★★★★（优秀）→ ★★★（良好）→ ★★★（良好）</li>
+    <li>绩效趋势：前两个周期表现突出，连续获得"优秀"评级；近两个周期出现明显下滑，降至"良好"水平</li>
+    <li>绩效排名：在所属部门 23 人中，当前排名第 12 位，较去年同期下降 6 位</li>
+  </ul>
+  <div class="portrait-highlight">⚠️ 绩效连续两期下滑是一个需要关注的信号，建议在面谈中了解其对当前工作状态的真实感受。</div>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏆</span> 项目经历</div>
+  <ul class="portrait-list">
+    <li>2022-2023 年：主导"用户增长 2.0"核心项目，带领 5 人小组，项目最终为公司带来 DAU 提升 18%，属于当年重点战场项目</li>
+    <li>2023 年下半年：参与"商业化变现"跨部门协作项目，担任产品侧接口人，项目顺利上线并贡献季度营收增长 12%</li>
+    <li>2024 年至今：转入"平台基础能力维护"项目，工作内容以日常运维和小需求迭代为主，战略重要性相比之前有明显降低</li>
+  </ul>
+  <div class="portrait-highlight">📌 从核心战场转到维护型项目，可能导致其成就感和价值认同感下降，这可能是离职意愿产生的关键诱因之一。</div>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💬</span> 360 度反馈摘要</div>
+  <ul class="portrait-list">
+    <li><b>上级评价：</b>执行力和业务理解能力强，前期项目推动非常高效；但近半年主动性和投入度明显下降，沟通频率减少，对新任务的响应速度变慢</li>
+    <li><b>同事反馈：</b>跨部门协作意识良好，沟通风格直接高效，在团队中口碑较好；但近期在会议中发言减少，参与感有所降低</li>
+    <li><b>下属反馈：</b>关注团队成员的成长和发展，管理风格务实、不过度干预；但近期对下属的辅导和指导频次有所减少</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 面谈分析建议</div>
+  <ol class="portrait-suggestion-list">
+    <li>绩效下滑与项目调整的时间节点高度吻合，大概率与从核心项目调至维护型项目后价值感降低有关，建议面谈时重点倾听其对项目调整的真实看法</li>
+    <li>关注其对未来职业发展的期望，了解其是否有明确的外部机会，以及内部是否还有吸引力足够的发展路径能够挽留</li>
+    <li>结合 360 反馈中"主动性下降"的信号，建议面谈中观察其情绪状态，判断是短期低迷还是已经做出了离职决定</li>
+    <li>如有意保留，可考虑重新分配核心项目资源或提供晋升通道明确化等方案，在面谈中试探其接受意愿</li>
+  </ol>
+</div>`;
+    }
+
+    // 活水推荐
+    function showJobRecommend() {
+      if (isTyping) return;
+      // 添加用户消息
+      addMessage('user', '请帮我推荐适合的活水岗位');
+
+      // 模拟AI思考后返回推荐结果
+      setTimeout(() => {
+        const jobRecommendHTML = `
+          <div class="job-recommend-intro">
+            基于你的岗位经历和职业技能，我通过AI智能匹配，为你筛选了以下适合的活水岗位，按匹配度从高到低排列，供你参考：
+          </div>
+          <div class="job-card-list">
+            <div class="job-card">
+              <div class="job-card-left">
+                <div class="job-match-badge">97%<span>匹配</span></div>
+                <div class="job-info">
+                  <div class="job-name">高级产品经理</div>
+                  <div class="job-meta">
+                    <span class="job-meta-item">🏢 战略产品部</span>
+                    <span class="job-meta-item">👤 李明（负责人）</span>
+                  </div>
+                </div>
+              </div>
+              <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">查看详情</button>
+            </div>
+            <div class="job-card">
+              <div class="job-card-left">
+                <div class="job-match-badge">93%<span>匹配</span></div>
+                <div class="job-info">
+                  <div class="job-name">数据分析专家</div>
+                  <div class="job-meta">
+                    <span class="job-meta-item">🏢 数据智能中心</span>
+                    <span class="job-meta-item">👤 王芳（总监）</span>
+                  </div>
+                </div>
+              </div>
+              <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">查看详情</button>
+            </div>
+            <div class="job-card">
+              <div class="job-card-left">
+                <div class="job-match-badge">89%<span>匹配</span></div>
+                <div class="job-info">
+                  <div class="job-name">用户增长运营负责人</div>
+                  <div class="job-meta">
+                    <span class="job-meta-item">🏢 平台运营部</span>
+                    <span class="job-meta-item">👤 赵强（GM）</span>
+                  </div>
+                </div>
+              </div>
+              <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">查看详情</button>
+            </div>
+            <div class="job-card">
+              <div class="job-card-left">
+                <div class="job-match-badge">85%<span>匹配</span></div>
+                <div class="job-info">
+                  <div class="job-name">项目管理专家</div>
+                  <div class="job-meta">
+                    <span class="job-meta-item">🏢 企业发展部</span>
+                    <span class="job-meta-item">👤 张婷（总监）</span>
+                  </div>
+                </div>
+              </div>
+              <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">查看详情</button>
+            </div>
+            <div class="job-card">
+              <div class="job-card-left">
+                <div class="job-match-badge">82%<span>匹配</span></div>
+                <div class="job-info">
+                  <div class="job-name">商业化策略分析师</div>
+                  <div class="job-meta">
+                    <span class="job-meta-item">🏢 商业化部</span>
+                    <span class="job-meta-item">👤 陈浩（负责人）</span>
+                  </div>
+                </div>
+              </div>
+              <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">查看详情</button>
+            </div>
+            <div class="job-card">
+              <div class="job-card-left">
+                <div class="job-match-badge">78%<span>匹配</span></div>
+                <div class="job-info">
+                  <div class="job-name">AI产品运营经理</div>
+                  <div class="job-meta">
+                    <span class="job-meta-item">🏢 AI应用事业部</span>
+                    <span class="job-meta-item">👤 刘洋（VP）</span>
+                  </div>
+                </div>
+              </div>
+              <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">查看详情</button>
+            </div>
+          </div>
+        `;
+        addMessage('assistant', jobRecommendHTML);
+      }, 1000);
+    }
+
+    // 快速提问
+    function askQuestion(question) {
+      if (isWelcomePage) {
+        document.getElementById('welcomeInput').value = question;
+        sendWelcomeMessage();
+      } else {
+        document.getElementById('messageInput').value = question;
+        sendMessage();
+      }
+    }
+
+    // 首页分类快捷问题 - 先选择模块再发送问题
+    function askQuickQuestion(functionType, question) {
+      selectFunction(functionType);
+      setTimeout(function() {
+        document.getElementById('messageInput').value = question;
+        sendMessage();
+      }, 100);
+    }
+
+    // ========== 历史会话管理 ==========
+    let currentHistoryId = null;
+
+    // 根据用户第一句话动态生成历史记录
+    function createDynamicHistory(userMessage) {
+      if (currentHistoryId) return; // 已绑定历史记录则跳过
+
+      historyIdCounter++;
+      var newId = String(historyIdCounter);
+      // 截取前20字作为标题
+      var title = userMessage.length > 20 ? userMessage.substring(0, 20) + '...' : userMessage;
+      var now = new Date();
+      var timeStr = now.getFullYear() + '-'
+        + String(now.getMonth() + 1).padStart(2, '0') + '-'
+        + String(now.getDate()).padStart(2, '0') + ' '
+        + String(now.getHours()).padStart(2, '0') + ':'
+        + String(now.getMinutes()).padStart(2, '0');
+
+      var newItem = {
+        id: newId,
+        title: title,
+        time: timeStr,
+        messages: []
+      };
+
+      // 如果有开场白（通过selectFunction进入），把开场白也加入
+      if (currentFunction && functionConfig[currentFunction]) {
+        newItem.messages.push({ role: 'assistant', content: functionConfig[currentFunction].welcome });
+      }
+
+      // 插入到列表最前面
+      historyItems.unshift(newItem);
+      currentHistoryId = newId;
+
+      // 更新UI
+      document.getElementById('chatTitle').textContent = title;
+      document.getElementById('titleEditBtn').style.display = 'flex';
+      document.getElementById('deleteChatBtn').style.display = '';
+      renderHistoryList();
+    }
+
+    // 将后续消息追加到当前历史记录
+    function appendToCurrentHistory(role, content) {
+      if (!currentHistoryId || isLoadingHistory) return;
+      var item = historyItems.find(function(h) { return h.id === currentHistoryId; });
+      if (item) {
+        item.messages.push({ role: role, content: content });
+      }
+    }
+
+    let historyItems = [
+      { id: '1', title: '张三的离职面谈', time: '2024-02-06 14:30', messages: [
+        { role: 'assistant', content: '您好！我是离职面谈助手，可以帮您设计面谈问题、记录关键信息、分析离职原因。' },
+        { role: 'user', content: '请帮我设计一套针对技术人员的离职面谈问题' },
+        { role: 'assistant', content: '我为技术人员设计了专门的面谈问题：\n\n1. 技术栈是否符合您的职业发展方向？\n2. 项目管理和开发流程有哪些可以改进的地方？\n3. 团队技术氛围如何？\n4. 对技术培训和学习机会的看法？\n5. 薪酬水平与市场预期的差距？' }
+      ]},
+      { id: '2', title: 'Q4离职问数分析', time: '2024-02-05 16:45', messages: [
+        { role: 'assistant', content: '您好！我是离职问数助理，请问您想了解哪方面的离职数据？' },
+        { role: 'user', content: 'Q4各部门离职率是多少？' },
+        { role: 'assistant', content: 'Q4各部门离职率如下：\n\n• 研发部：15.2%\n• 销售部：14.8%\n• 产品部：11.5%\n• 职能部门：6.2%\n\n整体离职率 12.3%，同比上升 2.1个百分点。' }
+      ]},
+      { id: '3', title: '技术部门离职洞察', time: '2024-02-03 10:20', messages: [
+        { role: 'assistant', content: '您好！我是离职洞察专家，有什么可以帮您分析的？' },
+        { role: 'user', content: '技术部门为什么离职率这么高？' },
+        { role: 'assistant', content: '技术部门离职率偏高（15.2%）主要有三个原因：\n\n1. 薪酬竞争力不足（外部offer高出25%）\n2. 技术栈老旧，成长空间有限\n3. 项目压力大，加班时长同比增加40%' }
+      ]},
+      { id: '4', title: '离职流程优化建议', time: '2024-01-30 09:15', messages: [
+        { role: 'assistant', content: '您好！我是离职政策顾问，请问需要咨询什么？' },
+        { role: 'user', content: '目前的离职流程有哪些可以优化的地方？' },
+        { role: 'assistant', content: '建议从以下几个方面优化：\n\n1. 简化审批流程（目前平均需5个工作日）\n2. 标准化交接清单模板\n3. 增加离职面谈环节\n4. 自动化薪酬结算\n5. 建立离职员工人才库（回流机制）' }
+      ]},
+      { id: '5', title: '销售团队保留策略', time: '2024-01-28 15:22', messages: [
+        { role: 'assistant', content: '您好！请问您想了解什么？' },
+        { role: 'user', content: '销售团队离职严重，有什么保留策略？' },
+        { role: 'assistant', content: '针对销售团队的保留策略：\n\n• 优化提成方案，提高新客户开拓奖励\n• 延长新人保护期业绩目标\n• 设立季度销售冠军激励\n• 管理者沟通培训\n• 职业双通道（管理/专家）' }
+      ]},
+      { id: '6', title: '员工满意度调研', time: '2024-01-25 11:08', messages: [
+        { role: 'assistant', content: '您好！有什么可以帮到您？' },
+        { role: 'user', content: '最新的员工满意度调研结果如何？' },
+        { role: 'assistant', content: '最新满意度调研结果：\n\n• 整体敬业度：3.6/5.0（较去年下降0.3）\n• 最高维度：同事关系 4.2\n• 最低维度：薪酬福利 2.9\n• 参与率：78%\n• 重点关注：研发部敬业度仅3.2' }
+      ]}
+    ];
+
+    function renderHistoryList() {
+      var container = document.getElementById('historyListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      historyItems.forEach(function(item) {
+        var div = document.createElement('div');
+        div.className = 'history-item' + (currentHistoryId === item.id ? ' active' : '');
+        div.onclick = function(e) {
+          if (e.target.closest('.history-delete-btn')) return;
+          loadHistory(item.id);
+        };
+        div.innerHTML = '<div class="history-content"><h4>' + item.title + '</h4><p>' + item.time + '</p></div>';
+        container.appendChild(div);
+      });
+    }
+
+    // 加载历史对话
+    var isLoadingHistory = false;
+    function loadHistory(id) {
+      currentHistoryId = id;
+      var history = historyItems.find(function(h) { return h.id === id; });
+      if (!history) return;
+
+      showChatInterface();
+      document.getElementById('chatMessages').innerHTML = '';
+
+      document.getElementById('chatTitle').textContent = history.title;
+      // 显示编辑按钮和删除按钮
+      document.getElementById('titleEditBtn').style.display = 'flex';
+      document.getElementById('deleteChatBtn').style.display = '';
+
+      isLoadingHistory = true;
+      history.messages.forEach(function(msg) {
+        addMessage(msg.role, msg.content);
+      });
+      isLoadingHistory = false;
+
+      renderHistoryList();
+    }
+
+    // 删除当前历史会话
+    function deleteCurrentHistory() {
+      if (!currentHistoryId) return;
+      var history = historyItems.find(function(h) { return h.id === currentHistoryId; });
+      if (!history) return;
+      if (!confirm('确定要删除会话「' + history.title + '」吗？此操作不可恢复。')) return;
+
+      historyItems = historyItems.filter(function(h) { return h.id !== currentHistoryId; });
+      currentHistoryId = null;
+      renderHistoryList();
+      backToHome();
+    }
+
+    // 重命名对话
+    function startRenameChat() {
+      if (!currentHistoryId) return;
+      var titleEl = document.getElementById('chatTitle');
+      var editBtn = document.getElementById('titleEditBtn');
+      var currentName = titleEl.textContent;
+
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'title-rename-input';
+      input.value = currentName;
+      input.maxLength = 30;
+
+      titleEl.style.display = 'none';
+      editBtn.style.display = 'none';
+      titleEl.parentNode.insertBefore(input, titleEl);
+      input.focus();
+      input.select();
+
+      function finishRename() {
+        var newName = input.value.trim();
+        if (newName && newName !== currentName) {
+          titleEl.textContent = newName;
+          var item = historyItems.find(function(h) { return h.id === currentHistoryId; });
+          if (item) item.title = newName;
+          renderHistoryList();
+        }
+        input.remove();
+        titleEl.style.display = '';
+        editBtn.style.display = 'flex';
+      }
+
+      input.addEventListener('blur', finishRename);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+        if (e.key === 'Escape') { input.value = currentName; input.blur(); }
+      });
+    }
+
+    // 键盘事件处理
     function handleKeyDown(event) {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        if (!isTyping) {
-          sendMessage();
+        sendMessage();
+      }
+    }
+
+    // 点赞
+    function handleLike(btn) {
+      const actions = btn.closest('.message-actions');
+      const dislikeBtn = actions.querySelector('.dislike-btn');
+      btn.classList.toggle('active');
+      dislikeBtn.classList.remove('active');
+    }
+
+    // 点踩
+    function handleDislike(btn) {
+      const actions = btn.closest('.message-actions');
+      const likeBtn = actions.querySelector('.like-btn');
+      btn.classList.toggle('active');
+      likeBtn.classList.remove('active');
+    }
+
+    // 复制
+    function handleCopy(btn) {
+      var msgBody = btn.closest('.message-body');
+      var msgContent = msgBody.querySelector('.message-content');
+      var text = msgContent.innerText || msgContent.textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.classList.add('active');
+        btn.setAttribute('title', '已复制');
+        setTimeout(function() {
+          btn.classList.remove('active');
+          btn.setAttribute('title', '复制');
+        }, 1500);
+      });
+    }
+
+    // 连线小T
+    function connectXiaoT() {
+      alert('正在为您连线小T，请稍候...');
+    }
+
+    // 连线C-ER
+    function connectCER() {
+      alert('正在为您连线C-ER，请稍候...');
+    }
+
+    // 清空聊天
+    function clearChat() {
+      if (confirm('确定要清空当前对话吗？')) {
+        chatHistory = [];
+        interviewMsgCount = 0;
+        waitingPortraitInput = false;
+        portraitDone = false;
+        dataMsgCount = 0;
+        policyMsgCount = 0;
+        insightMsgCount = 0;
+        currentInsightTopic = null;
+        insightGenericIdx = 0;
+        chatSmallTalkCount = 0;
+        document.getElementById('chatMessages').innerHTML = '';
+        
+        // 重新发送欢迎消息（开场白不流式输出）
+        if (currentFunction) {
+          const config = functionConfig[currentFunction];
+          addMessage('assistant', config.welcome, false);
         }
       }
     }
 
-    document.getElementById('userInput').addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-    });
+    // 初始化图表
+    function initCharts() {
+      // 离职趋势图表
+      const trendCtx = document.getElementById('trendChart');
+      if (trendCtx) {
+        new Chart(trendCtx, {
+          type: 'line',
+          data: {
+            labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            datasets: [{
+              label: '离职人数',
+              data: [18, 22, 28, 19, 25, 31, 24, 27, 35, 29, 26, 23],
+              borderColor: '#0052D9',
+              backgroundColor: 'rgba(0, 82, 217, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: '#f0f0f0'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
 
+      // 部门分布图表
+      const deptCtx = document.getElementById('departmentChart');
+      if (deptCtx) {
+        new Chart(deptCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['技术部', '销售部', '市场部', '人事部', '财务部', '其他'],
+            datasets: [{
+              data: [35, 28, 15, 8, 6, 8],
+              backgroundColor: [
+                '#0052D9',
+                '#4787F0',
+                '#7BA7F7',
+                '#A8C1F8',
+                '#D4E3FC',
+                '#ECF2FE'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 20,
+                  usePointStyle: true
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // 初始化
     document.addEventListener('DOMContentLoaded', function() {
-      initMiniChart();
+      // 渲染历史会话列表
+      renderHistoryList();
+
+      // 设置输入框自动调整高度
+      const input = document.getElementById('messageInput');
+      if (input) {
+        input.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+      }
+
+      const welcomeInput = document.getElementById('welcomeInput');
+      if (welcomeInput) {
+        welcomeInput.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = Math.max(160, Math.min(this.scrollHeight, 280)) + 'px';
+        });
+      }
     });
   </script>
 </body>
