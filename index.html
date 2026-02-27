@@ -1666,6 +1666,8 @@
     let portraitDone = false; // 离职画像是否已输出过
     let inJobRecommendContext = false; // 是否处于活水推荐上下文
     let jobFollowupCount = 0; // 活水岗位追问计数
+    let emotionSupportCount = 0; // 情绪安抚互动计数
+    let inEmotionContext = false; // 是否处于情绪安抚上下文
     let historyIdCounter = 100; // 动态历史记录ID计数器
 
     // 功能模块配置
@@ -1818,6 +1820,8 @@
       currentInsightTopic = null;
       insightGenericIdx = 0;
       chatSmallTalkCount = 0;
+      emotionSupportCount = 0;
+      inEmotionContext = false;
       document.getElementById('chatMessages').innerHTML = '';
       
       // 清空欢迎页输入框
@@ -1895,6 +1899,9 @@
       insightMsgCount = 0;
       currentInsightTopic = null;
       insightGenericIdx = 0;
+      chatSmallTalkCount = 0;
+      emotionSupportCount = 0;
+      inEmotionContext = false;
       chatSmallTalkCount = 0;
       document.getElementById('chatMessages').innerHTML = '';
       
@@ -1981,6 +1988,8 @@
       currentInsightTopic = null;
       insightGenericIdx = 0;
       chatSmallTalkCount = 0;
+      emotionSupportCount = 0;
+      inEmotionContext = false;
       document.getElementById('chatMessages').innerHTML = '';
       document.querySelectorAll('.function-card').forEach(card => card.classList.remove('active'));
       showWelcomePage();
@@ -2880,6 +2889,74 @@
     function generateInterviewResponse(message) {
       const msg = message.toLowerCase();
 
+      // 情绪安抚逻辑：识别负面情绪关键词
+      const emotionKeywords = ['pua', 'PUA', '领导pua', '被pua', '烦躁', '烦死了', '烦', '心情不好', '心情差', '压抑', '崩溃', '受不了', '委屈', '不开心', '郁闷', '焦虑', '难过', '痛苦', '绝望', '抑郁', '煎熬', '窒息', '恶心', '讨厌', '气死', '生气', '愤怒', '不公平', '被针对', '被打压', '欺负', '霸凌', '职场霸凌', '冷暴力', '边缘化', '被排挤', '穿小鞋', '甩锅', '背锅', '不想干了', '干不下去', '没意思', '太累了', '身心俱疲', '心累', '想哭', '无语', '服了', '裂开', 'emo', '破防', '麻了', '摆烂'];
+      const isEmotionTrigger = emotionKeywords.some(kw => msg.includes(kw));
+
+      // 进入情绪安抚上下文 或 已在情绪安抚上下文中继续追问
+      if (isEmotionTrigger && !inEmotionContext) {
+        inEmotionContext = true;
+        emotionSupportCount = 1;
+      } else if (inEmotionContext) {
+        emotionSupportCount++;
+      }
+
+      if (inEmotionContext) {
+        // 第1轮：共情倾听 + 情绪确认
+        if (emotionSupportCount === 1) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💛</span> 我听到你了</div>
+  <ul class="portrait-list">
+    <li>谢谢你愿意跟我说这些，能感受到你现在承受了不少压力和委屈。</li>
+    <li>你的感受是完全正当的，任何人处在这样的情境下都会感到不舒服，这不是你的问题。</li>
+    <li>在做任何决定之前，先让自己缓一缓是很重要的。你不需要急着给自己一个答案。</li>
+  </ul>
+</div>
+<div class="portrait-highlight">🤝 你现在最大的困扰是什么？可以跟我多聊聊，不管是工作上的还是情绪上的，我都在这里听你说。</div>`;
+        }
+
+        // 第2轮：进一步安抚 + 实际建议
+        if (emotionSupportCount === 2) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🌟</span> 你并不孤单</div>
+  <ul class="portrait-list">
+    <li>你说的这些我都认真记下了。能把这些感受表达出来，本身就是一种很好的自我觉察。</li>
+    <li>职场中遇到这样的情况确实很消耗人，但请记住——你的价值不会因为别人的不当行为而改变。</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 一些小建议</div>
+  <ul class="portrait-list">
+    <li><b>记录留痕：</b>如果存在不合理的对待，建议保留相关沟通记录和工作证据，必要时可以作为申诉依据</li>
+    <li><b>寻求支持：</b>公司有员工关怀热线（EAP），提供免费、保密的心理咨询服务，你可以随时拨打</li>
+    <li><b>给自己空间：</b>现在最重要的是照顾好自己的状态，不要在情绪最低落的时候做重大决定</li>
+    <li><b>内部通道：</b>如果情况严重，你有权通过HR合规通道或员工投诉机制正式反映问题</li>
+  </ul>
+</div>
+<div class="portrait-highlight">🤗 无论你最终怎么选择，我都支持你。如果你想聊聊接下来的打算，或者看看内部有没有更适合你的机会，我随时都在。</div>`;
+        }
+
+        // 第3轮及以后：兜底话术终止对话
+        inEmotionContext = false; // 重置状态
+        emotionSupportCount = 0;
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💛</span> 温馨提醒</div>
+  <ul class="portrait-list">
+    <li>很高兴你愿意跟我分享这些，希望刚才的交流能让你感觉好一点点。</li>
+    <li>我作为AI助理，能做的陪伴是有限的，但真心希望你能感受到被关心。</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📞</span> 更专业的支持渠道</div>
+  <ul class="portrait-list">
+    <li><b>员工关怀热线（EAP）：</b>400-xxx-xxxx（7×24小时，完全保密）</li>
+    <li><b>HR合规投诉邮箱：</b>compliance@company.com</li>
+    <li><b>HRBP一对一沟通：</b>你可以联系你的HRBP预约一次面对面的交流</li>
+  </ul>
+</div>
+<div class="portrait-highlight">🌈 请记住：你值得被好好对待。照顾好自己，有需要的时候随时回来找我。如果你想聊其他话题，比如 <b>离职画像分析</b> 或 <b>活水岗位推荐</b>，也可以点击左边的功能按钮。</div>`;
+      }
+
       // 活水相关关键词 → 走活水岗位回复
       const huoshuiKeywords = ['活水', '内部转岗', '转岗', '内部机会'];
       const isHuoshuiRelated = huoshuiKeywords.some(kw => msg.includes(kw));
@@ -3610,6 +3687,8 @@
         currentInsightTopic = null;
         insightGenericIdx = 0;
         chatSmallTalkCount = 0;
+        emotionSupportCount = 0;
+        inEmotionContext = false;
         document.getElementById('chatMessages').innerHTML = '';
         
         // 重新发送欢迎消息（开场白不流式输出）
