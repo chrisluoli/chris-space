@@ -1664,6 +1664,8 @@
     let isTyping = false; // 是否正在打字输出
     let waitingPortraitInput = false; // 是否等待离职画像用户输入
     let portraitDone = false; // 离职画像是否已输出过
+    let inJobRecommendContext = false; // 是否处于活水推荐上下文
+    let jobFollowupCount = 0; // 活水岗位追问计数
     let historyIdCounter = 100; // 动态历史记录ID计数器
 
     // 功能模块配置
@@ -2227,12 +2229,8 @@
         return generatePolicyResponse(message);
       }
 
-      // 离职面谈模块：支持岗位追问，超过次数拒绝
+      // 离职面谈模块：除活水关键词外，默认走离职画像逻辑
       if (currentFunction === 'interview') {
-        interviewMsgCount++;
-        if (interviewMsgCount > MAX_FOLLOWUP) {
-          return '回答不了这个问题，你也可以联系<a href="javascript:void(0)" onclick="alert(\'正在唤起企业微信...\')" style="color: var(--td-brand-color); text-decoration: underline; cursor: pointer; font-weight: 500;">活水顾问</a>。';
-        }
         return generateInterviewResponse(message);
       }
 
@@ -2631,11 +2629,38 @@
     }
 
     // 离职面谈智能回复（支持岗位追问）
-    // 离职数据源（基于CSV模板）
+    // 离职数据源（基于CSV模板，含多维画像数据）
     const resignationData = [
-      { name: '张三', empId: 'EMP001', dept: '产品部', level: 'P6', joinDate: '2021-03-15', leaveDate: '2024-01-20', age: 28, gender: '男', reason: '个人发展', performance: 'B+', type: '主动' },
-      { name: '李四', empId: 'EMP002', dept: '研发部', level: 'P7', joinDate: '2020-06-01', leaveDate: '2024-01-15', age: 32, gender: '女', reason: '薪资待遇', performance: 'A', type: '主动' },
-      { name: '王五', empId: 'EMP003', dept: '研发部', level: 'P5', joinDate: '2023-02-10', leaveDate: '2024-02-01', age: 26, gender: '男', reason: '工作压力', performance: 'B', type: '主动' }
+      { name: '张三', empId: 'EMP001', dept: '产品部', level: 'P6', joinDate: '2021-03-15', leaveDate: '2024-01-20', age: 28, gender: '男', reason: '个人发展', performance: 'B+', type: '主动',
+        engagement: 2.8, satisfaction: 2.5, managerFeedback: '工作态度积极但近半年主动性明显下降，对项目分配有不满情绪，多次表达希望参与更核心的产品线',
+        feedback360: '跨部门协作能力强，沟通表达优秀；但近期会议参与度降低，同事反馈其对工作投入度下滑',
+        promotionHistory: '2022年4月 P5→P6晋升成功；2023年10月 P6→P7晋升未通过（差0.2分）',
+        salaryCompetitiveness: '低于市场P6中位数约12%',
+        trainingRecord: '2023年参加2次内部培训，较2022年（5次）明显减少',
+        leavePattern: '2023年Q4请假天数8天，较Q3（2天）显著增加',
+        teamSatisfaction: '直属上级满意度评分3.8/5.0，但\"发展机会\"单项仅2.1/5.0',
+        exitInterview: '面谈中表达对晋升结果不满，认为评审标准不透明；同时收到外部offer，薪资涨幅约35%'
+      },
+      { name: '李四', empId: 'EMP002', dept: '研发部', level: 'P7', joinDate: '2020-06-01', leaveDate: '2024-01-15', age: 32, gender: '女', reason: '薪资待遇', performance: 'A', type: '主动',
+        engagement: 3.2, satisfaction: 2.3, managerFeedback: '核心技术骨干，代码质量和架构能力出色；但从核心项目调至维护型项目后情绪明显低落，多次提出调回申请未获批准',
+        feedback360: '技术能力获全组最高评分（4.8/5.0），导师型角色，带教3名新人；近期跨组协作意愿降低，拒绝了2次技术分享邀请',
+        promotionHistory: '2021年10月 P6→P7晋升成功；2023年4月 P7→P8申请被延期至下一窗口，原因为\"项目影响力不足\"',
+        salaryCompetitiveness: '低于市场P7中位数约18%，同级别同事中薪资排名后25%',
+        trainingRecord: '2023年完成高级架构师认证，参加3次外部技术大会',
+        leavePattern: '2023年Q4请假天数5天，含2天面试假（推测）',
+        teamSatisfaction: '直属上级满意度评分3.2/5.0，\"薪酬公平性\"评分仅1.8/5.0',
+        exitInterview: '面谈中明确表示薪资与市场严重脱节是首要原因；其次是从核心项目调离让其感到价值被否定；已接受外部某大厂P8 offer，薪资涨幅约45%'
+      },
+      { name: '王五', empId: 'EMP003', dept: '研发部', level: 'P5', joinDate: '2023-02-10', leaveDate: '2024-02-01', age: 26, gender: '男', reason: '工作压力', performance: 'B', type: '主动',
+        engagement: 2.4, satisfaction: 2.0, managerFeedback: '学习能力强但抗压能力偏弱，入职后一直负责基础模块维护，未获得核心项目锻炼机会；加班较多时情绪波动明显',
+        feedback360: '基础技术扎实，代码规范性好；但主动沟通较少，遇到问题倾向于自己消化而非求助，团队融入度一般',
+        promotionHistory: '2023年入职，P5级别，尚未经历晋升窗口',
+        salaryCompetitiveness: '与市场P5中位数持平',
+        trainingRecord: '2023年参加4次内部技术培训，完成新人成长计划',
+        leavePattern: '2023年12月请假天数6天，含3天病假（心理压力相关）',
+        teamSatisfaction: '直属上级满意度评分3.5/5.0，\"工作量合理性\"评分仅1.9/5.0',
+        exitInterview: '面谈中反映长期加班导致身心疲惫，且工作内容单一缺乏成就感；希望找到节奏更合理、能接触新技术的团队'
+      }
     ];
 
     let dataMsgCount = 0; // 离职数据追问计数
@@ -2643,7 +2668,7 @@
     // 离职数据智能回答
     function generateDataResponse(message) {
       dataMsgCount++;
-      if (dataMsgCount > 3) {
+      if (dataMsgCount > 8) {
         return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
       }
 
@@ -2653,6 +2678,86 @@
       const personMatch = resignationData.find(p => msg.includes(p.name));
       if (personMatch) {
         const tenure = ((new Date(personMatch.leaveDate) - new Date(personMatch.joinDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1);
+
+        // 判断是否在深度挖掘离职原因
+        const deepAnalysisKeywords = ['原因', '为什么', '分析', '挖掘', '深入', '详细', '根因', '真实原因', '背后', '底层', '洞察', '诊断', '敬业度', '满意度', '反馈', '360', '晋升', '上级', '画像'];
+        const isDeepAnalysis = deepAnalysisKeywords.some(kw => msg.includes(kw));
+
+        if (isDeepAnalysis) {
+          // 深度离职原因挖掘 —— 结合多维数据
+          const engagementLevel = personMatch.engagement <= 2.5 ? '严重偏低' : (personMatch.engagement <= 3.0 ? '偏低' : '中等');
+          const satisfactionLevel = personMatch.satisfaction <= 2.0 ? '严重偏低' : (personMatch.satisfaction <= 2.5 ? '偏低' : '中等');
+
+          return `<div class="portrait-intro">以下是${personMatch.name}离职原因的多维度深度分析，综合了敬业度调研、满意度数据、上级反馈、360评估、晋升记录等多个数据源：</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👤</span> 基本信息</div>
+  <ul class="portrait-list">
+    <li><b>姓名：</b>${personMatch.name}（${personMatch.empId}）｜<b>部门：</b>${personMatch.dept}｜<b>职级：</b>${personMatch.level}</li>
+    <li><b>在职时长：</b>${tenure} 年（${personMatch.joinDate} ~ ${personMatch.leaveDate}）</li>
+    <li><b>绩效等级：</b>${personMatch.performance}｜<b>离职原因（表面）：</b>${personMatch.reason}</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 敬业度 & 满意度数据</div>
+  <ul class="portrait-list">
+    <li><b>敬业度评分：</b>${personMatch.engagement}/5.0 — <span style="color:${personMatch.engagement <= 2.5 ? '#D54941' : '#E37318'};font-weight:600;">${engagementLevel}</span>（部门均值 3.6，公司均值 3.4）</li>
+    <li><b>满意度评分：</b>${personMatch.satisfaction}/5.0 — <span style="color:${personMatch.satisfaction <= 2.0 ? '#D54941' : '#E37318'};font-weight:600;">${satisfactionLevel}</span>（部门均值 3.3，公司均值 3.2）</li>
+    <li><b>团队满意度细项：</b>${personMatch.teamSatisfaction}</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👔</span> 上级反馈</div>
+  <ul class="portrait-list">
+    <li>${personMatch.managerFeedback}</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔄</span> 360度反馈</div>
+  <ul class="portrait-list">
+    <li>${personMatch.feedback360}</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📈</span> 职级晋升情况</div>
+  <ul class="portrait-list">
+    <li><b>晋升记录：</b>${personMatch.promotionHistory}</li>
+    <li><b>薪酬竞争力：</b>${personMatch.salaryCompetitiveness}</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 行为信号追溯</div>
+  <ul class="portrait-list">
+    <li><b>培训参与：</b>${personMatch.trainingRecord}</li>
+    <li><b>请假趋势：</b>${personMatch.leavePattern}</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🗣️</span> 离职面谈记录</div>
+  <ul class="portrait-list">
+    <li>${personMatch.exitInterview}</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 根因诊断</div>
+  <ul class="portrait-list">
+    <li><b>表面原因：</b>${personMatch.reason}</li>
+    <li><b>深层原因：</b>${personMatch.reason === '个人发展' ? '晋升受阻（P6→P7未通过）+ 未获得核心产品线参与机会 → 成长预期落空，叠加外部高薪offer形成拉力' : personMatch.reason === '薪资待遇' ? '薪酬长期低于市场水平 + 核心项目调离导致价值感丧失 → 经济回报与个人贡献严重不匹配' : '长期高强度加班 + 工作内容单一（基础模块维护）→ 身心疲惫且缺乏成就感，新人成长路径不清晰'}</li>
+    <li><b>可预防性评估：</b>${personMatch.reason === '个人发展' ? '<span style="color:#E37318;font-weight:600;">中等</span> — 若在晋升窗口前给予更多核心项目机会和透明的评审反馈，有较大概率保留' : personMatch.reason === '薪资待遇' ? '<span style="color:#D54941;font-weight:600;">较高</span> — 薪酬对标和项目调整若在6个月前介入，保留概率可达60%以上' : '<span style="color:#E37318;font-weight:600;">中等</span> — 若能在入职早期提供轮岗机会和合理的工作量管理，可有效降低流失风险'}</li>
+  </ul>
+</div>
+
+<div class="portrait-highlight">📌 建议后续行动：${personMatch.reason === '个人发展' ? '1）优化晋升评审透明度，提前与候选人沟通差距和改进方向；2）建立\"核心项目轮岗\"机制，让高潜员工有更多展示机会' : personMatch.reason === '薪资待遇' ? '1）启动P7+技术岗薪酬市场对标专项调整；2）避免将核心骨干调离关键项目，调整前需评估人才保留风险' : '1）新人入职6个月后安排一次岗位适配度评估和轮岗意向沟通；2）加强团队工作量管理，建立\"加班预警\"机制'}</div>`;
+        }
+
+        // 非深度分析 → 返回基本信息 + 简要画像
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">👤</span> ${personMatch.name}的离职信息</div>
   <ul class="portrait-list">
@@ -2666,7 +2771,15 @@
     <li><b>离职类型：</b>${personMatch.type}离职</li>
   </ul>
 </div>
-<div class="portrait-highlight">💡 ${personMatch.name}因"${personMatch.reason}"主动离职，绩效为${personMatch.performance}，在职${tenure}年。${personMatch.performance >= 'A' ? '属于高绩效人才流失，建议重点复盘。' : '建议关注该岗位后续补充情况。'}</div>`;
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 快速画像</div>
+  <ul class="portrait-list">
+    <li><b>敬业度：</b>${personMatch.engagement}/5.0｜<b>满意度：</b>${personMatch.satisfaction}/5.0</li>
+    <li><b>上级评价：</b>${personMatch.managerFeedback.substring(0, 40)}...</li>
+    <li><b>晋升情况：</b>${personMatch.promotionHistory}</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 ${personMatch.name}因"${personMatch.reason}"主动离职，绩效为${personMatch.performance}，在职${tenure}年。${personMatch.performance >= 'A' ? '属于高绩效人才流失，建议重点复盘。' : '建议关注该岗位后续补充情况。'}如需深入分析离职根因，可以问我"${personMatch.name}离职的深层原因是什么？"</div>`;
       }
 
       // 部门相关
@@ -2763,45 +2876,126 @@
 <div class="portrait-highlight">💡 你可以试着这样问我：<br>• "张三的离职情况是什么？"<br>• "各部门离职分布怎样？"<br>• "离职原因有哪些？"<br>• "高绩效员工流失情况如何？"</div>`;
     }
 
-    // 离职面谈智能回复（支持岗位追问）
+    // 离职面谈智能回复（除活水外，默认走离职画像分析）
     function generateInterviewResponse(message) {
       const msg = message.toLowerCase();
 
-      // 岗位相关追问
-      const jobKeywords = ['产品经理', '数据分析', '运营', '项目管理', '策略分析', 'AI产品', '岗位', '推荐', '匹配', '活水', '详情', '薪资', '薪酬', '待遇', '工作内容', '职责', '要求', '团队', '负责人', '部门'];
-      const isJobRelated = jobKeywords.some(kw => msg.includes(kw));
+      // 活水相关关键词 → 走活水岗位回复
+      const huoshuiKeywords = ['活水', '内部转岗', '转岗', '内部机会'];
+      const isHuoshuiRelated = huoshuiKeywords.some(kw => msg.includes(kw));
 
-      if (isJobRelated) {
+      if (isHuoshuiRelated) {
+        inJobRecommendContext = true;
+        jobFollowupCount = 0;
         const jobResponses = [
           '这个岗位目前团队规模在15人左右，业务发展势头不错，负责人也很重视人才培养。如果你感兴趣，我可以帮你预约一次和负责人的非正式沟通，先了解下团队氛围和具体方向，你觉得怎么样？',
-          '这个岗位的核心职责是推动业务增长策略的落地，对数据分析和跨部门协作能力要求较高，和你目前的技能储备非常契合。薪酬方面会根据你的职级和经验综合评定，整体竞争力不错的。',
-          '好问题！这个团队的工作节奏相对合理，加班不算多，团队氛围偏扁平化。负责人风格是给空间、重结果。如果你看重工作生活平衡，这个岗位会是不错的选择。',
-          '根据你的经历来看，这个岗位的匹配度确实很高。建议你可以先看看岗位详情，如果有兴趣我们可以安排一次线下交流，让你更全面地了解这个机会。',
-          '这个部门去年业绩增长了30%+，今年还在扩招，发展空间很大。而且部门内部有完善的晋升通道，从专家到管理双通道都有清晰的路径。'
+          '根据你的经历来看，内部有几个岗位的匹配度确实很高。建议你可以点击下方的「活水推荐」查看AI为你匹配的岗位详情，如果有兴趣我们可以安排一次线下交流。',
+          '好的，我来帮你看看内部有哪些合适的机会。你可以点击下方的「活水推荐」按钮，我会根据你的技能和经验智能匹配最适合的岗位。'
         ];
         return jobResponses[Math.floor(Math.random() * jobResponses.length)];
       }
 
-      // 离职原因相关
-      const reasonKeywords = ['原因', '为什么', '离职', '不满', '压力', '发展', '薪资低', '加班', '不开心', '想走'];
-      const isReasonRelated = reasonKeywords.some(kw => msg.includes(kw));
-
-      if (isReasonRelated) {
-        const reasonResponses = [
-          '谢谢你的坦诚分享。你提到的这些问题我都记录下来了。其实很多同事都有类似的感受，公司也在积极改善中。在做最终决定之前，要不要先看看内部有没有更适合你的机会？',
-          '我理解你的感受，这些确实是影响工作体验的重要因素。不过在正式离职之前，我建议可以先考虑下内部转岗的可能性，换个环境也许会有不一样的体验。要不要我帮你看看活水岗位？',
-          '你说的这些情况我都理解。每个人对职业发展的期望不同，关键是找到真正适合自己的方向。如果你愿意，我可以帮你做一个更全面的职业分析，看看内部有没有更匹配的发展路径。'
-        ];
-        return reasonResponses[Math.floor(Math.random() * reasonResponses.length)];
+      // 处于活水推荐上下文时，针对岗位追问生成详细回复
+      if (inJobRecommendContext) {
+        jobFollowupCount++;
+        return generateJobFollowupResponse(message, jobFollowupCount);
       }
 
-      // 通用回复
-      const generalResponses = [
-        '我理解你的想法。作为离职小助理，我的目标是帮你找到最适合的选择。你可以继续跟我聊聊你的想法，或者点击下方的「活水推荐」看看有没有感兴趣的内部岗位。',
-        '好的，我记下了。如果你想了解更多关于内部转岗的信息，随时可以问我。也可以直接点击「活水推荐」查看AI为你匹配的岗位。',
-        '感谢你的分享！不管最终决定如何，我都希望能帮到你。你还有什么想了解的吗？比如活水岗位、离职流程，或者其他任何问题都可以问我。'
-      ];
-      return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+      // 其他所有情况 → 走离职画像分析逻辑
+      // 尝试提取人名
+      const nameMatch = message.match(/[\u4e00-\u9fa5]{2,3}(?=的|过去|是否|绩效|情况|表现|能力|最近|近期|怎么|咋|如何|什么|啥)/);
+      const name = nameMatch ? nameMatch[0] : null;
+
+      // 如果能提取到人名，直接生成该员工的画像
+      if (name) {
+        portraitDone = true;
+        return generatePortraitResponse(message);
+      }
+
+      // 没有明确人名时，基于用户问题生成通用画像分析
+      interviewMsgCount++;
+
+      // 第一次提问：给出综合画像分析引导 + 近期离职风险员工画像
+      if (interviewMsgCount === 1) {
+        return `<div class="portrait-intro">根据你的问题，我结合系统数据为你做了一份综合分析，以下是近期重点关注的离职面谈对象画像：</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👤</span> 重点关注员工画像</div>
+  <ul class="portrait-list">
+    <li><b>张三（产品部·P6）：</b>司龄2年3个月，近两个考核周期绩效从"优秀"降至"良好"，近期参与度明显下降，上级反馈主动性不足</li>
+    <li><b>李四（研发部·P7）：</b>司龄4年1个月，核心技术骨干，近期从核心项目调至维护型项目，360反馈显示工作投入度下降</li>
+    <li><b>王五（研发部·P5）：</b>司龄1年8个月，入职后一直在基础模块，多次表达希望参与核心项目，未得到调整</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 风险信号分析</div>
+  <ul class="portrait-list">
+    <li><b>绩效下滑：</b>3人中有2人近期绩效出现下滑，与项目调整、成就感降低高度相关</li>
+    <li><b>敬业度预警：</b>李四和张三在最近一次敬业度调研中评分均低于3.0，属于高风险区间</li>
+    <li><b>行为信号：</b>会议发言减少、跨部门协作意愿降低、请假频率增加</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 面谈建议</div>
+  <ol class="portrait-suggestion-list">
+    <li>优先约谈李四——技术骨干流失影响最大，且从核心项目调离可能是关键诱因</li>
+    <li>与张三面谈时重点了解其对当前工作内容和发展方向的期望</li>
+    <li>王五属于早期干预阶段，可通过项目调配和成长规划进行保留</li>
+  </ol>
+</div>
+
+<div class="portrait-highlight">📌 你可以告诉我想深入了解哪位员工，比如"帮我分析李四的详细情况"，我会为你生成更完整的个人画像报告。</div>`;
+      }
+
+      // 第二次及以后提问：根据问题内容生成针对性画像分析
+      if (interviewMsgCount === 2) {
+        return `<div class="portrait-intro">好的，我进一步为你分析了这个问题，以下是结合面谈数据和员工档案的深度洞察：</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 数据洞察</div>
+  <ul class="portrait-list">
+    <li><b>离职意愿评估：</b>综合行为数据、敬业度评分和绩效趋势，当前3名重点关注员工中，李四离职概率最高（约78%），张三次之（约55%）</li>
+    <li><b>核心矛盾点：</b>薪酬竞争力不足（外部offer平均高出25%）、职业发展通道不清晰、从核心战场调离后价值感降低</li>
+    <li><b>最佳干预窗口：</b>通常员工从产生离职想法到正式提出有2-3个月的窗口期，李四预计已进入决策确认期</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 保留策略建议</div>
+  <ul class="portrait-list">
+    <li><b>短期措施：</b>为李四安排与CTO的1v1沟通，明确其在下一阶段核心项目中的角色定位</li>
+    <li><b>中期规划：</b>推动薪酬调整方案，重点覆盖P6-P7技术岗的市场对标差距</li>
+    <li><b>长期机制：</b>建立"绩效下滑+敬业度预警"双因子离职风险模型，实现早期自动预警</li>
+  </ul>
+</div>
+
+<div class="portrait-highlight">💡 如果你需要更详细的某位员工画像报告，可以直接告诉我名字，比如"详细分析李四"，我会生成包含完整绩效、项目、360反馈的全面画像。</div>`;
+      }
+
+      // 第三次及以后
+      return `<div class="portrait-intro">基于你的持续关注，我补充了更多维度的分析数据：</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📈</span> 趋势对比分析</div>
+  <ul class="portrait-list">
+    <li><b>同比数据：</b>本季度面谈对象中高绩效员工占比22%，较去年同期上升8个百分点，高绩效流失加剧</li>
+    <li><b>部门对比：</b>研发部离职面谈量连续两个季度领先，占总面谈量的45%</li>
+    <li><b>司龄分布：</b>2-3年司龄段员工占面谈总量的60%，是最需要关注的群体</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔗</span> 关联分析</div>
+  <ul class="portrait-list">
+    <li>离职面谈中提到"发展空间"的员工，82%同时对薪资表示不满——双因素叠加是流失核心驱动力</li>
+    <li>曾参与核心项目后被调至非核心项目的员工，6个月内离职概率达67%</li>
+    <li>直属上级满意度评分低于3.0的团队，员工离职面谈转化率高出平均值2.4倍</li>
+  </ul>
+</div>
+
+<div class="portrait-highlight">📌 你还可以继续问我任何关于离职面谈的问题，我会持续提供数据支撑和分析建议。也可以指定某位员工查看其完整画像。</div>`;
     }
 
     // 离职画像引导
@@ -2874,11 +3068,199 @@
 </div>`;
     }
 
+    // 活水岗位追问智能回复
+    function generateJobFollowupResponse(message, count) {
+      const msg = message.toLowerCase();
+
+      // 识别用户提到的具体岗位
+      const jobMap = {
+        '产品经理': { name: '高级产品经理', dept: '战略产品部', leader: '李明', match: '97%' },
+        '数据分析': { name: '数据分析专家', dept: '数据智能中心', leader: '王芳', match: '93%' },
+        '运营': { name: '用户增长运营负责人', dept: '平台运营部', leader: '赵强', match: '89%' },
+        '项目管理': { name: '项目管理专家', dept: '企业发展部', leader: '张婷', match: '85%' },
+        '策略': { name: '商业化策略分析师', dept: '商业化部', leader: '陈浩', match: '82%' },
+        'ai': { name: 'AI产品运营经理', dept: 'AI应用事业部', leader: '刘洋', match: '78%' },
+        '商业化': { name: '商业化策略分析师', dept: '商业化部', leader: '陈浩', match: '82%' }
+      };
+
+      // 匹配用户提到的岗位
+      let matchedJob = null;
+      for (const [keyword, job] of Object.entries(jobMap)) {
+        if (msg.includes(keyword)) {
+          matchedJob = job;
+          break;
+        }
+      }
+
+      // 薪资/薪酬相关
+      if (msg.includes('薪资') || msg.includes('薪酬') || msg.includes('待遇') || msg.includes('工资') || msg.includes('收入') || msg.includes('多少钱')) {
+        const jobName = matchedJob ? matchedJob.name : '高级产品经理';
+        const jobDept = matchedJob ? matchedJob.dept : '战略产品部';
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💰</span> ${jobName}（${jobDept}）薪酬信息</div>
+  <ul class="portrait-list">
+    <li><b>薪资范围：</b>该岗位对标职级为 P7-P8，年薪区间约 45W-65W（含年终奖），具体根据你的职级和经验综合评定</li>
+    <li><b>年终奖系数：</b>部门近两年平均年终奖系数为 3.5-5 个月，优秀绩效可达 6 个月以上</li>
+    <li><b>股票期权：</b>P7 及以上有机会获得年度股票授予，该部门去年获授比例约 65%</li>
+    <li><b>其他福利：</b>额外的住房补贴、弹性工作制度、年度体检升级套餐、培训预算等</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 整体薪酬竞争力在内部属于中上水平。如果你目前的薪资期望有明确数字，我可以帮你做一个更精准的对比分析。</div>`;
+      }
+
+      // 团队/氛围/加班/工作节奏
+      if (msg.includes('团队') || msg.includes('氛围') || msg.includes('加班') || msg.includes('工作节奏') || msg.includes('工作强度') || msg.includes('文化')) {
+        const jobName = matchedJob ? matchedJob.name : '高级产品经理';
+        const jobDept = matchedJob ? matchedJob.dept : '战略产品部';
+        const jobLeader = matchedJob ? matchedJob.leader : '李明';
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👥</span> ${jobDept}团队情况</div>
+  <ul class="portrait-list">
+    <li><b>团队规模：</b>目前 18 人，其中产品 5 人、研发 8 人、设计 2 人、数据 3 人，今年计划扩招至 25 人</li>
+    <li><b>负责人风格：</b>${jobLeader}，管理风格偏扁平化，注重结果导向，给团队成员较大的自主空间，定期 1v1 关注个人发展</li>
+    <li><b>工作节奏：</b>采用双周迭代模式，核心工作时间 10:00-19:00，非紧急项目期间基本不加班，团队平均每周加班时长约 3 小时</li>
+    <li><b>团队氛围：</b>最近一次团队满意度调研评分 4.3/5.0，"同事关系"和"上级支持"两项得分最高</li>
+    <li><b>成长空间：</b>部门内部有明确的专家和管理双通道晋升路径，去年团队晋升率 28%</li>
+  </ul>
+</div>
+<div class="portrait-highlight">📌 整体来看，这个团队的工作生活平衡做得不错，适合追求稳定发展和成长空间的同学。要不要我帮你预约一次和${jobLeader}的非正式交流？</div>`;
+      }
+
+      // 工作内容/职责/做什么
+      if (msg.includes('工作内容') || msg.includes('职责') || msg.includes('做什么') || msg.includes('负责什么') || msg.includes('具体做') || msg.includes('方向')) {
+        const jobName = matchedJob ? matchedJob.name : '高级产品经理';
+        const jobDept = matchedJob ? matchedJob.dept : '战略产品部';
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> ${jobName}（${jobDept}）岗位职责</div>
+  <ul class="portrait-list">
+    <li><b>核心职责：</b>负责公司核心产品的战略规划与落地执行，主导用户增长和商业化两大方向的产品设计</li>
+    <li><b>业务范围：</b>覆盖 C 端用户产品和 B 端商业化产品，当前重点项目包括"智能推荐系统2.0"和"会员增值体系"</li>
+    <li><b>日常工作：</b>需求调研与分析（20%）、产品方案设计（30%）、跨部门协调推进（25%）、数据分析与迭代（25%）</li>
+    <li><b>汇报对象：</b>直接向部门负责人汇报，每两周一次业务 review</li>
+    <li><b>协作团队：</b>日常需与研发、设计、数据、运营团队紧密配合，跨部门项目约占工作量的 40%</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 岗位亮点</div>
+  <ul class="portrait-list">
+    <li>参与公司级战略项目，直接影响核心业务指标</li>
+    <li>有机会从 0 到 1 打造新产品线，创新空间大</li>
+    <li>团队技术氛围好，能接触到 AI、大数据等前沿技术的产品化落地</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 这个岗位很适合有全局视野、喜欢推动复杂项目的产品人。和你过去在用户增长方面的经验非常匹配，要了解更多细节吗？</div>`;
+      }
+
+      // 晋升/发展/前景
+      if (msg.includes('晋升') || msg.includes('发展') || msg.includes('前景') || msg.includes('成长') || msg.includes('上升') || msg.includes('空间')) {
+        const jobDept = matchedJob ? matchedJob.dept : '战略产品部';
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📈</span> ${jobDept}职业发展路径</div>
+  <ul class="portrait-list">
+    <li><b>专家通道：</b>P6（高级）→ P7（资深）→ P8（专家）→ P9（高级专家），该部门 P7 以上占比 35%，晋升通道畅通</li>
+    <li><b>管理通道：</b>可竞聘小组负责人（M1）→ 团队负责人（M2）→ 部门总监（M3），去年有 2 人成功转管理通道</li>
+    <li><b>晋升周期：</b>每年 4 月和 10 月两次晋升窗口，该部门去年整体晋升率 28%，高于公司平均的 22%</li>
+    <li><b>培训资源：</b>年度培训预算人均 1.5W，支持外部课程、行业会议、内部导师制等多种成长方式</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⭐</span> 发展优势</div>
+  <ul class="portrait-list">
+    <li>部门处于业务上升期，新项目多、机会多，快速出成果的概率高</li>
+    <li>负责人重视人才培养，每季度会和核心成员做职业规划 1v1</li>
+    <li>内部轮岗机制灵活，入职满 1 年后可申请跨组或跨方向发展</li>
+  </ul>
+</div>
+<div class="portrait-highlight">🎯 从职业发展角度看，这个部门是目前内部公认的"成长快车道"之一。你最看重发展中的哪个方面？我可以帮你做更有针对性的分析。</div>`;
+      }
+
+      // 要求/条件/能力/匹配
+      if (msg.includes('要求') || msg.includes('条件') || msg.includes('能力') || msg.includes('匹配') || msg.includes('适合') || msg.includes('胜任')) {
+        const jobName = matchedJob ? matchedJob.name : '高级产品经理';
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">✅</span> ${jobName}岗位要求与你的匹配分析</div>
+  <ul class="portrait-list">
+    <li><b>核心能力要求：</b>3年以上互联网产品经验、数据驱动的产品思维、跨部门协作能力 → <span style="color:#0052D9;font-weight:600;">✓ 你的经历完全符合</span></li>
+    <li><b>行业知识：</b>熟悉用户增长或商业化领域优先 → <span style="color:#0052D9;font-weight:600;">✓ 你在用户增长方面有丰富经验</span></li>
+    <li><b>技术理解：</b>能与研发团队有效沟通，理解技术方案的可行性 → <span style="color:#0052D9;font-weight:600;">✓ 你过去主导过多个跨部门技术项目</span></li>
+    <li><b>管理经验：</b>有小团队管理经验者优先（非必须） → <span style="color:#0052D9;font-weight:600;">✓ 你有带领5人小组的项目管理经验</span></li>
+    <li><b>学历要求：</b>本科及以上 → <span style="color:#0052D9;font-weight:600;">✓ 符合</span></li>
+  </ul>
+</div>
+<div class="portrait-highlight">🎯 综合评估，你的经验和能力与该岗位的匹配度非常高。如果你有意向，建议尽快安排一次和负责人的沟通，了解更多实际细节。</div>`;
+      }
+
+      // 面试/流程/怎么申请
+      if (msg.includes('面试') || msg.includes('流程') || msg.includes('申请') || msg.includes('怎么转') || msg.includes('如何申请')) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📝</span> 活水转岗流程说明</div>
+  <ul class="portrait-list">
+    <li><b>Step 1 - 意向沟通：</b>我可以帮你预约一次和目标岗位负责人的非正式沟通（约30分钟），双方先了解匹配度</li>
+    <li><b>Step 2 - 正式申请：</b>沟通满意后，在内部活水平台提交转岗申请，填写意向岗位和个人简历</li>
+    <li><b>Step 3 - 面试评估：</b>目标部门安排 1-2 轮面试（通常为业务面 + 总监面），周期约 1-2 周</li>
+    <li><b>Step 4 - 审批确认：</b>面试通过后，由双方部门负责人和 HRBP 确认转岗方案，包括职级、薪酬等</li>
+    <li><b>Step 5 - 交接到岗：</b>原部门完成工作交接（通常 2-4 周），正式到新岗位报到</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 温馨提示</div>
+  <ul class="portrait-list">
+    <li>活水转岗不影响原有的司龄、年假和福利权益</li>
+    <li>在职满 12 个月即可申请活水，你的司龄完全符合条件</li>
+    <li>全程保密，在正式确认转岗前，不会通知你的现任上级</li>
+  </ul>
+</div>
+<div class="portrait-highlight">📌 如果你决定了感兴趣的岗位，我可以立刻帮你预约第一步的意向沟通，整个过程会非常顺畅。</div>`;
+      }
+
+      // 通用岗位追问（对比/推荐/选哪个等）
+      if (matchedJob) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> ${matchedJob.name}（${matchedJob.dept}）详细分析</div>
+  <ul class="portrait-list">
+    <li><b>匹配度：</b>${matchedJob.match}，在所有推荐岗位中排名靠前</li>
+    <li><b>部门负责人：</b>${matchedJob.leader}，管理风格务实、重视团队成员的发展和成长</li>
+    <li><b>团队现状：</b>目前处于业务扩张期，团队规模在快速增长中，加入后能获得较多发展机会</li>
+    <li><b>业务前景：</b>该部门被列为公司今年重点投入方向之一，资源充足、战略优先级高</li>
+    <li><b>工作氛围：</b>团队年龄结构年轻化，沟通效率高，鼓励创新和试错</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 你还想了解这个岗位的哪些方面？比如薪资待遇、晋升空间、工作内容、团队氛围等，我都可以帮你详细分析。</div>`;
+      }
+
+      // 兜底：没匹配到具体方向的追问
+      const generalJobResponses = [
+        `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 岗位综合对比分析</div>
+  <ul class="portrait-list">
+    <li><b>最佳匹配：</b>高级产品经理（战略产品部）— 匹配度 97%，与你的用户增长经验高度吻合，战略重要性最高</li>
+    <li><b>成长最快：</b>数据分析专家（数据智能中心）— 匹配度 93%，部门处于快速上升期，晋升机会多</li>
+    <li><b>平衡最佳：</b>项目管理专家（企业发展部）— 匹配度 85%，工作节奏合理，适合追求工作生活平衡</li>
+    <li><b>前景最好：</b>AI产品运营经理（AI应用事业部）— 匹配度 78%，AI赛道长期前景广阔，但需要一定学习成本</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 建议你优先考虑排名前两位的岗位。你可以告诉我你最关心哪个方面（薪资、发展、工作内容、团队氛围等），我帮你做更有针对性的分析。</div>`,
+        `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 个性化推荐建议</div>
+  <ul class="portrait-list">
+    <li><b>如果你更看重薪酬：</b>高级产品经理（战略产品部）薪资区间最高，年终奖系数也领先</li>
+    <li><b>如果你更看重成长：</b>数据分析专家（数据智能中心）晋升通道最清晰，部门晋升率高出平均 8%</li>
+    <li><b>如果你更看重平衡：</b>用户增长运营负责人（平台运营部）工作节奏最合理，团队满意度评分最高</li>
+    <li><b>如果你想尝试新方向：</b>AI产品运营经理（AI应用事业部）是全新赛道，长期发展潜力大</li>
+  </ul>
+</div>
+<div class="portrait-highlight">📌 你最看重哪个方面？告诉我，我可以帮你做更深入的分析和建议，也可以帮你预约与岗位负责人的沟通。</div>`
+      ];
+      return generalJobResponses[Math.floor(Math.random() * generalJobResponses.length)];
+    }
+
     // 活水推荐
     function showJobRecommend() {
       if (isTyping) return;
       // 添加用户消息
       addMessage('user', '请帮我推荐适合的活水岗位');
+      inJobRecommendContext = true;
+      jobFollowupCount = 0;
 
       // 模拟AI思考后返回推荐结果
       setTimeout(() => {
