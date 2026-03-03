@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>离职AI助理</title>
+  <title>离职小助理</title>
   <!-- TDesign CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tdesign-web-components/dist/tdesign.css">
   <!-- TDesign Icons -->
@@ -1154,6 +1154,16 @@
       line-height: 1.5;
     }
 
+    .huoshui-advisor-link {
+      color: #0052D9;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .huoshui-advisor-link:hover {
+      color: #003DA5;
+    }
+
     /* 离职画像结构化样式 */
     .portrait-section {
       margin-bottom: 16px;
@@ -1845,7 +1855,7 @@
       <div class="sidebar-header">
         <div class="user-avatar">HR</div>
         <div class="user-info">
-          <h3>离职AI助理</h3>
+          <h3>离职小助理</h3>
           <p>你的离职AI助手</p>
         </div>
         <div class="wecom-btn" onclick="openWeCom()" title="企业微信">企微版</div>
@@ -1925,7 +1935,7 @@
       <!-- 欢迎页面 -->
       <div class="welcome-page" id="welcomePage">
         <div class="welcome-container">
-          <h1 class="welcome-greeting">你好，欢迎使用离职AI助理</h1>
+          <h1 class="welcome-greeting">你好，欢迎使用离职小助理</h1>
           
           <!-- 输入框 -->
           <div class="welcome-input-wrapper">
@@ -1946,8 +1956,7 @@
                   <div class="skill-item" onclick="useSkill('interview','showPortraitGuide')"><span class="skill-item-icon">👤</span>离职画像</div>
                   <div class="skill-item" onclick="useSkill('data','showDataWidetable')"><span class="skill-item-icon">📋</span>宽表问数</div>
                   <div class="skill-item" onclick="useSkill('data','showDataInsightReports')"><span class="skill-item-icon">🔍</span>洞察报告</div>
-                  <div class="skill-item" onclick="useSkill('policy','connectXiaoT')"><span class="skill-item-icon">🤖</span>连线小T</div>
-                  <div class="skill-item" onclick="useSkill('policy','connectCER')"><span class="skill-item-icon">👩‍💼</span>连线C-ER</div>
+                  <div class="skill-item" onclick="useSkill('policy','transferToHuman')"><span class="skill-item-icon">👨‍💼</span>转人工</div>
                 </div>
               </div>
               <button class="send-btn-welcome" onclick="sendWelcomeMessage()">
@@ -1970,13 +1979,6 @@
                 </div>
               </div>
 
-              <div class="guide-question" onclick="askQuickQuestion('policy', '离职后社保和公积金怎么转移？')">
-                <div class="question-icon">📋</div>
-                <div class="question-content">
-                  <div class="question-text">离职后社保和公积金怎么转移？</div>
-                  <div class="question-desc">离职知识 · 社保公积金</div>
-                </div>
-              </div>
               <div class="guide-question" onclick="askQuickQuestion('data', '高绩效员工的离职占比是多少？')">
                 <div class="question-icon">📈</div>
                 <div class="question-content">
@@ -1991,11 +1993,11 @@
                   <div class="question-desc">离职数据 · 薪酬分析</div>
                 </div>
               </div>
-              <div class="guide-question" onclick="askQuickQuestion('policy', '竞业限制协议有哪些规定？')">
-                <div class="question-icon">⚖️</div>
+              <div class="guide-question" onclick="askQuickQuestion('policy', '离职赔偿金怎么计算？N、N+1、2N分别适用什么场景？')">
+                <div class="question-icon">💰</div>
                 <div class="question-content">
-                  <div class="question-text">竞业限制协议有哪些规定？</div>
-                  <div class="question-desc">离职知识 · 合规管理</div>
+                  <div class="question-text">离职赔偿金 N、N+1、2N 的区别</div>
+                  <div class="question-desc">离职知识 · 经济补偿</div>
                 </div>
               </div>
               <div class="guide-question" onclick="askQuickQuestion('data', '入职不到一年就离职的员工有哪些共同特征？')">
@@ -2003,6 +2005,13 @@
                 <div class="question-content">
                   <div class="question-text">入职不到一年就离职的员工有哪些共同特征？</div>
                   <div class="question-desc">离职数据 · 趋势洞察</div>
+                </div>
+              </div>
+              <div class="guide-question" onclick="askQuickQuestion('policy', '竞业限制协议有哪些规定？补偿金标准是多少？')">
+                <div class="question-icon">⚖️</div>
+                <div class="question-content">
+                  <div class="question-text">竞业限制协议有哪些规定？</div>
+                  <div class="question-desc">离职知识 · 合规管理</div>
                 </div>
               </div>
             </div>
@@ -2014,7 +2023,7 @@
       <div class="chat-interface" id="chatInterface">
         <div class="chat-header">
           <div class="chat-title-area">
-            <span class="chat-title" id="chatTitle">离职AI助理</span>
+            <span class="chat-title" id="chatTitle">离职小助理</span>
             <button class="title-edit-btn" id="titleEditBtn" onclick="startRenameChat()" title="重命名" style="display:none;">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
             </button>
@@ -2051,13 +2060,13 @@
           </div>
 
           <div class="quick-actions" id="policyQuickActions">
-            <button class="quick-action-btn" onclick="connectXiaoT()">
-              <span class="quick-action-icon">🤖</span>
-              <span>连线小T</span>
+            <button class="quick-action-btn" onclick="transferToHuman()">
+              <span class="quick-action-icon">👨‍💼</span>
+              <span>转人工</span>
             </button>
-            <button class="quick-action-btn" onclick="connectCER()">
-              <span class="quick-action-icon">👩‍💼</span>
-              <span>连线C-ER</span>
+            <button class="quick-action-btn" onclick="askQuestion('公司有一名老员工，在司工作年限长、年龄偏大，近多年绩效长期处于中等水平，无突出贡献但也无重大过错。该员工在内部存在一定裙带关系，过往管理上一直偏温和处理，未做过严格的绩效改进与书面记录。现公司基于组织优化与人效提升，希望该员工离职，但该员工明确不愿主动协商离职，反而主张公司属违法解除，要求按照 2N 标准进行赔偿。请问在合规前提下，如何稳妥处理此类员工离职，既控制用工风险与赔偿成本，又避免内部舆情与裙带关系带来的负面影响？')">
+              <span class="quick-action-icon">📑</span>
+              <span>Case咨询</span>
             </button>
           </div>
 
@@ -2124,7 +2133,7 @@
         <div class="wecom-contact-item active">
           <div class="wecom-contact-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
           <div class="wecom-contact-info">
-            <div class="wecom-contact-name">离职AI助理</div>
+            <div class="wecom-contact-name">离职小助理</div>
             <div class="wecom-contact-msg">好的，已为您生成离职分析报告</div>
           </div>
           <div class="wecom-contact-meta">
@@ -2200,7 +2209,7 @@
     <div class="wecom-chat">
       <div class="wecom-chat-header">
         <div class="wecom-chat-header-left">
-          <span class="wecom-chat-name">离职AI助理</span>
+          <span class="wecom-chat-name">离职小助理</span>
           <span class="wecom-chat-tag">Bot</span>
         </div>
         <div class="wecom-chat-actions">
@@ -2216,12 +2225,12 @@
         <div class="wecom-msg">
           <div class="wecom-msg-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
           <div class="wecom-msg-content">
-            <div class="wecom-msg-sender">离职AI助理</div>
+            <div class="wecom-msg-sender">离职小助理</div>
             <div class="wecom-welcome-card">
-              <div class="wecom-welcome-title">Hi，我是离职AI助理</div>
+              <div class="wecom-welcome-title">Hi，我是离职小助理</div>
               <div class="wecom-welcome-desc">我可以帮你查询离职数据、分析离职趋势、生成洞察报告，还能模拟离职面谈、解答离职政策等，随时为你提供支持。</div>
               <a class="wecom-welcome-link" onclick="closeWeCom()">
-                <span>点击 👉 离职AI助理完整版</span>
+                <span>点击 👉 离职小助理完整版</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
               </a>
               <div class="wecom-welcome-divider"></div>
@@ -2261,7 +2270,7 @@
         <div class="wecom-msg">
           <div class="wecom-msg-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
           <div class="wecom-msg-content">
-            <div class="wecom-msg-sender">离职AI助理</div>
+            <div class="wecom-msg-sender">离职小助理</div>
             <div class="wecom-msg-bubble">📊 <b>各部门离职率（基于部门总人数）</b><br><br>
 <table style="width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;">
 <tr style="background:#f0f5ff;"><th style="padding:6px 8px;text-align:left;border-bottom:1px solid #e0e0e0;">部门</th><th style="padding:6px 8px;text-align:right;border-bottom:1px solid #e0e0e0;">离职人数</th><th style="padding:6px 8px;text-align:right;border-bottom:1px solid #e0e0e0;">部门总人数</th><th style="padding:6px 8px;text-align:right;border-bottom:1px solid #e0e0e0;">离职率</th></tr>
@@ -2286,14 +2295,14 @@
         <div class="wecom-msg">
           <div class="wecom-msg-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
           <div class="wecom-msg-content">
-            <div class="wecom-msg-sender">离职AI助理</div>
+            <div class="wecom-msg-sender">离职小助理</div>
             <div class="wecom-msg-bubble">📋 已为你生成<b>组织离职分析报告</b>，以下是核心摘要：<br><br>
 📊 <b>整体概况</b><br>· 统计周期离职 20 人，整体离职率 7.7%<br>· 高绩效流失占比 30%，需重点关注<br><br>
 🏢 <b>部门分布</b><br>· 研发部离职最多（7人），运营部离职率最高（8.9%）<br>· 设计部和市场部相对稳定<br><br>
 🔍 <b>核心原因</b><br>· 个人发展（30%）> 薪资待遇（25%）> 工作压力（20%）<br>· 管理问题集中在运营部和产品部<br><br>
 ⚠️ <b>风险预警</b><br>· 6名高绩效员工流失，研发部占4人<br>· 入职1年内新人离职占35%<br><br>
 💡 你可以追问补充更多维度，如"补充薪酬分析"、"加入司龄分析"等，持续定制这份报告。<br><br>
-<span style="color:#999;font-size:12px;">点击 👉 <a onclick="closeWeCom()" style="color:#3370FF;cursor:pointer;">离职AI助理完整版</a> 查看带图表的完整报告</span></div>
+<span style="color:#999;font-size:12px;">点击 👉 <a onclick="closeWeCom()" style="color:#3370FF;cursor:pointer;">离职小助理完整版</a> 查看带图表的完整报告</span></div>
           </div>
         </div>
       </div>
@@ -2361,14 +2370,11 @@
       policy: {
         name: '离职知识',
         icon: '📋',
-        welcome: '您好！我是离职知识顾问，可以帮您解答离职相关知识、优化流程、确保合规管理。<br><br>以下是一些常见问题，点击即可快速咨询：'
+        welcome: '您好！我是您的<b>离职顾问专家</b>，专注于离职相关的政策法规与实务处理。我不仅能解答社保公积金、经济补偿、竞业限制等常见政策问题，还能帮您<b>分析复杂的离职case</b>，提供合规、稳妥的处理建议。<br><br>以下是一些我擅长的问题，点击即可快速咨询：'
           + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">'
-          + '<div onclick="askQuestion(\'工作满15年离职有什么特殊规定？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>🏖️</span><span>工作满15年离职有什么特殊规定？</span></div>'
-          + '<div onclick="askQuestion(\'离职后社保和公积金怎么转移？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>🏦</span><span>离职后社保和公积金怎么转移？</span></div>'
-          + '<div onclick="askQuestion(\'离职赔偿金怎么计算？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>💰</span><span>离职赔偿金怎么计算？</span></div>'
-          + '<div onclick="askQuestion(\'离职工作交接有哪些流程？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📋</span><span>离职工作交接有哪些流程？</span></div>'
-          + '<div onclick="askQuestion(\'提前多久提离职？通知期是多少天？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>⏰</span><span>提前多久提离职？通知期是多少天？</span></div>'
-          + '<div onclick="askQuestion(\'竞业限制协议有哪些规定？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>⚖️</span><span>竞业限制协议有哪些规定？</span></div>'
+          + '<div onclick="askQuestion(\'离职赔偿金怎么计算？N、N+1、2N分别适用什么场景？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>💰</span><span>离职赔偿金怎么计算？N、N+1、2N 的区别</span></div>'
+          + '<div onclick="askQuestion(\'员工离职后社保和公积金怎么转移？需要哪些材料？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>🏦</span><span>离职后社保和公积金怎么转移？</span></div>'
+          + '<div onclick="askQuestion(\'竞业限制协议有哪些规定？补偿金标准是多少？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>⚖️</span><span>竞业限制协议有哪些规定？</span></div>'
           + '</div>'
       }
     };
@@ -2447,11 +2453,11 @@
       cardMsg.className = 'wecom-msg';
       cardMsg.innerHTML = '<div class="wecom-msg-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>'
         + '<div class="wecom-msg-content">'
-        + '<div class="wecom-msg-sender">离职AI助理</div>'
+        + '<div class="wecom-msg-sender">离职小助理</div>'
         + '<div class="wecom-welcome-card">'
-        + '<div class="wecom-welcome-title">Hi，我是离职AI助理</div>'
+        + '<div class="wecom-welcome-title">Hi，我是离职小助理</div>'
         + '<div class="wecom-welcome-desc">我可以帮你查询离职数据、分析离职趋势、生成洞察报告，还能模拟离职面谈、解答离职政策等，随时为你提供支持。</div>'
-        + '<a class="wecom-welcome-link" onclick="closeWeCom()"><span>点击 👉 离职AI助理完整版</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></a>'
+        + '<a class="wecom-welcome-link" onclick="closeWeCom()"><span>点击 👉 离职小助理完整版</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></a>'
         + '<div class="wecom-welcome-divider"></div>'
         + '<div class="wecom-welcome-hint">试试这样问</div>'
         + '<div class="wecom-welcome-question" onclick="wecomQuickAsk(\'生成一份组织离职分析报告\')"><span>生成一份组织离职分析报告</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div>'
@@ -2506,7 +2512,7 @@
 
       var avatarBg = type === 'self' ? '#3370FF' : 'linear-gradient(135deg,#3370FF,#5B93FF)';
       var avatarText = type === 'self' ? 'HR' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg>';
-      var senderName = type === 'self' ? '我' : '离职AI助理';
+      var senderName = type === 'self' ? '我' : '离职小助理';
 
       div.innerHTML = '<div class="wecom-msg-avatar" style="background:' + avatarBg + ';">' + avatarText + '</div>'
         + '<div class="wecom-msg-content">'
@@ -2830,10 +2836,8 @@
           showDataWidetable();
         } else if (action === 'showDataInsightReports') {
           showDataInsightReports();
-        } else if (action === 'connectXiaoT') {
-          connectXiaoT();
-        } else if (action === 'connectCER') {
-          connectCER();
+        } else if (action === 'transferToHuman') {
+          transferToHuman();
         }
       }, 300);
     }
@@ -3189,13 +3193,23 @@
                             (child.children.length === 0 && child.textContent.trim().length > 0);
 
         if (isTextBlock) {
-          const originalText = child.textContent;
-          child.textContent = '';
-          child.style.opacity = '1';
-          el.appendChild(child);
-          typeTextInElement(child, originalText, 30, function() {
-            setTimeout(showNext, 200);
-          });
+          // 检查是否包含内联HTML（如链接），如果包含则直接渐显而不逐字打
+          const hasInlineHTML = child.innerHTML !== child.textContent;
+          if (hasInlineHTML) {
+            child.style.opacity = '0';
+            child.style.transition = 'opacity 0.4s ease';
+            el.appendChild(child);
+            requestAnimationFrame(function() { child.style.opacity = '1'; });
+            setTimeout(showNext, 500);
+          } else {
+            const originalText = child.textContent;
+            child.textContent = '';
+            child.style.opacity = '1';
+            el.appendChild(child);
+            typeTextInElement(child, originalText, 30, function() {
+              setTimeout(showNext, 200);
+            });
+          }
         } else {
           // 结构化卡片内容：渐显效果
           child.style.opacity = '0';
@@ -3223,7 +3237,7 @@
     let chatSmallTalkCount = 0;
     const smallTalkPatterns = /^(你好|hello|hi|嗨|hey|哈喽|在吗|在不在|你是谁|你叫什么|今天天气|吃了吗|早上好|下午好|晚上好|早安|晚安|干嘛呢|无聊|哈哈|嘿嘿|呵呵|谢谢|感谢|谢啦|辛苦了|厉害|666|nb|牛|好的|ok|嗯|哦|没事|再见|拜拜|bye|测试|test|你好呀|怎么样|什么|啥|哎|唉|额|emm|emmm|好无聊|闲着|随便聊聊|聊天|说话|讲话|陪我|逗我|好玩吗|有意思|开心|不开心|难过|烦|累|困|饿|渴|冷|热)$/i;
     const smallTalkResponses = [
-      '哈喽～我是你的离职AI助理 😊 虽然我的专长是离职相关的分析和咨询，但跟你聊两句也是可以的～有什么想聊的？',
+      '哈喽～我是你的离职小助理 😊 虽然我的专长是离职相关的分析和咨询，但跟你聊两句也是可以的～有什么想聊的？',
       '嘿嘿，被你发现了，其实我最擅长的是离职数据分析、面谈辅导这些专业活儿 😄 不过偶尔陪你聊聊天也挺开心的～',
     ];
     const smallTalkEnd = '好啦好啦，我只是个demo，不跟你瞎聊了～ 😜<br><br>回到正题吧，你可以试试左边的功能模块，比如 <b>离职沟通</b>、<b>离职数据</b>、<b>离职知识</b>，我在这些方面可专业了！';
@@ -3293,11 +3307,16 @@
 
     function generatePolicyResponse(message) {
       policyMsgCount++;
-      if (policyMsgCount > 4) {
+      if (policyMsgCount > 6) {
         return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
       }
 
       const msg = message;
+
+      // 0. 复杂离职case优先判断（长文本或多关键词组合场景，优先于简单关键词匹配）
+      if (msg.length > 50 || isComplexCase(msg)) {
+        return generateComplexCaseResponse(msg);
+      }
 
       // 1. 15年退休
       if (/15年|十五年|退休|退休金|养老|工龄/.test(msg)) {
@@ -3436,10 +3455,285 @@
       return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📋</span> 离职知识库</div>
   <ul class="portrait-list">
-    <li>目前我可以为您解答以下方面的离职知识问题：</li>
+    <li>作为离职顾问专家，我可以帮您解答政策法规问题，也能分析复杂的离职case，提供合规处理建议。</li>
   </ul>
 </div>
-<div class="portrait-highlight">你可以试着这样问我：<br>• "工作满15年离职有什么特殊规定？"<br>• "离职后社保和公积金怎么转移？"<br>• "离职赔偿金怎么计算？"<br>• "离职工作交接有哪些流程？"<br>• "提前多久提离职？通知期是多少天？"<br>• "竞业限制协议有哪些规定？"</div>`;
+<div class="portrait-highlight">你可以试着这样问我：<br>• "离职赔偿金怎么计算？N、N+1、2N的区别"<br>• "离职后社保和公积金怎么转移？"<br>• "竞业限制协议有哪些规定？"<br>• 或者直接描述一个具体的离职case，我来帮你分析处理方案</div>`;
+    }
+
+    // 判断是否为复杂离职case
+    function isComplexCase(msg) {
+      const caseKeywords = [
+        /老员工.*离职|离职.*老员工/,
+        /绩效.*改进|PIP|绩效改进计划/,
+        /不愿.*离职|拒绝.*离职|不同意.*离职|不想走|不愿走/,
+        /协商.*解除|协商.*离职|劝退|优化/,
+        /裙带|关系.*复杂|人际.*敏感|背景.*特殊/,
+        /合规.*处理|怎么.*处理|如何.*处理|稳妥.*处理/,
+        /用工.*风险|法律.*风险|仲裁.*风险|劳动.*风险/,
+        /舆情|负面.*影响|团队.*影响|内部.*影响/,
+        /组织.*优化|人效.*提升|末位.*淘汰|架构.*调整/,
+        /试用期.*辞退|试用期.*不合格/,
+        /医疗期|工伤|孕期|产期|哺乳期|三期/,
+        /严重.*违纪|旷工|违规|造假/,
+        /合同.*到期.*不续|不续签/,
+        /群体.*离职|批量.*离职|集体/,
+        /员工.*不配合|消极.*怠工|摆烂/,
+        /如何.*劝退|怎么.*劝退|劝退.*方案/,
+        /降薪.*离职|调岗.*离职|变相.*裁员/,
+        /离职.*方案|处理.*方案|应对.*策略/
+      ];
+      return caseKeywords.some(pattern => pattern.test(msg));
+    }
+
+    // 生成复杂离职case的智能回复
+    function generateComplexCaseResponse(msg) {
+      // 识别case中的关键要素
+      const elements = {
+        hasOldEmployee: /老员工|年限长|工龄长|在司.*年|工作.*多年|资深/.test(msg),
+        hasPerformanceIssue: /绩效.*中等|绩效.*一般|绩效.*不佳|不胜任|绩效.*差|能力.*不足|绩效.*低|平庸/.test(msg),
+        hasRelationship: /裙带|关系|人际|背景|特殊.*身份/.test(msg),
+        hasNoRecord: /无.*记录|没有.*记录|未.*记录|缺乏.*证据|无.*书面|未做.*改进/.test(msg),
+        hasRefusal: /不愿|拒绝|不同意|不接受|不想走|坚决不|明确不/.test(msg),
+        hasCostConcern: /成本|赔偿.*控制|控制.*赔偿|降低.*赔偿|2N|两倍/.test(msg),
+        hasReputationRisk: /舆情|负面|影响|口碑|声誉|团队.*稳定/.test(msg),
+        hasOrgOptimize: /组织.*优化|人效|架构.*调整|末位|编制.*缩减|降本/.test(msg),
+        hasProbation: /试用期|试用.*不合格|转正.*不通过/.test(msg),
+        hasSpecialProtection: /孕期|产期|哺乳|三期|医疗期|工伤/.test(msg),
+        hasDiscipline: /违纪|旷工|违规|造假|严重.*过错|泄密/.test(msg),
+        hasContractExpiry: /合同.*到期|不续签|不续|期满/.test(msg),
+        hasPassiveResist: /不配合|消极|怠工|摆烂|磨洋工|出工不出力/.test(msg),
+        hasJobChange: /调岗|降薪|变相.*裁员|调整.*岗位/.test(msg),
+        hasBatchLayoff: /批量|群体|集体|大规模|裁员.*计划/.test(msg)
+      };
+
+      let response = '';
+
+      // ===== 场景一：绩效问题员工（老员工、绩效中等/不佳、无记录等） =====
+      if (elements.hasPerformanceIssue || elements.hasOldEmployee || elements.hasNoRecord || elements.hasOrgOptimize) {
+        response = `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：关键要素识别</div>
+  <ul class="portrait-list">`;
+        if (elements.hasOldEmployee) response += `\n    <li><b>员工特征：</b>在司年限较长、年龄偏大，属于受法律特殊保护的群体，处理需更加审慎</li>`;
+        if (elements.hasPerformanceIssue) response += `\n    <li><b>绩效状况：</b>绩效长期处于中等或偏低水平，无突出贡献但也无明显过错，属于"灰色地带"员工</li>`;
+        if (elements.hasNoRecord) response += `\n    <li><b>管理短板：</b>过往缺乏正式的绩效改进记录和书面沟通记录，为后续处理带来举证困难</li>`;
+        if (elements.hasRelationship) response += `\n    <li><b>关系因素：</b>内部存在一定人际关系网络，处理不当可能引发连锁反应</li>`;
+        if (elements.hasRefusal) response += `\n    <li><b>员工态度：</b>明确拒绝协商离职，可能主张违法解除要求2N赔偿</li>`;
+        if (elements.hasOrgOptimize) response += `\n    <li><b>组织背景：</b>基于组织优化和人效提升的战略需要，推动人员结构调整</li>`;
+        response += `\n  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 分阶段处理策略</div>
+  <ul class="portrait-list">
+    <li><b>第一阶段 — 补充管理动作（1-2个月）：</b>
+      <br>• 启动正式的绩效改进计划（PIP），明确改进目标、时间节点和考核标准
+      <br>• 所有沟通、辅导、反馈均形成书面记录并由员工签字确认
+      <br>• 安排直属上级进行定期一对一辅导，记录辅导内容和员工表现</li>
+    <li><b>第二阶段 — 评估与沟通（PIP结束后）：</b>
+      <br>• 客观评估PIP达成情况，如未达标则形成书面评估报告
+      <br>• 由HRBP主导进行正式协商沟通，表达公司的优化意图
+      <br>• 提供合理的协商方案（建议N或N+1标准），展现公司诚意</li>
+    <li><b>第三阶段 — 推进落地：</b>
+      <br>• 如协商成功：签署协商解除协议，明确补偿金额、离职日期、交接安排等
+      <br>• 如协商未果且PIP确实不达标：可依据《劳动合同法》第四十条"不能胜任工作"条款，提前30天通知或支付代通知金后解除
+      <br>• 全程保留完整的过程文件和证据链</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 风险防控要点</div>
+  <ul class="portrait-list">
+    <li><b>法律合规：</b>确保有完整的"不胜任→培训/调岗→仍不胜任"证据链，这是合法解除的核心前提</li>
+    <li><b>赔偿底线：</b>协商方案建议不低于N标准，既体现公司善意，也降低仲裁风险；若走法定解除程序则为N+1</li>`;
+        if (elements.hasRelationship) response += `\n    <li><b>关系管理：</b>提前与相关利益方（如推荐人、关联同事的上级）进行预沟通，降低信息扩散带来的负面影响</li>`;
+        if (elements.hasReputationRisk) response += `\n    <li><b>舆情管控：</b>对内统一口径，避免"针对性淘汰"的负面解读；确保流程公正透明，让其他员工看到制度的合理性</li>`;
+        response += `\n    <li><b>沟通策略：</b>谈话中避免使用"淘汰""末位"等敏感词汇，以"岗位匹配度""职业发展"为切入点，给予员工尊重和体面</li>
+    <li><b>时间节点：</b>注意劳动合同到期时间，如即将到期可考虑合同到期不续签方案（需提前30天通知，支付N补偿金）</li>
+  </ul>
+</div>
+
+<div class="portrait-highlight">💡 <b>核心原则：</b>此类case的关键在于"先补课、再推进"——通过规范的PIP流程补足管理证据，在此基础上优先协商解除。切忌在没有充分证据的情况下强行解除，否则大概率被认定为违法解除，需支付2N赔偿金。建议全程与法务部门协同推进。</div>`;
+        return response;
+      }
+
+      // ===== 场景二：试用期辞退 =====
+      if (elements.hasProbation) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：试用期员工辞退</div>
+  <ul class="portrait-list">
+    <li><b>法律依据：</b>《劳动合同法》第三十九条第（一）项——在试用期间被证明不符合录用条件的，用人单位可以解除劳动合同</li>
+    <li><b>核心要求：</b>必须有明确的录用条件 + 考核标准 + 不合格的客观证据</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 合规处理步骤</div>
+  <ul class="portrait-list">
+    <li><b>事前准备：</b>确认入职时已书面告知录用条件（offer/录用通知中明确），试用期考核方案已提前告知员工</li>
+    <li><b>考核评估：</b>客观记录试用期表现，收集不符合录用条件的具体证据（如考核评分、工作成果、客户投诉等）</li>
+    <li><b>解除通知：</b>在试用期届满前发出书面解除通知，说明不符合录用条件的具体事由</li>
+    <li><b>注意事项：</b>试用期解除无需支付经济补偿金，也无需提前30天通知，但必须在试用期内完成</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ <b>常见陷阱：</b>如果录用条件不明确、考核标准模糊、或在试用期满后才提出辞退，均可能被认定为违法解除。建议入职当天即完成录用条件的书面确认签字。</div>`;
+      }
+
+      // ===== 场景三：特殊保护期员工（三期、医疗期、工伤） =====
+      if (elements.hasSpecialProtection) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：特殊保护期员工离职处理</div>
+  <ul class="portrait-list">
+    <li><b>法律保护：</b>根据《劳动合同法》第四十二条，处于孕期、产期、哺乳期（"三期"）以及医疗期、工伤的员工，用人单位<b>不得依据第四十条、第四十一条</b>解除劳动合同</li>
+    <li><b>合同延续：</b>劳动合同期满时，如员工仍处于特殊保护期，合同应顺延至保护期结束</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 可行的处理路径</div>
+  <ul class="portrait-list">
+    <li><b>协商解除：</b>双方自愿协商一致解除，需确保员工真实意愿，建议有工会或第三方见证</li>
+    <li><b>严重违纪解除：</b>如员工确实存在严重违反规章制度的行为（第三十九条），即使在特殊保护期内也可依法解除，但举证标准极高</li>
+    <li><b>等待保护期结束：</b>保护期结束后再按正常程序处理</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ <b>高风险提示：</b>特殊保护期员工的解除争议中，仲裁和法院通常倾向于保护劳动者。强行解除几乎必然被认定为违法解除（2N赔偿）。建议此类case务必先经法务审核，慎之又慎。</div>`;
+      }
+
+      // ===== 场景四：严重违纪解除 =====
+      if (elements.hasDiscipline) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：严重违纪员工处理</div>
+  <ul class="portrait-list">
+    <li><b>法律依据：</b>《劳动合同法》第三十九条——劳动者严重违反用人单位的规章制度的，用人单位可以解除劳动合同，且无需支付经济补偿金</li>
+    <li><b>适用场景：</b>旷工达到规定天数、严重违规操作、伪造学历/证书、营私舞弊给公司造成重大损害等</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 合规操作要点</div>
+  <ul class="portrait-list">
+    <li><b>制度前提：</b>公司规章制度中有明确的违纪行为定义和处理标准，且制度经过民主程序制定并已公示告知员工</li>
+    <li><b>证据收集：</b>收集充分的违纪证据（监控、系统记录、证人证言等），确保证据链完整</li>
+    <li><b>程序合规：</b>通知工会（或征求工会意见），给予员工申辩机会，发出书面解除通知</li>
+    <li><b>送达确认：</b>解除通知需确保送达员工本人，建议当面签收或EMS邮寄</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ <b>关键提醒：</b>严重违纪解除虽然无需支付补偿金，但在仲裁中用人单位承担举证责任，"严重"程度的认定标准较高。如证据不足或程序瑕疵，仍可能被认定为违法解除。</div>`;
+      }
+
+      // ===== 场景五：合同到期不续签 =====
+      if (elements.hasContractExpiry) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：劳动合同到期不续签</div>
+  <ul class="portrait-list">
+    <li><b>用人单位不续签：</b>需提前30天书面通知员工，并支付经济补偿金（N）</li>
+    <li><b>员工不续签：</b>如公司维持或提高条件而员工不续签，无需支付补偿金；如公司降低条件导致员工不续签，需支付N</li>
+    <li><b>无固定期限合同：</b>连续订立两次固定期限合同后，如员工提出续签，公司应订立无固定期限合同（第十四条）</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 操作建议</div>
+  <ul class="portrait-list">
+    <li>合同到期前2个月开始评估是否续签，提前做好决策</li>
+    <li>不续签的，务必在到期前30天发出书面通知，保留送达凭证</li>
+    <li>注意检查是否属于应签无固定期限合同的情形，避免违法不续签</li>
+    <li>如员工处于特殊保护期（三期、医疗期等），合同应自动顺延至保护期结束</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 合同到期不续签是风险相对较低的离职路径，适用于需要优化但缺乏其他合法解除依据的情况。建议在合同续签管理中做好前瞻规划。</div>`;
+      }
+
+      // ===== 场景六：员工消极怠工 =====
+      if (elements.hasPassiveResist) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：员工消极怠工/不配合</div>
+  <ul class="portrait-list">
+    <li><b>现象识别：</b>出工不出力、工作产出持续低于岗位基本要求、拒绝合理工作安排等</li>
+    <li><b>处理难点：</b>"消极怠工"缺乏法律明确定义，直接以此为由解除风险较大</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 建议处理路径</div>
+  <ul class="portrait-list">
+    <li><b>量化管理：</b>设定明确的工作目标和产出标准，将"消极"转化为可量化的"绩效不达标"</li>
+    <li><b>书面记录：</b>对不配合的行为（如拒绝工作安排、未完成任务）发出书面提醒或警告，保留签收记录</li>
+    <li><b>绩效改进：</b>启动PIP流程，给予合理改进期限和辅导支持</li>
+    <li><b>制度适用：</b>如规章制度中有"消极怠工""不服从工作安排"等条款，可在证据充分时适用</li>
+    <li><b>推进协商：</b>在有充分管理记录后，与员工坦诚沟通，推进协商解除</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>核心思路：</b>将主观的"态度问题"转化为客观的"绩效不达标"或"违反制度"，通过规范的管理流程积累证据，再推进离职。切忌因员工态度差而情绪化处理。</div>`;
+      }
+
+      // ===== 场景七：调岗/降薪相关 =====
+      if (elements.hasJobChange) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：调岗/降薪与离职</div>
+  <ul class="portrait-list">
+    <li><b>协商调岗：</b>岗位和薪酬属于劳动合同核心条款，原则上调整需经双方协商一致</li>
+    <li><b>合法调岗情形：</b>不胜任工作经培训后仍不胜任可调岗（第四十条）；医疗期满不能从事原工作可调岗；规章制度中有合理调岗条款</li>
+    <li><b>风险提示：</b>未经员工同意的单方调岗降薪，可能被员工主张"被迫离职"并要求经济补偿金</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 合规建议</div>
+  <ul class="portrait-list">
+    <li>调岗需具有合理性（与原岗位相关、不具有侮辱性、薪酬变动合理）</li>
+    <li>调岗前充分沟通，书面确认员工的接受意愿</li>
+    <li>如员工不接受合法合理的调岗，应做好证据保全后依法处理</li>
+    <li>避免"变相逼退"的操作（如大幅降薪、边缘化岗位），此类行为在仲裁中对企业极为不利</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ 司法实践中，法院对"变相裁员"行为持严厉态度。如被认定为恶意调岗逼退，企业不仅需支付2N赔偿，还可能面临声誉损失。建议通过正当渠道推进人员优化。</div>`;
+      }
+
+      // ===== 场景八：批量/群体离职 =====
+      if (elements.hasBatchLayoff) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析：批量裁员/群体离职</div>
+  <ul class="portrait-list">
+    <li><b>经济性裁员条件（第四十一条）：</b>裁减20人以上或占企业职工总数10%以上，需符合法定情形（如破产重整、经营困难、技术变革等）</li>
+    <li><b>法定程序：</b>提前30天向工会或全体职工说明情况 → 听取意见 → 向劳动行政部门报告 → 执行裁员方案</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 操作建议</div>
+  <ul class="portrait-list">
+    <li><b>方案设计：</b>明确裁员范围、补偿标准、时间安排，确保方案合法合理</li>
+    <li><b>优先留用：</b>法律规定应优先留用签订无固定期限合同的、家庭无其他就业人员的、赡养老人/抚养未成年子女的员工</li>
+    <li><b>补偿标准：</b>按N标准支付经济补偿金，建议在法定标准基础上适当上浮以降低争议</li>
+    <li><b>舆情管控：</b>统一对内对外口径，设立专项沟通小组，做好员工情绪疏导</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ 经济性裁员程序严格，任何环节的瑕疵都可能导致整体裁员行为被认定为违法。建议在法务和外部劳动法律师的全程指导下推进。</div>`;
+      }
+
+      // ===== 通用复杂case兜底：提取关键要素给出框架性建议 =====
+      return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> Case 分析与处理建议</div>
+  <ul class="portrait-list">
+    <li>根据您描述的情况，我从以下几个维度为您分析：</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 建议处理路径</div>
+  <ul class="portrait-list">
+    <li><b>第一步 — 梳理现状：</b>明确员工的合同类型、工作年限、岗位情况、过往绩效记录等基本信息，判断适用的法律条款</li>
+    <li><b>第二步 — 评估风险：</b>检查是否有充分的管理记录和证据支撑，评估可能面临的仲裁风险和赔偿成本</li>
+    <li><b>第三步 — 制定方案：</b>
+      <br>• <b>优先路径：</b>协商解除（风险最低、效率最高），建议提供N至N+1标准的补偿方案
+      <br>• <b>替代路径：</b>如协商失败，根据具体情况选择合法的解除依据（不胜任→PIP→解除 / 合同到期不续签 / 严重违纪解除等）</li>
+    <li><b>第四步 — 执行落地：</b>全程保留书面记录，确保程序合规，做好交接安排和团队沟通</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 通用风险提示</div>
+  <ul class="portrait-list">
+    <li>任何离职case的处理，<b>证据完整性</b>和<b>程序合规性</b>是两大核心要素</li>
+    <li>协商解除是成本和风险的最优解，建议始终作为首选方案</li>
+    <li>避免情绪化操作或"一刀切"处理，每个case都需要个性化方案</li>
+    <li>复杂case建议联合HRBP、法务、甚至外部劳动法律师共同评估</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 如果您能提供更多细节（如员工工龄、合同类型、绩效记录、具体违规行为等），我可以给出更有针对性的处理建议。您也可以点击下方的"转人工"按钮，接入专业的人工顾问获取一对一支持。</div>`;
     }
 
     // 离职面谈智能回复（支持岗位追问）
@@ -5698,92 +5992,84 @@
       setTimeout(() => {
         const jobRecommendHTML = `
           <div class="job-recommend-intro">
-            同学，基于你的岗位经历和职业技能，小助理为你筛选了以下适合的活水岗位，按匹配度从高到低排列，供你参考～过去你的绩效表现一直非常不错，小助理希望能在公司内找到更合适你的环境，如果我为你推荐的岗位不合适，你也可以直接联系活水顾问帮你人工找到更合适的哦～
+            同学，基于你的岗位经历和职业技能，小助理为你筛选了以下适合的活水岗位，供你参考～过去你的绩效表现一直非常不错，小助理希望能在公司内找到更合适你的环境～
           </div>
           <div class="job-card-list">
             <div class="job-card">
               <div class="job-card-top">
                 <div class="job-card-left">
-                  <div class="job-match-badge">97%<span>匹配</span></div>
                   <div class="job-info">
                     <div class="job-name">高级产品经理</div>
                     <div class="job-meta">
                       <span class="job-meta-item">🏢 战略产品部</span>
-                      <span class="job-meta-item">👤 招聘经理：李明</span>
+                      <span class="job-meta-item">👤 招聘经理：<a href="javascript:void(0)" onclick="alert('正在跳转到李明的企微名片...')" style="color:#0052D9;text-decoration:underline;cursor:pointer;">李明</a></span>
                       <span class="job-meta-item">📊 T10-T11</span>
                     </div>
                   </div>
                 </div>
                 <div class="job-btn-group">
                   <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">岗位详情</button>
-                  <button class="job-advisor-btn" onclick="alert('正在打开活水顾问企业微信...')">活水顾问</button>
+                  <button class="job-advisor-btn" onclick="alert('正在跳转到匿名咨询页面...')">匿名咨询</button>
                 </div>
               </div>
-              <div class="job-reason">💡 推荐理由：你在产品规划与用户需求分析方面有丰富经验，与该岗位的战略产品方向高度契合</div>
             </div>
             <div class="job-card">
               <div class="job-card-top">
                 <div class="job-card-left">
-                  <div class="job-match-badge">93%<span>匹配</span></div>
                   <div class="job-info">
                     <div class="job-name">数据分析专家</div>
                     <div class="job-meta">
                       <span class="job-meta-item">🏢 数据智能中心</span>
-                      <span class="job-meta-item">👤 招聘经理：王芳</span>
+                      <span class="job-meta-item">👤 招聘经理：<a href="javascript:void(0)" onclick="alert('正在跳转到王芳的企微名片...')" style="color:#0052D9;text-decoration:underline;cursor:pointer;">王芳</a></span>
                       <span class="job-meta-item">📊 T9-T10</span>
                     </div>
                   </div>
                 </div>
                 <div class="job-btn-group">
                   <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">岗位详情</button>
-                  <button class="job-advisor-btn" onclick="alert('正在打开活水顾问企业微信...')">活水顾问</button>
+                  <button class="job-advisor-btn" onclick="alert('正在跳转到匿名咨询页面...')">匿名咨询</button>
                 </div>
               </div>
-              <div class="job-reason">💡 推荐理由：你的数据建模与SQL分析能力突出，与该岗位的数据驱动决策需求匹配</div>
             </div>
             <div class="job-card">
               <div class="job-card-top">
                 <div class="job-card-left">
-                  <div class="job-match-badge">89%<span>匹配</span></div>
                   <div class="job-info">
                     <div class="job-name">用户增长运营负责人</div>
                     <div class="job-meta">
                       <span class="job-meta-item">🏢 平台运营部</span>
-                      <span class="job-meta-item">👤 招聘经理：赵强</span>
+                      <span class="job-meta-item">👤 招聘经理：<a href="javascript:void(0)" onclick="alert('正在跳转到赵强的企微名片...')" style="color:#0052D9;text-decoration:underline;cursor:pointer;">赵强</a></span>
                       <span class="job-meta-item">📊 T10-T12</span>
                     </div>
                   </div>
                 </div>
                 <div class="job-btn-group">
                   <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">岗位详情</button>
-                  <button class="job-advisor-btn" onclick="alert('正在打开活水顾问企业微信...')">活水顾问</button>
+                  <button class="job-advisor-btn" onclick="alert('正在跳转到匿名咨询页面...')">匿名咨询</button>
                 </div>
               </div>
-              <div class="job-reason">💡 推荐理由：你具备用户增长策略和运营体系搭建经验，与该岗位的增长目标契合</div>
             </div>
             <div class="job-card">
               <div class="job-card-top">
                 <div class="job-card-left">
-                  <div class="job-match-badge">85%<span>匹配</span></div>
                   <div class="job-info">
                     <div class="job-name">项目管理专家</div>
                     <div class="job-meta">
                       <span class="job-meta-item">🏢 企业发展部</span>
-                      <span class="job-meta-item">👤 招聘经理：张婷</span>
+                      <span class="job-meta-item">👤 招聘经理：<a href="javascript:void(0)" onclick="alert('正在跳转到张婷的企微名片...')" style="color:#0052D9;text-decoration:underline;cursor:pointer;">张婷</a></span>
                       <span class="job-meta-item">📊 T9-T11</span>
                     </div>
                   </div>
                 </div>
                 <div class="job-btn-group">
                   <button class="job-detail-btn" onclick="alert('岗位详情页开发中')">岗位详情</button>
-                  <button class="job-advisor-btn" onclick="alert('正在打开活水顾问企业微信...')">活水顾问</button>
+                  <button class="job-advisor-btn" onclick="alert('正在跳转到匿名咨询页面...')">匿名咨询</button>
                 </div>
               </div>
-              <div class="job-reason">💡 推荐理由：你的跨团队协作与项目推动能力强，适合该岗位的复杂项目管理需求</div>
             </div>
           </div>
           <div class="job-recommend-intro" style="margin-top: 16px;">
-            小助理还可以帮你总结团队氛围、加班情况、工作职责内容等，你可以告诉我你想了解哪个岗位？
+            小助理还可以帮你总结团队氛围、加班情况、工作职责内容等，你可以告诉我你想了解哪个岗位？如果你想找到专门为你解决活水问题的人，也可以联系定制服务的<a href="javascript:void(0)" class="huoshui-advisor-link" onclick="alert('正在跳转到活水顾问页面...')">活水顾问</a>。
           </div>
         `;
         addMessage('assistant', jobRecommendHTML, true);
@@ -6019,14 +6305,13 @@
       });
     }
 
-    // 连线小T
-    function connectXiaoT() {
-      alert('正在为您连线小T，请稍候...');
-    }
-
-    // 连线C-ER
-    function connectCER() {
-      alert('正在为您连线C-ER，请稍候...');
+    // 转人工
+    function transferToHuman() {
+      if (isTyping) return;
+      addMessage('user', '转人工');
+      setTimeout(() => {
+        addMessage('assistant', '已接入人工坐席，请描述你的问题。');
+      }, 800);
     }
 
     // 清空聊天
