@@ -2370,11 +2370,10 @@
       policy: {
         name: '离职知识',
         icon: '📋',
-        welcome: '您好！我是您的<b>离职顾问专家</b>，专注于离职相关的政策法规与实务处理。我不仅能解答社保公积金、经济补偿、竞业限制等常见政策问题，还能帮您<b>分析复杂的离职case</b>，提供合规、稳妥的处理建议。<br><br>以下是一些我擅长的问题，点击即可快速咨询：'
+        welcome: '您好！我是您的<b>离职顾问专家</b>，专注于离职相关的政策法规与实务处理。我不仅能解答离职流程办理、离职结算、竞业限制等常见问题，还能帮您解答<b>特殊离职case</b>的处理建议~<br><br>以下是一些常见问题，点击即可快速咨询：'
           + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">'
-          + '<div onclick="askQuestion(\'离职赔偿金怎么计算？N、N+1、2N分别适用什么场景？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>💰</span><span>离职赔偿金怎么计算？N、N+1、2N 的区别</span></div>'
-          + '<div onclick="askQuestion(\'员工离职后社保和公积金怎么转移？需要哪些材料？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>🏦</span><span>离职后社保和公积金怎么转移？</span></div>'
-          + '<div onclick="askQuestion(\'竞业限制协议有哪些规定？补偿金标准是多少？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>⚖️</span><span>竞业限制协议有哪些规定？</span></div>'
+          + '<div onclick="askQuestion(\'员工已事实离职，离职流程如何推进？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📋</span><span>员工已事实离职，离职流程如何推进？</span></div>'
+          + '<div onclick="askQuestion(\'员工不配合办理离职手续，但申请开具离职证明，如何处理？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📄</span><span>员工不配合办理离职手续，但申请开具离职证明，如何处理？</span></div>'
           + '</div>'
       }
     };
@@ -3313,7 +3312,82 @@
 
       const msg = message;
 
-      // 0. 复杂离职case优先判断（长文本或多关键词组合场景，优先于简单关键词匹配）
+      // 0A. 事实离职 — 离职流程推进（精确匹配，优先于复杂case泛化判断）
+      if (/事实离职|已经离职.*流程|离职.*流程.*推进|不来上班.*流程|旷工.*离职/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 员工已事实离职，离职流程推进指南</div>
+  <div class="portrait-intro">当员工已经不再出勤、事实上脱离了工作岗位，但尚未正式办理离职手续时，HR需要<b>主动推进流程</b>，确保用工关系依法解除，避免"僵尸劳动关系"带来的法律风险。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📌</span> 第一步：确认"事实离职"的情形</div>
+  <ul class="portrait-list">
+    <li><b>连续旷工：</b>员工连续多天未到岗，且未请假、未说明原因</li>
+    <li><b>口头告知离职：</b>员工口头表示不干了，但未提交书面辞职信</li>
+    <li><b>不辞而别：</b>员工突然消失，电话不接、消息不回</li>
+    <li><b>已入职其他公司：</b>发现员工已经在其他单位上班</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚙️</span> 第二步：启动正式通知程序</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>发送返岗通知书：</b>通过EMS邮寄（保留回执）+ 短信/邮件多渠道送达，要求员工在指定日期前返岗或说明情况，明确逾期视为旷工</li>
+    <li><b>等待合理期限：</b>一般给予3-5个工作日的回复期，通知书中需写明期限</li>
+    <li><b>发送解除劳动合同通知书：</b>如员工未回复且继续未到岗，依据公司规章制度（如"连续旷工X天视为严重违纪"）发出解除通知，同样通过EMS邮寄</li>
+    <li><b>办理社保减员：</b>解除生效后及时办理社保、公积金减员手续</li>
+    <li><b>留存离职证明：</b>即便员工不来领取，也应开具并存档，员工随时可来领取</li>
+  </ol>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 关键风险提示</div>
+  <ul class="portrait-list">
+    <li><b>不能放任不管：</b>如果不主动解除，劳动关系持续存在，公司仍有缴纳社保等义务，员工也可能日后主张权益</li>
+    <li><b>必须留痕：</b>所有通知必须保留发送凭证（快递回执、短信截图、邮件发送记录），作为日后应对仲裁的证据</li>
+    <li><b>规章制度前置：</b>公司必须有合法有效的考勤和旷工处理制度，且员工已签收或公示过，解除才有法律依据</li>
+    <li><b>不建议直接按"自动离职"处理：</b>"自动离职"在法律上没有明确定义，直接以此处理存在被认定为违法解除的风险</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>处理建议：</b>事实离职的核心是<b>"通知到位 + 制度合规 + 证据留痕"</b>。建议HR在首次发现员工异常缺勤后3天内启动正式流程，越早处理风险越低。如遇员工失联，可同步联系其紧急联系人确认情况。如需进一步分析具体case，可点击下方"Case咨询"或"转人工"获取一对一支持。</div>`;
+      }
+
+      // 0B. 不配合办理手续但申请离职证明
+      if (/不配合.*离职|不配合.*手续|离职证明.*不配合|不办.*手续.*离职证明|拒绝.*交接.*离职证明/.test(msg)) {
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📄</span> 员工不配合办理手续但要求开具离职证明</div>
+  <div class="portrait-intro">实务中常遇到这种情况：员工拒绝配合工作交接或归还公司资产，但同时要求公司开具离职证明。HR需要在<b>法律合规</b>和<b>公司利益保护</b>之间找到平衡。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚖️</span> 法律规定：必须开具离职证明</div>
+  <ul class="portrait-list">
+    <li>根据《劳动合同法》第五十条，<b>用人单位应当在解除或终止劳动合同时出具解除或终止劳动合同的证明</b></li>
+    <li><b>这是法定义务，不以员工是否完成交接为前提条件</b>。即便员工未完成交接，公司也不能拒绝开具离职证明</li>
+    <li>拒绝开具离职证明的后果：员工可向劳动监察部门投诉，公司可能被责令改正；如因此给员工造成损失（如无法入职新单位），公司需承担赔偿责任</li>
+    <li>根据《劳动合同法实施条例》第二十四条，离职证明应当写明：劳动合同期限、解除/终止日期、工作岗位、在本单位的工作年限</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🛡️</span> 公司利益如何保护？</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>开具离职证明 ≠ 放弃追责权利：</b>离职证明照常开具，同时可以书面通知员工尚未完成交接事项及相应的法律后果</li>
+    <li><b>发送交接催告函：</b>正式书面函件列明未完成的交接事项（如未归还电脑、未交接客户资料等），要求限期完成，保留送达凭证</li>
+    <li><b>暂扣应得款项的合法操作：</b>对于员工未归还的公司财物，可依据规章制度从工资结算中扣除等值金额（需有制度依据且提前告知），但<b>不能扣发全部工资</b></li>
+    <li><b>追究损失赔偿：</b>根据《劳动合同法》第九十条，员工违反规定解除劳动合同或违反保密/竞业义务给公司造成损失的，应当承担赔偿责任</li>
+    <li><b>仲裁途径：</b>如员工拒不归还重要资产或造成实际损失，可通过劳动仲裁或民事诉讼追偿</li>
+  </ol>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📝</span> 推荐操作流程</div>
+  <ul class="portrait-list">
+    <li><b>第1步：</b>正常开具离职证明，员工签收（如拒绝来领，可邮寄并保留凭证）</li>
+    <li><b>第2步：</b>同步发送《交接催告函》，明确交接清单和截止日期</li>
+    <li><b>第3步：</b>在工资结算中合法处理未归还资产（需有制度和协议支撑）</li>
+    <li><b>第4步：</b>如有实质性损失，收集证据后走法律途径追偿</li>
+    <li><b>第5步：</b>将全过程记录存档，纳入该员工离职档案</li>
+  </ul>
+</div>
+<div class="portrait-highlight">⚠️ <b>核心原则：离职证明必须开，交接问题另行追究。</b>千万不要以"未完成交接"为由拒绝开具离职证明，这是实务中最常见的违规操作之一，极易引发劳动仲裁且公司必败。如需进一步分析具体case，可点击"转人工"接入专业顾问。</div>`;
+      }
+
+      // 0C. 复杂离职case泛化判断（长文本或多关键词组合场景，优先于简单关键词匹配）
       if (msg.length > 50 || isComplexCase(msg)) {
         return generateComplexCaseResponse(msg);
       }
