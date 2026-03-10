@@ -2612,10 +2612,14 @@
     function showDataInsightReports() {
       const html = '<div style="margin-bottom:14px;">近期基于公司的管理热点，小助理为你整理了几个分析报告，你可以点击查看，也可以继续提问优化报告：</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
-        + '<div onclick="askQuestion(\'请展示组织离职分析报告\')" style="background:linear-gradient(135deg,#f0f5ff,#e0ecff);border:1px solid #d4e3fc;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,82,217,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(0,82,217,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(0,82,217,0.08)\'">'
+        + '<div onclick="showOrgReportSummary()" style="background:linear-gradient(135deg,#f0f5ff,#e0ecff);border:1px solid #d4e3fc;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,82,217,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(0,82,217,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(0,82,217,0.08)\'">'
         + '<div style="font-size:20px;margin-bottom:8px;">🏢</div>'
         + '<div style="font-size:14px;font-weight:600;color:#0052d9;">组织离职分析报告</div>'
         + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">组织整体离职趋势、部门对比与关键发现</div></div>'
+        + '<div onclick="showAttritionReportSummary()" style="background:linear-gradient(135deg,#fff5f5,#ffe0e0);border:1px solid #fcc4c4;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(217,43,43,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(217,43,43,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(217,43,43,0.08)\'">'
+        + '<div style="font-size:20px;margin-bottom:8px;">🔎</div>'
+        + '<div style="font-size:14px;font-weight:600;color:#d92b2b;">离职归因分析报告</div>'
+        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">离职核心原因归因与多维度驱动因素分析</div></div>'
         + '<div onclick="askQuestion(\'请展示青云人才离职去向分析\')" style="background:linear-gradient(135deg,#fff7f0,#ffe8d4);border:1px solid #fcd4b0;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(227,115,24,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(227,115,24,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(227,115,24,0.08)\'">'
         + '<div style="font-size:20px;margin-bottom:8px;">🌟</div>'
         + '<div style="font-size:14px;font-weight:600;color:#e37318;">青云人才离职去向分析</div>'
@@ -2630,6 +2634,55 @@
         + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">梯队人才流失对组织能力的影响与管理建议</div></div>'
         + '</div>';
       addMessage('assistant', html, false);
+    }
+
+    // 组织离职分析报告 - 简化版（整体概况 + tomoro链接）
+    function showOrgReportSummary() {
+      if (isTyping) return;
+      // 先添加用户消息
+      addMessage('user', '请展示组织离职分析报告');
+      // 模拟AI思考延迟后流式输出
+      setTimeout(() => {
+        const html = `<div class="portrait-intro">以下是你所负责组织2025年Q1离职整体概况：</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 整体离职概况</div>
+  <ul class="portrait-list">
+    <li><b>报告周期：</b>2025年Q1（1月~3月）</li>
+    <li><b>离职总人数：</b>47人（主动38人 / 被动9人），较去年同期增长12%</li>
+    <li><b>整体离职率：</b>4.8%，较去年Q1（4.3%）上升0.5个百分点</li>
+    <li><b>主动离职率：</b>3.9%，高于公司均值（3.2%）</li>
+  </ul>
+</div>
+<div class="portrait-highlight" style="display:flex;align-items:center;gap:8px;">
+  📋 详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZTepCJG9LQjMzwxrffU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
+</div>`;
+        addMessage('assistant', html, true);
+      }, 800);
+    }
+
+    // 离职归因分析报告 - 概要版（归因概况 + tomoro链接）
+    function showAttritionReportSummary() {
+      if (isTyping) return;
+      // 先添加用户消息
+      addMessage('user', '请展示离职归因分析报告');
+      // 模拟AI思考延迟后流式输出
+      setTimeout(() => {
+        const html = `<div class="portrait-intro">以下是你所负责组织2025年Q1离职归因分析概要：</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔎</span> 离职归因概况</div>
+  <ul class="portrait-list">
+    <li><b>分析样本：</b>Q1主动离职38人，有效离职面谈覆盖率89%（34人）</li>
+    <li><b>Top1 归因：</b>薪酬竞争力不足（占比34%），集中在T9-T10层级</li>
+    <li><b>Top2 归因：</b>职业发展空间受限（占比26%），晋升周期超过2年的占比高</li>
+    <li><b>Top3 归因：</b>直属管理者关系（占比18%），涉及3个重点团队</li>
+    <li><b>组合因素：</b>62%的离职员工存在2个及以上叠加离职原因</li>
+  </ul>
+</div>
+<div class="portrait-highlight" style="display:flex;align-items:center;gap:8px;">
+  📋 详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZUm0Bq1tWQ5rVya3JMU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
+</div>`;
+        addMessage('assistant', html, true);
+      }, 800);
     }
 
     // 开始新对话
