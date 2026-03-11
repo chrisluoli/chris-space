@@ -2064,10 +2064,10 @@
               <span class="quick-action-icon">👨‍💼</span>
               <span>转人工</span>
             </button>
-            <button class="quick-action-btn" onclick="askQuestion('公司有一名老员工，在司工作年限长、年龄偏大，近多年绩效长期处于中等水平，无突出贡献但也无重大过错。该员工在内部存在一定裙带关系，过往管理上一直偏温和处理，未做过严格的绩效改进与书面记录。现公司基于组织优化与人效提升，希望该员工离职，但该员工明确不愿主动协商离职，反而主张公司属违法解除，要求按照 2N 标准进行赔偿。请问在合规前提下，如何稳妥处理此类员工离职，既控制用工风险与赔偿成本，又避免内部舆情与裙带关系带来的负面影响？')">
-              <span class="quick-action-icon">📑</span>
-              <span>Case咨询</span>
-            </button>
+            <div class="role-switch-wrapper" id="policyRoleSwitchWrapper">
+              <button class="role-switch-btn" id="policyRoleEmployee" onclick="togglePolicyRole('employee')">员工</button>
+              <button class="role-switch-btn active" id="policyRoleHR" onclick="togglePolicyRole('hr')">HR</button>
+            </div>
           </div>
 
           <div class="quick-actions" id="dataQuickActions">
@@ -2370,11 +2370,20 @@
       policy: {
         name: '离职知识',
         icon: '📋',
-        welcome: '您好！我是您的<b>离职顾问专家</b>，专注于离职相关的政策法规与实务处理。我不仅能解答离职流程办理、离职结算、竞业限制等常见问题，还能帮您解答<b>特殊离职case</b>的处理建议~<br><br>以下是一些常见问题，点击即可快速咨询：'
-          + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">'
-          + '<div onclick="askQuestion(\'员工已事实离职，离职流程如何推进？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📋</span><span>员工已事实离职，离职流程如何推进？</span></div>'
-          + '<div onclick="askQuestion(\'员工不配合办理离职手续，但申请开具离职证明，如何处理？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📄</span><span>员工不配合办理离职手续，但申请开具离职证明，如何处理？</span></div>'
-          + '</div>'
+        get welcome() {
+          if (policyCurrentRole === 'employee') {
+            return '您好！我是您的<b>离职服务助手</b>，可以帮您解答离职流程和进度相关的问题~<br><br>以下是一些常见问题，点击即可快速咨询：'
+              + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">'
+              + '<div onclick="askQuestion(\'我需要办理离职，怎么发起流程呢？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📝</span><span>我需要办理离职，怎么发起流程呢？</span></div>'
+              + '<div onclick="askQuestion(\'我已在OA中提交离职流程，在哪里可以查我的离职进度？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>🔍</span><span>我已在OA中提交离职流程，在哪里可以查我的离职进度？</span></div>'
+              + '</div>';
+          }
+          return '您好！我是您的<b>离职顾问专家</b>，专注于离职相关的政策法规与实务处理。我不仅能解答离职流程办理、离职结算、竞业限制等常见问题，还能帮您解答<b>特殊离职case</b>的处理建议~<br><br>以下是一些常见问题，点击即可快速咨询：'
+            + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">'
+            + '<div onclick="askQuestion(\'员工已事实离职，离职流程如何推进？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📋</span><span>员工已事实离职，离职流程如何推进？</span></div>'
+            + '<div onclick="askQuestion(\'员工不配合办理离职手续，但申请开具离职证明，如何处理？\')" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f5ff;border:1px solid #d4e3fc;border-radius:8px;cursor:pointer;font-size:13px;color:#0052d9;transition:all 0.2s;" onmouseover="this.style.background=\'#e0ecff\'" onmouseout="this.style.background=\'#f0f5ff\'"><span>📄</span><span>员工不配合办理离职手续，但申请开具离职证明，如何处理？</span></div>'
+            + '</div>';
+        }
       }
     };
 
@@ -2539,113 +2548,70 @@
       // 复用宽表问数的数据回复逻辑
       wecomDataMsgCount++;
       if (wecomDataMsgCount > 30) {
-        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
+        return '我只是个小demo，不是真实的AI~';
       }
       return generateDataResponse(message);
     }
 
-    // 离职数据 - 宽表问数：展示基于部门的离职数据框架报告
+    // 离职数据 - 宽表问数：展示引导文案和可点击的示例问题
     function showDataWidetable() {
-      const html = '<div style="margin-bottom:12px;">好的，以下是基于你有权限的部门离职宽表数据概览：</div>'
-        + '<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">'
-        + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#e8f3ff,#d4e8ff);border-radius:10px;padding:14px 16px;">'
-        + '<div style="font-size:12px;color:#666;">离职总人数</div>'
-        + '<div style="font-size:28px;font-weight:700;color:#0052d9;margin:4px 0;">20</div>'
-        + '<div style="font-size:11px;color:#999;">全部为主动离职</div></div>'
-        + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#fff3e8,#ffe8d4);border-radius:10px;padding:14px 16px;">'
-        + '<div style="font-size:12px;color:#666;">整体离职率</div>'
-        + '<div style="font-size:28px;font-weight:700;color:#e37318;margin:4px 0;">7.7<span style="font-size:14px;">%</span></div>'
-        + '<div style="font-size:11px;color:#999;">公司总人数 260 人</div></div>'
-        + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#e8fff0,#d4ffe8);border-radius:10px;padding:14px 16px;">'
-        + '<div style="font-size:12px;color:#666;">平均年龄</div>'
-        + '<div style="font-size:28px;font-weight:700;color:#2ba471;margin:4px 0;">29.3<span style="font-size:14px;">岁</span></div>'
-        + '<div style="font-size:11px;color:#999;">24~36岁区间</div></div>'
-        + '</div>'
-        + '<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">'
-        + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#f0e8ff,#e4d4ff);border-radius:10px;padding:14px 16px;">'
-        + '<div style="font-size:12px;color:#666;">高绩效流失</div>'
-        + '<div style="font-size:28px;font-weight:700;color:#7b61ff;margin:4px 0;">8<span style="font-size:14px;">人</span></div>'
-        + '<div style="font-size:11px;color:#999;">A/A+ 级别，占比 40%</div></div>'
-        + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#ffe8e8,#ffd4d4);border-radius:10px;padding:14px 16px;">'
-        + '<div style="font-size:12px;color:#666;">平均司龄</div>'
-        + '<div style="font-size:28px;font-weight:700;color:#e34d59;margin:4px 0;">2.5<span style="font-size:14px;">年</span></div>'
-        + '<div style="font-size:11px;color:#999;">最短0.6年 / 最长6.1年</div></div>'
-        + '<div style="flex:1;min-width:120px;background:linear-gradient(135deg,#e8f8ff,#d4f0ff);border-radius:10px;padding:14px 16px;">'
-        + '<div style="font-size:12px;color:#666;">覆盖部门</div>'
-        + '<div style="font-size:28px;font-weight:700;color:#0594fa;margin:4px 0;">6<span style="font-size:14px;">个</span></div>'
-        + '<div style="font-size:11px;color:#999;">研发/产品/运营/设计/市场/HR</div></div>'
-        + '</div>'
-        + '<div style="background:#f7f8fa;border-radius:10px;padding:14px 16px;margin-bottom:14px;">'
-        + '<div style="font-size:13px;font-weight:600;color:#333;margin-bottom:10px;">📊 离职分布</div>'
-        + '<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;">'
-        + '<div><span style="color:#666;">部门：</span>'
-        + '<span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px;">研发部 7人</span>'
-        + '<span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px;">产品部 3人</span>'
-        + '<span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px;">运营部 3人</span>'
-        + '<span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px;">设计部 2人</span>'
-        + '<span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px;">市场部 2人</span>'
-        + '<span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px;">人力资源部 2人</span>'
-        + '<span style="display:inline-block;background:#0052d9;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px;">未分类 1人</span></div>'
-        + '<div><span style="color:#666;">职级：</span><span style="color:#333;">P5 ~ P8</span></div>'
-        + '</div>'
-        + '</div>'
-        + '<div style="background:#f7f8fa;border-radius:10px;padding:14px 16px;margin-bottom:14px;">'
-        + '<div style="font-size:13px;font-weight:600;color:#333;margin-bottom:10px;">🔍 离职原因</div>'
-        + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
-        + '<span style="background:#fff3e8;color:#e37318;border-radius:20px;padding:4px 12px;font-size:12px;">个人发展 6人</span>'
-        + '<span style="background:#e8f3ff;color:#0052d9;border-radius:20px;padding:4px 12px;font-size:12px;">薪资待遇 5人</span>'
-        + '<span style="background:#ffe8e8;color:#e34d59;border-radius:20px;padding:4px 12px;font-size:12px;">工作压力 4人</span>'
-        + '<span style="background:#f0e8ff;color:#7b61ff;border-radius:20px;padding:4px 12px;font-size:12px;">管理问题 3人</span>'
-        + '<span style="background:#e8fff0;color:#2ba471;border-radius:20px;padding:4px 12px;font-size:12px;">家庭原因 2人</span>'
-        + '</div></div>'
-        + '<div style="font-size:13px;color:#666;margin-top:8px;line-height:1.8;">你可以继续向我提问任何关于离职数据的问题，例如：<br>'
-        + '• "各部门离职率是多少？"<br>'
-        + '• "离职趋势按月度有什么变化？"<br>'
-        + '• "高绩效员工流失情况如何？"<br>'
-        + '• "入职不到一年离职的有哪些人？"<br>'
-        + '• "男女离职比例如何？"<br>'
-        + '• "薪酬竞争力和离职有什么关联？"</div>';
-      addMessage('assistant', html, false);
-    }
-
-    // 离职数据 - 洞察报告：展示可点击的分析报告列表
-    function showDataInsightReports() {
-      const html = '<div style="margin-bottom:14px;">近期基于公司的管理热点，小助理为你整理了几个分析报告，你可以点击查看，也可以继续提问优化报告：</div>'
-        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
-        + '<div onclick="showOrgReportSummary()" style="background:linear-gradient(135deg,#f0f5ff,#e0ecff);border:1px solid #d4e3fc;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,82,217,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(0,82,217,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(0,82,217,0.08)\'">'
-        + '<div style="font-size:20px;margin-bottom:8px;">🏢</div>'
-        + '<div style="font-size:14px;font-weight:600;color:#0052d9;">组织离职分析报告</div>'
-        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">组织整体离职趋势、部门对比与关键发现</div></div>'
-        + '<div onclick="showAttritionReportSummary()" style="background:linear-gradient(135deg,#fff5f5,#ffe0e0);border:1px solid #fcc4c4;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(217,43,43,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(217,43,43,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(217,43,43,0.08)\'">'
-        + '<div style="font-size:20px;margin-bottom:8px;">🔎</div>'
-        + '<div style="font-size:14px;font-weight:600;color:#d92b2b;">离职归因分析报告</div>'
-        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">离职核心原因归因与多维度驱动因素分析</div></div>'
-        + '<div onclick="askQuestion(\'请展示青云人才离职去向分析\')" style="background:linear-gradient(135deg,#fff7f0,#ffe8d4);border:1px solid #fcd4b0;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(227,115,24,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(227,115,24,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(227,115,24,0.08)\'">'
-        + '<div style="font-size:20px;margin-bottom:8px;">🌟</div>'
-        + '<div style="font-size:14px;font-weight:600;color:#e37318;">青云人才离职去向分析</div>'
-        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">高潜青云人才流向追踪与竞对分析</div></div>'
-        + '<div onclick="askQuestion(\'请展示高潜新生代离职原因挖掘\')" style="background:linear-gradient(135deg,#f0fff5,#d4ffe4);border:1px solid #b0f0c8;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(43,164,113,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(43,164,113,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(43,164,113,0.08)\'">'
-        + '<div style="font-size:20px;margin-bottom:8px;">🌱</div>'
-        + '<div style="font-size:14px;font-weight:600;color:#2ba471;">高潜新生代离职原因挖掘</div>'
-        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">新生代员工离职动因与代际差异分析</div></div>'
-        + '<div onclick="askQuestion(\'请展示梯队人员离职体现的管理洞察\')" style="background:linear-gradient(135deg,#f5f0ff,#e8d4ff);border:1px solid #d4b0fc;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(134,77,217,0.08);" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(134,77,217,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(134,77,217,0.08)\'">'
-        + '<div style="font-size:20px;margin-bottom:8px;">📐</div>'
-        + '<div style="font-size:14px;font-weight:600;color:#864dd9;">梯队人员离职体现的管理洞察</div>'
-        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">梯队人才流失对组织能力的影响与管理建议</div></div>'
+      const html = '<div class="portrait-intro">我可以帮你快速查询你所管辖部门的离职数据情况，你可以直接输入问题，也可以点击以下示例快速开始：</div>'
+        + '<div style="display:flex;flex-direction:column;gap:8px;">'
+        + '<div onclick="askQuestion(\'部门近3年的离职率和趋势怎么样？\')" style="background:#f8faff;border:1px solid #e0e8f5;border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.borderColor=\'#0052d9\';this.style.background=\'#ecf2fe\';this.style.transform=\'translateX(4px)\'" onmouseout="this.style.borderColor=\'#e0e8f5\';this.style.background=\'#f8faff\';this.style.transform=\'none\'">'
+        + '<span style="font-size:18px;">📈</span>'
+        + '<div><div style="font-size:14px;font-weight:500;color:#333;">部门近3年的离职率和趋势怎么样？</div>'
+        + '<div style="font-size:12px;color:#999;margin-top:2px;">了解组织离职率变化与长期走势</div></div></div>'
+        + '<div onclick="askQuestion(\'男女离职比例如何？有什么差异特征？\')" style="background:#f8faff;border:1px solid #e0e8f5;border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.borderColor=\'#0052d9\';this.style.background=\'#ecf2fe\';this.style.transform=\'translateX(4px)\'" onmouseout="this.style.borderColor=\'#e0e8f5\';this.style.background=\'#f8faff\';this.style.transform=\'none\'">'
+        + '<span style="font-size:18px;">👫</span>'
+        + '<div><div style="font-size:14px;font-weight:500;color:#333;">男女离职比例如何？有什么差异特征？</div>'
+        + '<div style="font-size:12px;color:#999;margin-top:2px;">分析性别维度的离职差异与规律</div></div></div>'
+        + '<div onclick="askQuestion(\'离职后主要就业去向是哪里？\')" style="background:#f8faff;border:1px solid #e0e8f5;border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.borderColor=\'#0052d9\';this.style.background=\'#ecf2fe\';this.style.transform=\'translateX(4px)\'" onmouseout="this.style.borderColor=\'#e0e8f5\';this.style.background=\'#f8faff\';this.style.transform=\'none\'">'
+        + '<span style="font-size:18px;">🏢</span>'
+        + '<div><div style="font-size:14px;font-weight:500;color:#333;">离职后主要就业去向是哪里？</div>'
+        + '<div style="font-size:12px;color:#999;margin-top:2px;">追踪离职员工流向与竞对分布</div></div></div>'
+        + '<div onclick="askQuestion(\'高绩效员工流失情况怎么样？\')" style="background:#f8faff;border:1px solid #e0e8f5;border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.borderColor=\'#0052d9\';this.style.background=\'#ecf2fe\';this.style.transform=\'translateX(4px)\'" onmouseout="this.style.borderColor=\'#e0e8f5\';this.style.background=\'#f8faff\';this.style.transform=\'none\'">'
+        + '<span style="font-size:18px;">⭐</span>'
+        + '<div><div style="font-size:14px;font-weight:500;color:#333;">高绩效员工流失情况怎么样？</div>'
+        + '<div style="font-size:12px;color:#999;margin-top:2px;">关注核心人才流失与保留风险</div></div></div>'
+        + '<div onclick="askQuestion(\'入职不到一年离职的员工有哪些共同特征？\')" style="background:#f8faff;border:1px solid #e0e8f5;border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.borderColor=\'#0052d9\';this.style.background=\'#ecf2fe\';this.style.transform=\'translateX(4px)\'" onmouseout="this.style.borderColor=\'#e0e8f5\';this.style.background=\'#f8faff\';this.style.transform=\'none\'">'
+        + '<span style="font-size:18px;">🔍</span>'
+        + '<div><div style="font-size:14px;font-weight:500;color:#333;">入职不到一年离职的员工有哪些共同特征？</div>'
+        + '<div style="font-size:12px;color:#999;margin-top:2px;">分析短期离职的关键驱动因素</div></div></div>'
         + '</div>';
       addMessage('assistant', html, false);
     }
 
-    // 组织离职分析报告 - 简化版（整体概况 + tomoro链接）
-    function showOrgReportSummary() {
+    // 离职数据 - 洞察报告：展示三个按钮
+    function showDataInsightReports() {
+      const html = '<div style="margin-bottom:14px;">近期基于公司的管理热点，小助理为你整理了以下分析报告，请选择查看：</div>'
+        + '<div style="display:flex;flex-direction:column;gap:10px;">'
+        + '<div onclick="showGeneralReport()" style="background:linear-gradient(135deg,#f0f5ff,#e0ecff);border:1px solid #d4e3fc;border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,82,217,0.08);display:flex;align-items:center;gap:14px;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(0,82,217,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(0,82,217,0.08)\'">'
+        + '<div style="font-size:24px;flex-shrink:0;">📊</div>'
+        + '<div><div style="font-size:14px;font-weight:600;color:#0052d9;">离职通用分析报告</div>'
+        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">组织整体离职趋势与离职归因的综合分析</div></div></div>'
+        + '<div onclick="showGroupAnalysisReport()" style="background:linear-gradient(135deg,#fff7f0,#ffe8d4);border:1px solid #fcd4b0;border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(227,115,24,0.08);display:flex;align-items:center;gap:14px;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(227,115,24,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(227,115,24,0.08)\'">'
+        + '<div style="font-size:24px;flex-shrink:0;">🔍</div>'
+        + '<div><div style="font-size:14px;font-weight:600;color:#e37318;">特定群体离职分析报告</div>'
+        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">以青云人才为例，分析敬业度、离职时间、司龄与去向</div></div></div>'
+        + '<div onclick="showGroupPortraitReport()" style="background:linear-gradient(135deg,#f0fff5,#d4ffe4);border:1px solid #b0f0c8;border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 4px rgba(43,164,113,0.08);display:flex;align-items:center;gap:14px;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(43,164,113,0.15)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'0 1px 4px rgba(43,164,113,0.08)\'">'
+        + '<div style="font-size:24px;flex-shrink:0;">👤</div>'
+        + '<div><div style="font-size:14px;font-weight:600;color:#2ba471;">特定群体离职人员画像</div>'
+        + '<div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">以梯队人才为例，呈现年龄司龄、院校、绩效与反馈画像</div></div></div>'
+        + '</div>';
+      addMessage('assistant', html, false);
+    }
+
+    // 离职通用分析报告 - 整合组织离职分析 + 离职归因分析
+    function showGeneralReport() {
       if (isTyping) return;
       // 先添加用户消息
-      addMessage('user', '请展示组织离职分析报告');
+      addMessage('user', '请展示离职通用分析报告');
       // 模拟AI思考延迟后流式输出
       setTimeout(() => {
-        const html = `<div class="portrait-intro">以下是你所负责组织2025年Q1离职整体概况：</div>
+        const html = `<div class="portrait-intro">以下是你所负责组织2025年Q1离职通用分析报告：</div>
+
 <div class="portrait-section">
-  <div class="portrait-section-title"><span class="section-icon">📊</span> 整体离职概况</div>
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 组织离职概况</div>
   <ul class="portrait-list">
     <li><b>报告周期：</b>2025年Q1（1月~3月）</li>
     <li><b>离职总人数：</b>47人（主动38人 / 被动9人），较去年同期增长12%</li>
@@ -2653,21 +2619,10 @@
     <li><b>主动离职率：</b>3.9%，高于公司均值（3.2%）</li>
   </ul>
 </div>
-<div class="portrait-highlight" style="display:flex;align-items:center;gap:8px;">
-  📋 详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZTepCJG9LQjMzwxrffU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
-</div>`;
-        addMessage('assistant', html, true);
-      }, 800);
-    }
+<div class="portrait-highlight" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+  📋 组织离职详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZTepCJG9LQjMzwxrffU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
+</div>
 
-    // 离职归因分析报告 - 概要版（归因概况 + tomoro链接）
-    function showAttritionReportSummary() {
-      if (isTyping) return;
-      // 先添加用户消息
-      addMessage('user', '请展示离职归因分析报告');
-      // 模拟AI思考延迟后流式输出
-      setTimeout(() => {
-        const html = `<div class="portrait-intro">以下是你所负责组织2025年Q1离职归因分析概要：</div>
 <div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">🔎</span> 离职归因概况</div>
   <ul class="portrait-list">
@@ -2679,8 +2634,175 @@
   </ul>
 </div>
 <div class="portrait-highlight" style="display:flex;align-items:center;gap:8px;">
-  📋 详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZUm0Bq1tWQ5rVya3JMU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
+  📋 离职归因详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZUm0Bq1tWQ5rVya3JMU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
 </div>`;
+        addMessage('assistant', html, true);
+      }, 800);
+    }
+
+    // 特定群体离职分析报告 - 以青云人才为例（敬业度满意度、离职时间、平均司龄、离职去向）
+    function showGroupAnalysisReport() {
+      if (isTyping) return;
+      addMessage('user', '请展示特定群体离职分析报告');
+      setTimeout(() => {
+        const html = `<div class="portrait-intro">以下是以<b>青云人才</b>为例的特定群体离职分析报告，综合敬业度、满意度、离职时间、司龄及离职去向等多维度数据：</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🌟</span> 青云人才离职概况</div>
+  <ul class="portrait-list">
+    <li><b>统计范围：</b>2024年全年标记为"青云计划"的AI大模型方向人才</li>
+    <li><b>青云人才总数：</b>86人（覆盖大模型训练、推理优化、AI应用、数据工程等方向）</li>
+    <li><b>离职人数：</b>14人，离职率 <span style="color:#D54941;font-weight:600;">16.3%</span>，显著高于公司整体（8.7%）</li>
+    <li><b>其中核心骨干：</b>9人为P7+级别，占青云离职总量的64%</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 敬业度与满意度</div>
+  <ul class="portrait-list">
+    <li><b>敬业度均分：</b>离职青云人才 <span style="color:#D54941;font-weight:600;">2.2分</span>（青云整体3.8分，公司均值3.4分）</li>
+    <li><b>"工作意义感"项：</b>离职2.0分 vs 在职青云4.2分，<span style="color:#D54941;font-weight:600;">差距最大</span></li>
+    <li><b>"成长机会"项：</b>离职2.1分 vs 在职青云4.0分，反映发展空间不足</li>
+    <li><b>"团队技术氛围"（全面反馈）：</b>离职2.5分 vs 在职青云4.1分，部分团队技术讨论不活跃</li>
+    <li><b>整体满意度：</b>离职青云人才满意度均值2.3分，远低于在职均值3.9分</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📅</span> 离职时间与平均司龄</div>
+  <ul class="portrait-list">
+    <li><b>离职时间分布：</b>Q1集中（5人，36%）> Q4（4人，28%）> Q2/Q3（各2~3人）</li>
+    <li><b>离职高峰月份：</b>3月（年终奖发放后）和9月（秋招季竞对集中挖角）</li>
+    <li><b>平均司龄：</b>3.1年（最短1.2年，最长5.8年）</li>
+    <li><b>司龄分布：</b>1~2年占29%、2~3年占36%、3~5年占21%、5年以上占14%</li>
+    <li><b>关键发现：</b>入职2~3年为离职最高发期，与"技术方向定型期"高度吻合</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏢</span> 离职去向追踪</div>
+  <ul class="portrait-list">
+    <li><b>字节跳动（豆包/云雀）：</b>4人 — 主要从事大模型训练和RLHF方向，薪资涨幅约35~50%</li>
+    <li><b>智谱AI / 月之暗面：</b>3人 — 加入AI原生创业公司，获得期权激励</li>
+    <li><b>阿里（通义千问）：</b>2人 — 从事多模态大模型研发，职级提升1级</li>
+    <li><b>百度（文心一言）：</b>2人 — AI应用层架构方向</li>
+    <li><b>海外（OpenAI/Google DeepMind）：</b>1人 — 顶尖研究型人才外流</li>
+    <li><b>创业 / 自由职业：</b>2人 — 成立AI应用公司</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 管理建议</div>
+  <ol class="portrait-suggestion-list">
+    <li>紧急启动AI大模型岗位薪酬专项对标，建议P7+级别薪酬上浮15~20%对齐市场</li>
+    <li>设立"AI前沿研究20%时间"机制，允许青云人才投入部分精力在前沿探索方向</li>
+    <li>为敬业度低于3.0的12名在职青云人才，逐一安排VP级别1对1沟通，了解诉求</li>
+    <li>优化晋升通道，对青云人才开放快速评审机制，缩短平均晋升等待时间</li>
+  </ol>
+</div>
+<div class="portrait-highlight">📌 数据来源：离职宽表、青云人才库、薪酬系统、敬业度调研、全面反馈360、HR面谈记录。你可以继续追问，我会持续完善这份报告。</div>
+
+<div style="margin-top:16px;">
+  <div style="font-size:13px;color:#999;margin-bottom:10px;">💡 猜你想问</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;">
+    <div onclick="askQuestion('补充青云人才薪酬对标分析')" style="background:#f0f5ff;border:1px solid #d4e3fc;border-radius:18px;padding:7px 16px;font-size:13px;color:#0052d9;cursor:pointer;transition:all 0.2s;white-space:nowrap;" onmouseover="this.style.background='#d4e3fc'" onmouseout="this.style.background='#f0f5ff'">💰 补充薪酬对标分析</div>
+    <div onclick="askQuestion('补充青云人才技术方向分析')" style="background:#f0f5ff;border:1px solid #d4e3fc;border-radius:18px;padding:7px 16px;font-size:13px;color:#0052d9;cursor:pointer;transition:all 0.2s;white-space:nowrap;" onmouseover="this.style.background='#d4e3fc'" onmouseout="this.style.background='#f0f5ff'">🔬 补充技术方向分析</div>
+    <div onclick="askQuestion('补充青云人才离职去向追踪')" style="background:#f0f5ff;border:1px solid #d4e3fc;border-radius:18px;padding:7px 16px;font-size:13px;color:#0052d9;cursor:pointer;transition:all 0.2s;white-space:nowrap;" onmouseover="this.style.background='#d4e3fc'" onmouseout="this.style.background='#f0f5ff'">🏢 补充离职去向追踪</div>
+  </div>
+</div>`;
+        lastDataReportType = 'qingyun';
+        reportAddedSections = [];
+        reportFollowupRound = 0;
+        addMessage('assistant', html, true);
+      }, 800);
+    }
+
+    // 特定群体离职人员画像 - 以梯队人才为例（年龄、司龄、毕业院校、职级、绩效、全面反馈）
+    function showGroupPortraitReport() {
+      if (isTyping) return;
+      addMessage('user', '请展示特定群体离职人员画像');
+      setTimeout(() => {
+        const html = `<div class="portrait-intro">以下是以<b>梯队人才</b>为例的特定群体离职人员画像报告，综合年龄、司龄、毕业院校、职级、绩效及全面反馈等维度：</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📐</span> 梯队人才离职概况</div>
+  <ul class="portrait-list">
+    <li><b>梯队定义：</b>部门综合排名前20%的员工，综合绩效、能力评估、潜力标记三维度</li>
+    <li><b>梯队总人数：</b>156人</li>
+    <li><b>离职人数：</b>18人，离职率 <span style="color:#D54941;font-weight:600;">11.5%</span>，高于公司整体（8.7%）</li>
+    <li><b>其中部门级梯队：</b>12人 | <b>BG级梯队：</b>4人 | <b>公司级梯队：</b>2人</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👤</span> 年龄与司龄画像</div>
+  <ul class="portrait-list">
+    <li><b>年龄分布：</b>26~30岁占39%、31~35岁占44%、36岁以上占17%</li>
+    <li><b>平均年龄：</b>31.2岁（在职梯队均值32.8岁），离职梯队整体更年轻</li>
+    <li><b>平均司龄：</b>4.2年（在职梯队均值5.1年），离职梯队司龄偏短</li>
+    <li><b>司龄分布：</b>2~3年占28%、3~5年占44%、5年以上占28%</li>
+    <li><b>关键发现：</b>入职3~5年的中坚力量流失最严重，正处于价值产出高峰期</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎓</span> 毕业院校分布</div>
+  <ul class="portrait-list">
+    <li><b>985/211院校：</b>14人（78%），其中清北复交4人、华五3人、其他985/211共7人</li>
+    <li><b>海外QS Top 100：</b>3人（17%），涵盖CMU、NUS、Imperial College</li>
+    <li><b>其他院校：</b>1人（5%）</li>
+    <li><b>学历分布：</b>硕士及以上12人（67%）、本科6人（33%）</li>
+    <li><b>对比在职梯队：</b>离职梯队985/211占比（78%）高于在职梯队（61%），高学历人才流失更显著</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 职级与绩效画像</div>
+  <ul class="portrait-list">
+    <li><b>职级分布：</b>P6占22%、P7占44%、P8占28%、P9占6%</li>
+    <li><b>离职集中职级：</b>P7~P8占比72%，为中高级核心骨干层</li>
+    <li><b>绩效分布：</b>A+占17%、A占39%、B+占33%、B占11%</li>
+    <li><b>高绩效占比：</b>A级及以上占 <span style="color:#D54941;font-weight:600;">56%</span>，远高于公司整体离职中高绩效占比（28%）</li>
+    <li><b>连续高绩效：</b>18人中有10人连续两个周期绩效A级及以上，属于"高产出型"流失</li>
+    <li><b>晋升等待时长：</b>离职梯队平均等待晋升16个月 vs 在职梯队9个月</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 全面反馈（360）画像</div>
+  <ul class="portrait-list">
+    <li><b>上级辅导与支持：</b>离职梯队 <span style="color:#D54941;font-weight:600;">2.4分</span> vs 在职梯队3.7分 — 辅导投入严重不足</li>
+    <li><b>组织公平性：</b>离职梯队 <span style="color:#D54941;font-weight:600;">2.3分</span> vs 在职梯队3.6分 — 多人反馈"付出与回报不对等"</li>
+    <li><b>职业发展规划：</b>离职梯队 <span style="color:#D54941;font-weight:600;">2.1分</span> vs 在职梯队3.9分 — 缺乏清晰发展路径</li>
+    <li><b>团队协作氛围：</b>离职梯队2.8分 vs 在职梯队3.8分 — 差距相对较小</li>
+    <li><b>工作自主性：</b>离职梯队2.5分 vs 在职梯队3.5分 — 存在"被限制感"</li>
+    <li><b>典型反馈摘录：</b>"被标记为梯队但没有实质差异化培养"、"晋升评审存在关系因素"、"申请活水被上级拒绝"</li>
+  </ul>
+</div>
+
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 管理建议</div>
+  <ol class="portrait-suggestion-list">
+    <li>为每位梯队员工制定个性化IDP（个人发展计划），明确12个月内的发展目标和资源支持</li>
+    <li>对管理岗候选梯队实施"代理管理人"轮岗机制，每季度至少安排一次实际管理经历</li>
+    <li>取消管理者对梯队员工活水申请的一票否决权，改为HR+业务双线评审</li>
+    <li>梯队员工薪酬P50对标市场75分位，拉开与非梯队的差距至15%以上</li>
+    <li>建立"梯队健康度"季度检查机制，追踪敬业度、全面反馈变化与活水意向</li>
+  </ol>
+</div>
+<div class="portrait-highlight">📌 数据来源：梯队人才库、离职宽表、敬业度调研（2024H2）、全面反馈360、薪酬系统、学历档案。你可以继续追问，我会持续完善这份画像。</div>
+
+<div style="margin-top:16px;">
+  <div style="font-size:13px;color:#999;margin-bottom:10px;">💡 猜你想问</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;">
+    <div onclick="askQuestion('补充梯队人员活水机制分析')" style="background:#f0fff5;border:1px solid #b0f0c8;border-radius:18px;padding:7px 16px;font-size:13px;color:#2ba471;cursor:pointer;transition:all 0.2s;white-space:nowrap;" onmouseover="this.style.background='#d4ffe4'" onmouseout="this.style.background='#f0fff5'">🔄 补充活水机制分析</div>
+    <div onclick="askQuestion('补充梯队人员晋升通道分析')" style="background:#f0fff5;border:1px solid #b0f0c8;border-radius:18px;padding:7px 16px;font-size:13px;color:#2ba471;cursor:pointer;transition:all 0.2s;white-space:nowrap;" onmouseover="this.style.background='#d4ffe4'" onmouseout="this.style.background='#f0fff5'">📈 补充晋升通道分析</div>
+    <div onclick="askQuestion('补充梯队人员培养机制分析')" style="background:#f0fff5;border:1px solid #b0f0c8;border-radius:18px;padding:7px 16px;font-size:13px;color:#2ba471;cursor:pointer;transition:all 0.2s;white-space:nowrap;" onmouseover="this.style.background='#d4ffe4'" onmouseout="this.style.background='#f0fff5'">📚 补充培养机制分析</div>
+  </div>
+</div>`;
+        lastDataReportType = 'echelon';
+        reportAddedSections = [];
+        reportFollowupRound = 0;
         addMessage('assistant', html, true);
       }, 800);
     }
@@ -2706,10 +2828,12 @@
         portraitTargetName = '';
         portraitFollowupCount = 0;
         dataMsgCount = 0;
+        dataAnsweredTopics = new Set();
         lastDataReportType = null;
         reportAddedSections = [];
         reportFollowupRound = 0;
         policyMsgCount = 0;
+        policyAnsweredTopics = new Set();
         chatSmallTalkCount = 0;
         emotionSupportCount = 0;
         inEmotionContext = false;
@@ -2756,10 +2880,12 @@
       portraitTargetName = '';
       portraitFollowupCount = 0;
       dataMsgCount = 0;
+      dataAnsweredTopics = new Set();
       lastDataReportType = null;
       reportAddedSections = [];
       reportFollowupRound = 0;
       policyMsgCount = 0;
+      policyAnsweredTopics = new Set();
       chatSmallTalkCount = 0;
       emotionSupportCount = 0;
       inEmotionContext = false;
@@ -2950,10 +3076,15 @@
       portraitTargetName = '';
       portraitFollowupCount = 0;
       dataMsgCount = 0;
+      dataAnsweredTopics = new Set();
       lastDataReportType = null;
       reportAddedSections = [];
       reportFollowupRound = 0;
       policyMsgCount = 0;
+      policyAnsweredTopics = new Set();
+      policyCurrentRole = 'hr'; // 重置为默认HR视角
+      document.getElementById('policyRoleEmployee').classList.remove('active');
+      document.getElementById('policyRoleHR').classList.add('active');
       chatSmallTalkCount = 0;
       emotionSupportCount = 0;
       inEmotionContext = false;
@@ -3015,6 +3146,24 @@
       updateQuickActionsByRole();
     }
 
+    // 离职知识模块 — 身份切换逻辑（单选模式）
+    let policyCurrentRole = 'hr'; // 默认HR视角
+
+    function togglePolicyRole(role) {
+      if (policyCurrentRole === role) return; // 已选中则不操作
+      policyCurrentRole = role;
+      // 更新按钮样式
+      document.getElementById('policyRoleEmployee').classList.toggle('active', role === 'employee');
+      document.getElementById('policyRoleHR').classList.toggle('active', role === 'hr');
+      // 清空对话并重新发送对应角色的开场白
+      chatHistory = [];
+      policyMsgCount = 0;
+      policyAnsweredTopics = new Set();
+      document.getElementById('chatMessages').innerHTML = '';
+      const config = functionConfig['policy'];
+      addMessage('assistant', config.welcome, false);
+    }
+
     function updateQuickActionsByRole() {
       const btnHuoshui = document.getElementById('btn-huoshui');
       const btnPortrait = document.getElementById('btn-portrait');
@@ -3061,10 +3210,12 @@
       portraitTargetName = '';
       portraitFollowupCount = 0;
       dataMsgCount = 0;
+      dataAnsweredTopics = new Set();
       lastDataReportType = null;
       reportAddedSections = [];
       reportFollowupRound = 0;
       policyMsgCount = 0;
+      policyAnsweredTopics = new Set();
       chatSmallTalkCount = 0;
       emotionSupportCount = 0;
       inEmotionContext = false;
@@ -3335,38 +3486,151 @@
         return generateInterviewResponse(message);
       }
 
-      const responses = {
-        data: [
-          '根据最新数据分析，离职趋势呈现以下特征：\n\n📊 本月离职率环比上升 2.1%\n📈 技术部门离职率领跑各部门\n📉 平均司龄持续下降\n💡 建议关注 P5-P7 级别员工',
-          '离职数据统计如下：\n\n👥 本月离职 23 人\n📊 离职率 12.3%\n⏱️ 平均司龄 2.8 年\n⚠️ 高风险员工 15 人\n\n需要查看更详细的分析吗？',
-          '数据洞察发现：\n\n🎯 离职高峰期为 Q1 和 Q3\n📊 研发部离职率最高（15.2%）\n💰 因薪酬离职占比 35%\n🔄 主动离职占比 85%'
-        ],
-        policy: [
-          '关于离职流程的合规要点：\n\n📋 必须履行30天通知期\n💼 工作交接清单确认\n💰 薪酬结算和补偿计算\n🔒 保密协议和竞业限制\n📄 离职证明和档案转移',
-          '离职政策优化建议：\n\n• 简化离职手续流程\n• 建立标准化交接模板\n• 完善离职面谈制度\n• 优化薪酬结算流程\n• 加强法律风险防控',
-          '常见法律风险点包括：\n\n⚖️ 违法解除劳动合同\n💸 经济补偿金计算错误\n🤐 保密义务执行不当\n📝 离职手续不完整\n⏱️ 通知期处理不规范'
-        ]
-      };
-      
-      const functionResponses = responses[currentFunction] || responses.data;
-      return functionResponses[Math.floor(Math.random() * functionResponses.length)];
+      return '我只是个小demo，不是真实的AI~';
     }
 
     // ========== 离职政策知识问询 ==========
     let policyMsgCount = 0;
+    let policyAnsweredTopics = new Set(); // 追踪已回答过的政策主题，避免重复
 
 
 
     function generatePolicyResponse(message) {
       policyMsgCount++;
       if (policyMsgCount > 6) {
-        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
+        return '我只是个小demo，不是真实的AI~';
       }
 
       const msg = message;
 
+      // ===== 员工视角问题 =====
+      if (policyCurrentRole === 'employee') {
+        // 员工问题1：如何发起离职流程
+        if (/发起流程|办理离职|怎么离职|申请离职|提交离职|离职申请|怎么发起/.test(msg)) {
+          if (policyAnsweredTopics.has('员工发起流程')) {
+            return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📝</span> 离职流程发起 — 补充说明</div>
+  <ul class="portrait-list">
+    <li><b>离职申请撤回：</b>如果提交后反悔，在直属上级审批前可在OA中撤回申请；上级已审批的需联系HRBP协商处理</li>
+    <li><b>试用期离职：</b>试用期内只需提前3天提交即可，流程与正式员工一致，但审批周期更短</li>
+    <li><b>合同到期不续签：</b>合同到期前30天HR会与你沟通续签意向，如选择不续签无需走OA离职流程，HR会直接办理</li>
+    <li><b>离职日期协商：</b>如需提前离开（少于30天），可在申请时备注原因，由上级和HR协商确认</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 如有其他疑问，可随时咨询你的HRBP，或点击下方"转人工"获取一对一帮助。</div>`;
+          }
+          policyAnsweredTopics.add('员工发起流程');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📝</span> 离职流程发起指南</div>
+  <div class="portrait-intro">以下是办理离职的完整流程，帮助你顺利完成各项手续。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📌</span> 第一步：提交离职申请</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>登录OA系统：</b>打开公司OA → 在搜索栏输入"离职申请"或在"人事服务"模块中找到"离职申请"入口</li>
+    <li><b>填写申请表：</b>选择离职类型（主动离职/协商离职）、填写预计最后工作日（正式员工需提前30天）、离职原因等信息</li>
+    <li><b>提交审批：</b>确认信息无误后提交，系统会自动流转至你的直属上级进行审批</li>
+  </ol>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚙️</span> 第二步：审批流程</div>
+  <ul class="portrait-list">
+    <li><b>直属上级审批：</b>你的直属领导会收到审批通知，确认离职日期和交接安排</li>
+    <li><b>HRBP审批：</b>上级审批通过后流转至HRBP，HRBP会与你安排离职面谈</li>
+    <li><b>HR Ops审批：</b>最终由HR运营团队完成审批并启动后续手续</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 第三步：办理离职手续</div>
+  <ul class="portrait-list">
+    <li><b>工作交接：</b>与上级指定的交接人完成工作交接，填写《交接清单》并双方签字</li>
+    <li><b>资产归还：</b>归还电脑、工卡、显示器等公司资产，经IT确认签收</li>
+    <li><b>账号注销：</b>IT会在最后工作日统一处理系统账号、邮箱、VPN等权限的注销</li>
+    <li><b>薪资结算：</b>HR会在离职当月或次月完成工资、年假折算等结算</li>
+    <li><b>领取离职证明：</b>离职手续全部完成后，可联系HR Ops领取离职证明</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>温馨提示：</b>建议在提交离职申请前先与直属上级进行口头沟通，正式提交后注意关注OA审批进度，确保流程顺利推进。</div>`;
+        }
+
+        // 员工问题2：查询离职进度
+        if (/离职进度|查.*进度|流程进度|审批进度|审批.*到哪|走到哪|OA.*提交|提交.*OA|流程.*哪里|在哪.*查/.test(msg)) {
+          if (policyAnsweredTopics.has('员工查进度')) {
+            return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 离职进度查询 — 补充说明</div>
+  <ul class="portrait-list">
+    <li><b>审批超时处理：</b>如果某个审批节点超过3个工作日未处理，可在OA中点击"催办"按钮，系统会自动发送提醒</li>
+    <li><b>审批被驳回：</b>如申请被驳回，OA会显示驳回原因，你可以修改后重新提交，无需重新发起</li>
+    <li><b>离职面谈安排：</b>HRBP审批环节会包含离职面谈，HRBP会主动联系你安排时间</li>
+    <li><b>手续办理进度：</b>审批全部通过后，可在OA"离职办理"页面查看交接、资产归还、薪资结算等各项手续的完成状态</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 如遇流程异常或长时间未有进展，可直接联系你的HRBP或点击"转人工"获取帮助。</div>`;
+          }
+          policyAnsweredTopics.add('员工查进度');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 离职进度查询指南</div>
+  <div class="portrait-intro">你可以通过以下方式随时查看离职流程的审批进度。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💻</span> 方式一：OA系统查询</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>登录OA系统</b> → 点击左侧菜单"我的申请"或"我发起的流程"</li>
+    <li>在列表中找到你的<b>"离职申请"</b>，点击进入详情页</li>
+    <li>查看<b>审批流程图</b>：已完成的节点会显示绿色✅，当前审批节点会高亮显示，你可以看到目前流转到了哪位审批人</li>
+    <li>每个审批节点会显示<b>审批时间</b>和<b>审批意见</b>，方便你了解详细情况</li>
+  </ol>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📱</span> 方式二：企业微信/移动端查询</div>
+  <ul class="portrait-list">
+    <li>打开<b>企业微信</b> → "工作台" → "OA审批" → "我发起的"</li>
+    <li>同样可以查看离职申请的实时审批状态</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 审批流程节点说明</div>
+  <ul class="portrait-list">
+    <li><b>节点1 — 直属上级：</b>确认离职日期、交接安排（通常1-2个工作日）</li>
+    <li><b>节点2 — HRBP：</b>安排离职面谈、确认离职原因（通常2-3个工作日）</li>
+    <li><b>节点3 — HR Ops：</b>最终审批并启动离职手续办理（通常1个工作日）</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>温馨提示：</b>整个审批流程一般需要3-5个工作日。提交后你会收到OA消息通知每个审批节点的状态变化，请留意查看。如有紧急情况可联系你的HRBP沟通。</div>`;
+        }
+
+        // 员工角色下的通用兜底
+        return '我只是个小demo，不是真实的AI~';
+      }
+
       // 0A. 事实离职 — 离职流程推进（精确匹配，优先于复杂case泛化判断）
       if (/事实离职|已经离职.*流程|离职.*流程.*推进|不来上班.*流程|旷工.*离职/.test(msg)) {
+        if (policyAnsweredTopics.has('事实离职')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 事实离职 — 深度风险评估与应对策略</div>
+  <div class="portrait-intro">针对事实离职的复杂情形，以下补充<b>高频争议场景</b>和<b>仲裁应对要点</b>。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 高频争议场景</div>
+  <ul class="portrait-list">
+    <li><b>员工主张"被迫离职"：</b>员工可能反过来称是公司逼走的（如调岗、降薪），需留存完整的沟通记录和审批流程</li>
+    <li><b>员工失联后突然回来上班：</b>如已发出解除通知且生效，需明确告知劳动关系已解除，但应核实通知是否合法送达</li>
+    <li><b>员工在外兼职/入职新公司：</b>需取证后依据规章制度处理，注意取证方式的合法性</li>
+    <li><b>孕期/工伤/医疗期员工失联：</b>属于特殊保护期，处理需更加谨慎，建议先咨询法务</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 仲裁应对要点</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>举证责任：</b>公司需证明①员工确实未到岗、②已依法发出通知、③规章制度合法有效且已告知员工</li>
+    <li><b>通知送达：</b>优先EMS邮寄至劳动合同约定地址+身份证地址，辅以短信/邮件/微信（截图留存）</li>
+    <li><b>时效控制：</b>建议旷工3天内启动流程，超过30天未处理会被质疑管理疏忽</li>
+    <li><b>制度审查：</b>规章制度须经民主程序制定（职代会/全体员工讨论）且已向员工公示或告知</li>
+  </ol>
+</div>
+<div class="portrait-highlight">💡 <b>实务提醒：</b>事实离职案件中，公司败诉的核心原因通常是"通知未合法送达"或"规章制度未经民主程序"。建议HR在处理前先与法务做一次合规审查，确保流程万无一失。</div>`;
+        }
+        policyAnsweredTopics.add('事实离职');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📋</span> 员工已事实离职，离职流程推进指南</div>
   <div class="portrait-intro">当员工已经不再出勤、事实上脱离了工作岗位，但尚未正式办理离职手续时，HR需要<b>主动推进流程</b>，确保用工关系依法解除，避免"僵尸劳动关系"带来的法律风险。</div>
@@ -3399,11 +3663,36 @@
     <li><b>不建议直接按"自动离职"处理：</b>"自动离职"在法律上没有明确定义，直接以此处理存在被认定为违法解除的风险</li>
   </ul>
 </div>
-<div class="portrait-highlight">💡 <b>处理建议：</b>事实离职的核心是<b>"通知到位 + 制度合规 + 证据留痕"</b>。建议HR在首次发现员工异常缺勤后3天内启动正式流程，越早处理风险越低。如遇员工失联，可同步联系其紧急联系人确认情况。如需进一步分析具体case，可点击下方"Case咨询"或"转人工"获取一对一支持。</div>`;
+<div class="portrait-highlight">💡 <b>处理建议：</b>事实离职的核心是<b>"通知到位 + 制度合规 + 证据留痕"</b>。建议HR在首次发现员工异常缺勤后3天内启动正式流程，越早处理风险越低。如遇员工失联，可同步联系其紧急联系人确认情况。如需进一步分析具体case，可点击下方"转人工"获取一对一支持。</div>`;
       }
 
       // 0B. 不配合办理手续但申请离职证明
       if (/不配合.*离职|不配合.*手续|离职证明.*不配合|不办.*手续.*离职证明|拒绝.*交接.*离职证明/.test(msg)) {
+        if (policyAnsweredTopics.has('不配合手续')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📄</span> 不配合手续 — 深度实操指南</div>
+  <div class="portrait-intro">补充更多<b>实务细节</b>和<b>典型案例</b>，帮助HR更精准地应对。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 典型案例分析</div>
+  <ul class="portrait-list">
+    <li><b>案例1 — 员工带走客户资料：</b>先开具离职证明，同时发送律师函要求归还商业资料，保留客户转交记录作为损失证据</li>
+    <li><b>案例2 — 员工拒还笔记本电脑：</b>在工资结算中按公司资产管理制度扣除设备折旧费用（需有制度依据），同时书面通知</li>
+    <li><b>案例3 — 员工索要离职证明同时威胁仲裁：</b>正常开具离职证明不受影响，但注意离职证明内容仅限法定四项，不要加入负面评价</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚖️</span> 离职证明的合规要点</div>
+  <ul class="portrait-list">
+    <li><b>法定内容：</b>仅需写明劳动合同期限、解除/终止日期、工作岗位、工作年限四项</li>
+    <li><b>禁止内容：</b>不得记载"表现不佳""被辞退""有劳动争议"等主观或负面评价</li>
+    <li><b>开具时限：</b>应在解除/终止劳动合同后15日内完成</li>
+    <li><b>保存义务：</b>劳动合同文本和离职证明至少保存2年备查</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>关键提醒：</b>离职证明和交接是两个独立事项，不要混为一谈。离职证明是法定义务，必须无条件开具；交接纠纷通过其他法律途径解决。如需进一步咨询具体case，可点击"转人工"。</div>`;
+        }
+        policyAnsweredTopics.add('不配合手续');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📄</span> 员工不配合办理手续但要求开具离职证明</div>
   <div class="portrait-intro">实务中常遇到这种情况：员工拒绝配合工作交接或归还公司资产，但同时要求公司开具离职证明。HR需要在<b>法律合规</b>和<b>公司利益保护</b>之间找到平衡。</div>
@@ -3447,6 +3736,27 @@
 
       // 1. 15年退休
       if (/15年|十五年|退休|退休金|养老|工龄/.test(msg)) {
+        if (policyAnsweredTopics.has('退休')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏖️</span> 退休政策 — 深度解读与实操要点</div>
+  <ul class="portrait-list">
+    <li><b>延迟退休最新动态：</b>渐进式延迟退休方案已出台，男性延至63周岁、女性管理岗延至58周岁、女性生产岗延至55周岁（分阶段实施），具体到每位员工需逐年查表确认</li>
+    <li><b>无固定期限合同转换要点：</b>员工连续工作满15年+距退休不足5年的，即使合同到期也不能终止，必须续签无固定期限合同</li>
+    <li><b>养老金计算要素：</b>基础养老金（社会平均工资×缴费年限×1%）+ 个人账户养老金（个人账户余额÷计发月数），缴费年限越长领取越多</li>
+    <li><b>提前退休的特殊情形：</b>从事有毒有害工种满规定年限的可提前5年退休；完全丧失劳动能力的可申请病退</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> HR实操建议</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>建立临退人员台账：</b>定期筛查距退休5年内的员工名单，提前做好合同管理和岗位安排</li>
+    <li><b>退休办理清单：</b>提前3个月通知员工准备身份证、户口本、社保手册等材料，协助办理退休审批手续</li>
+    <li><b>返聘管理：</b>退休后返聘属于劳务关系而非劳动关系，需签订《劳务协议》，注意工伤认定等差异</li>
+  </ol>
+</div>
+<div class="portrait-highlight">💡 <b>特别提醒：</b>15年工龄+距退休5年的员工属于法律特殊保护对象，处理解除/终止时务必审慎。建议涉及此类员工的任何人事决定都先经法务审核。</div>`;
+        }
+        policyAnsweredTopics.add('退休');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">🏖️</span> 关于工龄满15年与退休相关政策</div>
   <ul class="portrait-list">
@@ -3461,6 +3771,28 @@
 
       // 2. 社保公积金转移
       if (/社保|公积金|转移|五险一金|保险|医保|住房/.test(msg)) {
+        if (policyAnsweredTopics.has('社保')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏦</span> 社保公积金 — 常见问题深度解答</div>
+  <ul class="portrait-list">
+    <li><b>社保断缴影响：</b>医保断缴次月即无法报销；养老保险可累计计算但影响退休金；部分城市购房/落户要求连续缴纳社保（断缴需重新计算）</li>
+    <li><b>灵活就业缴纳：</b>离职后未找到新工作可以灵活就业身份缴纳养老+医保，但无法缴纳工伤/失业/生育险</li>
+    <li><b>异地就医备案：</b>跨省就医前需办理异地就医备案，可通过国家医保服务平台APP线上办理</li>
+    <li><b>公积金贷款影响：</b>离职后公积金封存期间无法申请公积金贷款，已有贷款不受影响但需确保按时还款</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 各险种转移要点对比</div>
+  <ul class="portrait-list">
+    <li><b>养老保险：</b>跨省转移需在新参保地申请，转移个人账户余额+统筹基金12%</li>
+    <li><b>医疗保险：</b>各地政策不同，部分城市支持跨省转移（需满足条件），建议咨询当地社保局</li>
+    <li><b>失业保险：</b>非本人意愿失业+缴满1年可申领失业金，最长领24个月</li>
+    <li><b>工伤/生育保险：</b>不可转移，离职即中断。孕期离职的生育费用无法通过生育险报销</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>关键建议：</b>建议HR在离职面谈时主动告知社保断缴风险和衔接方案，可提供《社保衔接指引》（含灵活就业缴费指南），帮助员工做好过渡。</div>`;
+        }
+        policyAnsweredTopics.add('社保');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">🏦</span> 离职社保与公积金转移指南</div>
   <ul class="portrait-list">
@@ -3486,6 +3818,31 @@
 
       // 3. 离职赔偿
       if (/赔偿|补偿|补偿金|经济补偿|N\+1|2N|违法解除|辞退|裁员|开除/.test(msg)) {
+        if (policyAnsweredTopics.has('赔偿')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💰</span> 经济补偿金 — 计算实例与争议焦点</div>
+  <div class="portrait-intro">以下提供<b>具体计算示例</b>和<b>常见仲裁争议点</b>，帮助HR精准操作。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 计算示例</div>
+  <ul class="portrait-list">
+    <li><b>案例1：</b>员工工作3年7个月，月均工资15000元 → N=4（不满1年按1年算）→ 补偿金 = 4 × 15000 = 60,000元</li>
+    <li><b>案例2：</b>员工工作5年，月均工资45000元，当地社平工资三倍为36000元 → 补偿基数按36000封顶 → 5 × 36000 = 180,000元</li>
+    <li><b>案例3：</b>违法解除，员工工作2年，月均工资10000元 → 2N = 2 × 2 × 10000 = 40,000元</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚖️</span> 常见仲裁争议焦点</div>
+  <ul class="portrait-list">
+    <li><b>"月工资"口径：</b>应含基本工资+绩效奖金+加班费+津贴补贴，但不含报销和福利性补贴（如交通补贴按实报销）</li>
+    <li><b>年终奖是否计入：</b>如年终奖有明确发放标准且为劳动报酬性质，应按12个月均摊计入月工资基数</li>
+    <li><b>工作年限争议：</b>关联公司之间调动、劳务派遣转直签等情形的工龄是否连续计算，需看是否有协议约定</li>
+    <li><b>"三倍封顶"限制：</b>月工资超过社平三倍的，补偿年限最高不超过12年</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>实操建议：</b>在协商解除前，HR应先做好补偿金预算测算（含社保成本、年假折算等），与法务确认方案后再与员工沟通，避免现场承诺后无法兑现。</div>`;
+        }
+        policyAnsweredTopics.add('赔偿');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">💰</span> 离职经济补偿金政策</div>
   <ul class="portrait-list">
@@ -3510,6 +3867,32 @@
 
       // 4. 离职工作交接
       if (/交接|工作交接|移交|交接单|交接清单|接手|手续/.test(msg)) {
+        if (policyAnsweredTopics.has('交接')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📝</span> 工作交接 — 风险场景与应对方案</div>
+  <div class="portrait-intro">补充<b>特殊交接场景</b>的处理方法和<b>交接不完整</b>的风险应对。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 特殊交接场景</div>
+  <ul class="portrait-list">
+    <li><b>核心技术岗交接：</b>需安排"影子期"（shadow period），接手人至少跟岗1-2周；技术文档需经团队评审确认完整性</li>
+    <li><b>客户关系交接：</b>安排三方会议（离职员工+接手人+客户），正式介绍并确认后续对接人，降低客户流失风险</li>
+    <li><b>管理岗交接：</b>除业务交接外，需完成团队信息同步（在手审批、晋升/PIP进展、团队矛盾等敏感信息）</li>
+    <li><b>员工拒绝交接：</b>书面通知交接义务及法律后果，如造成实际损失可依据劳动合同法第九十条追偿</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 交接质量评估标准</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>完整性：</b>所有在手项目/任务是否有书面说明和后续计划</li>
+    <li><b>可操作性：</b>接手人是否能独立开展工作（可通过模拟操作验证）</li>
+    <li><b>资产清点：</b>IT资产、门禁权限、系统账号是否全部回收/转交</li>
+    <li><b>知识沉淀：</b>关键经验和隐性知识是否有文档化记录</li>
+  </ol>
+</div>
+<div class="portrait-highlight">💡 <b>最佳实践：</b>建议在离职通知期的第1天就启动交接计划，第一周列清单+安排接手人，第二至三周执行交接，最后一周做验收确认。交接完成后由HR/上级/IT三方签字存档。</div>`;
+        }
+        policyAnsweredTopics.add('交接');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📝</span> 离职工作交接规范</div>
   <ul class="portrait-list">
@@ -3533,6 +3916,33 @@
 
       // 5. 离职期限/通知期
       if (/期限|通知期|30天|三十天|提前|多久|几天|多长时间|什么时候能走|离职日期/.test(msg)) {
+        if (policyAnsweredTopics.has('通知期')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📅</span> 通知期 — 特殊情形与常见争议</div>
+  <div class="portrait-intro">补充通知期内的<b>特殊场景处理</b>和<b>实务争议解答</b>。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">❓</span> 常见问题解答</div>
+  <ul class="portrait-list">
+    <li><b>Q: 30天内公司能否要求员工提前走？</b>A: 可以，但需正常支付30天工资。公司主动缩短通知期视为提前解除，不影响员工权益</li>
+    <li><b>Q: 通知期内员工不来上班？</b>A: 通知期内员工有出勤义务，无故旷工可按规章制度处理，但不影响离职生效</li>
+    <li><b>Q: 通知期内员工能否撤回离职？</b>A: 公司尚未同意/审批的可撤回；已走完审批流程的，需双方协商一致才能撤回</li>
+    <li><b>Q: 周末/节假日算入30天吗？</b>A: 30天为自然日而非工作日，包含周末和法定节假日</li>
+    <li><b>Q: 员工当天提出当天走？</b>A: 属于违法解除，但实务中公司同意即可。建议签署《协商一致解除协议》留档</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 通知期管理最佳实践</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>系统留痕：</b>所有离职申请通过OA系统提交，确保有明确的提交时间记录</li>
+    <li><b>及时响应：</b>HR在收到离职申请后24小时内启动审批流程，避免因审批延迟引发争议</li>
+    <li><b>年假处理：</b>在通知期内主动与员工确认剩余年假的处理方式（休完或折算工资）</li>
+    <li><b>最后工作日确认：</b>书面确认最后工作日，并在该日完成离职面谈、交接签字、系统注销</li>
+  </ol>
+</div>
+<div class="portrait-highlight">💡 <b>合规要点：</b>通知期是法律赋予双方的过渡期，建议HR既不要阻挠也不要催促，在30天内有序完成交接和离职手续。</div>`;
+        }
+        policyAnsweredTopics.add('通知期');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📅</span> 离职通知期相关规定</div>
   <ul class="portrait-list">
@@ -3557,6 +3967,32 @@
 
       // 6. 竞业限制
       if (/竞业|竞业限制|竞业协议|竞业补偿|同业禁止|竞业禁止|保密/.test(msg)) {
+        if (policyAnsweredTopics.has('竞业')) {
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔒</span> 竞业限制 — 实务操作与风险防控</div>
+  <div class="portrait-intro">补充<b>竞业限制的执行细节</b>和<b>常见风险点</b>。</div>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 竞业限制执行要点</div>
+  <ul class="portrait-list">
+    <li><b>补偿金发放方式：</b>必须按月发放至员工个人账户，不能一次性发放或以其他形式替代。建议保留银行转账记录</li>
+    <li><b>竞业调查手段：</b>可通过社保缴纳记录、工商信息查询、招聘平台信息等方式核实员工是否违反竞业约定</li>
+    <li><b>违约金与损失赔偿：</b>违约金由协议约定，但法院会审查合理性；公司也可同时主张实际损失赔偿（需举证）</li>
+    <li><b>竞业限制与保密协议的区别：</b>保密义务不需要支付补偿金且无期限限制；竞业限制必须支付补偿金且最长2年</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> HR常见操作风险</div>
+  <ul class="portrait-list">
+    <li><b>风险1 — 全员签竞业：</b>竞业限制仅适用于"三类人员"，非核心岗位签订竞业协议可能被认定无效且增加成本</li>
+    <li><b>风险2 — 忘记启动/放弃：</b>员工离职后如不打算执行竞业，应在30天内书面通知解除，否则需持续支付补偿金</li>
+    <li><b>风险3 — 补偿金标准过低：</b>低于法定标准（月均工资30%且不低于最低工资）的竞业补偿约定无效</li>
+    <li><b>风险4 — 竞争对手界定模糊：</b>协议中应明确列出具体企业名单或行业范围，避免争议</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 <b>管理建议：</b>建议HR建立《竞业限制台账》，记录每位签约员工的协议期限、补偿金额、到期日等信息，设置提醒避免遗漏。离职面谈时主动告知竞业义务和违约后果。</div>`;
+        }
+        policyAnsweredTopics.add('竞业');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">🔒</span> 竞业限制政策解读</div>
   <ul class="portrait-list">
@@ -3579,13 +4015,7 @@
       }
 
       // 通用兜底
-      return `<div class="portrait-section">
-  <div class="portrait-section-title"><span class="section-icon">📋</span> 离职知识库</div>
-  <ul class="portrait-list">
-    <li>作为离职顾问专家，我可以帮您解答政策法规问题，也能分析复杂的离职case，提供合规处理建议。</li>
-  </ul>
-</div>
-<div class="portrait-highlight">你可以试着这样问我：<br>• "离职赔偿金怎么计算？N、N+1、2N的区别"<br>• "离职后社保和公积金怎么转移？"<br>• "竞业限制协议有哪些规定？"<br>• 或者直接描述一个具体的离职case，我来帮你分析处理方案</div>`;
+      return '我只是个小demo，不是真实的AI~';
     }
 
     // 判断是否为复杂离职case
@@ -3989,6 +4419,7 @@
     const totalHeadcount = 260;
 
     let dataMsgCount = 0; // 离职数据追问计数
+    let dataAnsweredTopics = new Set(); // 追踪已回答过的数据分析主题，避免重复
 
     // 洞察报告内容（离职数据模块专用）
     const dataInsightReports = {
@@ -4827,7 +5258,7 @@
     function generateDataResponse(message) {
       dataMsgCount++;
       if (dataMsgCount > 30) {
-        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
+        return '我只是个小demo，不是真实的AI~';
       }
 
       const msg = message.toLowerCase();
@@ -5076,10 +5507,99 @@
       function pct(n, total) { return (n / total * 100).toFixed(1); }
       function isHighPerf(p) { return p.performance === 'A' || p.performance === 'A+' || p.performance === 'S'; }
 
+      // ========== 特定部门深入分析（追问优先匹配） ==========
+      // 当用户追问某个具体部门的原因/为什么时，优先返回该部门的深入分析，避免重复返回总览数据
+      const deepDeptKeywords = ['为什么', '原因', '怎么回事', '什么原因', '分析一下', '深入', '具体', '详细', '怎么这么高', '这么高', '为啥', '咋回事', '啥原因', '怎么了'];
+      const isDeepDeptQuery = deepDeptKeywords.some(kw => msg.includes(kw));
+      const allDeptNames = ['研发部','产品部','运营部','设计部','市场部','人力资源部'];
+      const targetDept = allDeptNames.find(d => msg.includes(d) || msg.includes(d.replace('部','')));
+      
+      if (isDeepDeptQuery && targetDept) {
+        const deptPeople = resignationData.filter(p => p.dept === targetDept);
+        const deptHc = deptHeadcount[targetDept] || 30;
+        const deptRate = pct(deptPeople.length, deptHc);
+        const deptReasons = countBy(deptPeople, p => p.reason);
+        const reasonLines = sortedEntries(deptReasons).map(([r, c]) => `<li><b>${r}：</b>${c} 人（${pct(c, deptPeople.length)}%）</li>`).join('\n    ');
+        const highPerfDept = deptPeople.filter(isHighPerf);
+        const avgTenure = deptPeople.length > 0 ? (deptPeople.reduce((s, p) => s + calcTenure(p), 0) / deptPeople.length).toFixed(1) : '0';
+        const avgEngagement = deptPeople.length > 0 ? (deptPeople.reduce((s, p) => s + p.engagement, 0) / deptPeople.length).toFixed(1) : '-';
+        const avgSatisfaction = deptPeople.length > 0 ? (deptPeople.reduce((s, p) => s + p.satisfaction, 0) / deptPeople.length).toFixed(1) : '-';
+        const personList = deptPeople.map(p => `${p.name}(${p.level},${p.performance},${p.reason})`).join('、');
+        
+        return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> ${targetDept}离职深度分析</div>
+  <ul class="portrait-list">
+    <li><b>离职人数：</b>${deptPeople.length} 人（部门总人数 ${deptHc} 人，离职率 <span style="color:#D54941;font-weight:600;">${deptRate}%</span>）</li>
+    <li><b>离职人员：</b>${personList}</li>
+    <li><b>高绩效流失：</b>${highPerfDept.length} 人${highPerfDept.length > 0 ? '（' + highPerfDept.map(p => p.name).join('、') + '）' : ''}</li>
+    <li><b>平均司龄：</b>${avgTenure} 年</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 离职原因分布</div>
+  <ul class="portrait-list">
+    ${reasonLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📉</span> 组织健康度信号</div>
+  <ul class="portrait-list">
+    <li><b>平均敬业度：</b>${avgEngagement}/5.0${parseFloat(avgEngagement) < 3.0 ? ' <span style="color:#D54941;font-weight:600;">⚠️ 低于健康水平</span>' : ''}</li>
+    <li><b>平均满意度：</b>${avgSatisfaction}/5.0${parseFloat(avgSatisfaction) < 3.0 ? ' <span style="color:#D54941;font-weight:600;">⚠️ 低于健康水平</span>' : ''}</li>
+    <li><b>管理反馈：</b>${deptPeople.length > 0 ? deptPeople[0].managerFeedback.substring(0, 50) + '...' : '暂无'}</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 深层原因解读</div>
+  <ul class="portrait-list">
+    <li>${sortedEntries(deptReasons)[0] ? '首要离职原因为<b>"' + sortedEntries(deptReasons)[0][0] + '"</b>，占比' + pct(sortedEntries(deptReasons)[0][1], deptPeople.length) + '%' : '暂无数据'}${sortedEntries(deptReasons)[0] && sortedEntries(deptReasons)[0][0] === '个人发展' ? '，反映出晋升通道不畅或成长空间受限' : sortedEntries(deptReasons)[0] && sortedEntries(deptReasons)[0][0] === '薪资待遇' ? '，反映出薪酬竞争力不足，与外部市场存在明显差距' : sortedEntries(deptReasons)[0] && sortedEntries(deptReasons)[0][0] === '工作压力' ? '，反映出工作强度过大或工作内容缺乏成就感' : sortedEntries(deptReasons)[0] && sortedEntries(deptReasons)[0][0] === '管理问题' ? '，反映出团队管理风格存在问题或上下级沟通不畅' : ''}</li>
+    <li>${highPerfDept.length > 0 ? '高绩效员工流失' + highPerfDept.length + '人，占该部门离职总量' + pct(highPerfDept.length, deptPeople.length) + '%，核心人才保留亟需加强' : '该部门暂无高绩效员工流失'}</li>
+    <li>${parseFloat(avgEngagement) < 3.0 ? '敬业度评分偏低（' + avgEngagement + '/5.0），团队士气和归属感需要关注' : '敬业度评分尚在合理区间'}</li>
+    <li>建议${sortedEntries(deptReasons)[0] && sortedEntries(deptReasons)[0][0] === '个人发展' ? '优化晋升评审机制，提供更多核心项目参与机会和明确的成长路径' : sortedEntries(deptReasons)[0] && sortedEntries(deptReasons)[0][0] === '薪资待遇' ? '启动薪酬市场对标调整，重点覆盖核心岗位的竞争力差距' : sortedEntries(deptReasons)[0] && sortedEntries(deptReasons)[0][0] === '工作压力' ? '优化工作分配和节奏管理，建立加班预警机制，提供轮岗和调岗机会' : '加强管理者能力评估和管理改善，建立管理冲突调解机制'}</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 你还可以继续追问，如"${deptPeople.length > 0 ? deptPeople[0].name + '的详细离职原因是什么？' : '某位员工的详细离职原因'}"或"${targetDept}的离职趋势是怎样的？"</div>`;
+      }
+
       // ========== 离职率查询 ==========
       if (msg.includes('离职率') || msg.includes('流失率') || msg.includes('离职比例')) {
         const deptCount = countBy(resignationData, p => p.dept);
         const overallRate = pct(resignationData.length, totalHeadcount);
+        if (dataAnsweredTopics.has('离职率')) {
+          // 第二次追问：深化分析——高绩效离职率 & 行业对标
+          const highPerf = resignationData.filter(isHighPerf);
+          const highPerfRate = pct(highPerf.length, totalHeadcount);
+          const voluntaryRate = pct(resignationData.filter(p => p.type === '主动').length, totalHeadcount);
+          const deptHighPerfLines = sortedEntries(deptCount).map(([d, c]) => {
+            const hp = resignationData.filter(p => p.dept === d && isHighPerf(p));
+            const hc = deptHeadcount[d] || 30;
+            return `<li><b>${d}：</b>高绩效流失 ${hp.length} 人（高绩效流失率 <span style="color:${hp.length>1?'#D54941':'#0052D9'};font-weight:600;">${pct(hp.length, hc)}%</span>），主要原因：${hp.length > 0 ? hp.map(p => p.reason).filter((v,i,a) => a.indexOf(v)===i).join('、') : '无'}</li>`;
+          }).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 离职率深度对标分析</div>
+  <ul class="portrait-list">
+    <li><b>整体离职率：</b>${overallRate}%（行业参考：互联网10-15%，${parseFloat(overallRate) > 15 ? '明显高于行业' : parseFloat(overallRate) > 10 ? '处于行业中等偏高' : '处于行业正常范围'}）</li>
+    <li><b>主动离职率：</b>${voluntaryRate}%（主动离职占全部离职的 ${pct(resignationData.filter(p => p.type === '主动').length, resignationData.length)}%）</li>
+    <li><b>高绩效离职率：</b>${highPerfRate}%（行业建议值 <5%，${parseFloat(highPerfRate) > 5 ? '<span style="color:#D54941;font-weight:600;">⚠️ 超标</span>' : '在可控范围'}）</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 各部门高绩效流失明细</div>
+  <ul class="portrait-list">
+    ${deptHighPerfLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 改善建议</div>
+  <ul class="portrait-list">
+    <li>高绩效离职率 ${highPerfRate}% 需重点关注，每流失1名高绩效员工的替换成本约为其年薪的1.5-2倍</li>
+    <li>建议启动高绩效员工保留专项：包括定向调薪、核心项目参与、管理者定期1on1等</li>
+    <li>建立离职预警体系：敬业度≤3.0 + 最近12个月未晋升 + 薪酬低于市场的员工优先关注</li>
+    <li>可继续追问具体部门的深入分析，如"研发部离职率为什么这么高？"</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('离职率');
         const deptRateLines = sortedEntries(deptCount).map(([d, c]) => {
           const hc = deptHeadcount[d] || 30;
           return `<li><b>${d}：</b>离职 ${c} 人 / 在编 ${hc} 人，离职率 <span style="color:${(c/hc)>0.08?'#D54941':'#0052D9'};font-weight:600;">${pct(c, hc)}%</span></li>`;
@@ -5107,6 +5627,44 @@
       if (msg.includes('趋势') || msg.includes('按月') || msg.includes('月度') || msg.includes('季度') || msg.includes('每月') || msg.includes('走势') || msg.includes('变化') || msg.includes('环比') || msg.includes('同比')) {
         const monthCount = countBy(resignationData, p => getMonth(p.leaveDate));
         const sortedMonths = Object.keys(monthCount).sort();
+        const peakMonth = sortedEntries(monthCount)[0];
+        if (dataAnsweredTopics.has('趋势')) {
+          // 第二次追问：按部门拆解趋势 + 高绩效流失时间分布
+          const deptMonthData = {};
+          resignationData.forEach(p => {
+            const m = getMonth(p.leaveDate);
+            if (!deptMonthData[p.dept]) deptMonthData[p.dept] = {};
+            deptMonthData[p.dept][m] = (deptMonthData[p.dept][m] || 0) + 1;
+          });
+          const deptTrendLines = Object.keys(deptMonthData).map(d => {
+            const months = Object.entries(deptMonthData[d]).sort((a,b) => a[0].localeCompare(b[0]));
+            return `<li><b>${d}：</b>${months.map(([m,c]) => m.substring(5) + '月' + c + '人').join('、')}</li>`;
+          }).join('\n    ');
+          const highPerfMonths = countBy(resignationData.filter(isHighPerf), p => getMonth(p.leaveDate));
+          const hpLines = sortedEntries(highPerfMonths).map(([m,c]) => `<li><b>${m}：</b>${c} 人</li>`).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📈</span> 各部门离职时间分布</div>
+  <ul class="portrait-list">
+    ${deptTrendLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 高绩效员工离职时间分布</div>
+  <ul class="portrait-list">
+    ${hpLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 深度解读</div>
+  <ul class="portrait-list">
+    <li>研发部离职集中在 Q1，与年终奖发放后跳槽窗口高度吻合</li>
+    <li>高绩效员工离职也集中在年初，说明竞争对手在年终/年初加大了定向挖角力度</li>
+    <li>建议在每年 11-12 月提前启动核心人才保留面谈和定向激励方案</li>
+    <li>Q3-Q4 的零星离职多为工作压力和管理问题导致，需关注团队管理质量</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('趋势');
         const monthLines = sortedMonths.map(m => `<li><b>${m}：</b>${monthCount[m]} 人</li>`).join('\n    ');
         // 季度汇总
         const qtrCount = {};
@@ -5117,7 +5675,6 @@
           qtrCount[q] = (qtrCount[q] || 0) + 1;
         });
         const qtrLines = Object.keys(qtrCount).sort().map(q => `<li><b>${q}：</b>${qtrCount[q]} 人</li>`).join('\n    ');
-        const peakMonth = sortedEntries(monthCount)[0];
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📈</span> 离职月度趋势</div>
   <ul class="portrait-list">
@@ -5143,12 +5700,48 @@
 
       // ========== 司龄/在职时长分析 ==========
       if (msg.includes('司龄') || msg.includes('在职') || msg.includes('工龄') || msg.includes('待了多久') || msg.includes('入职多久') || msg.includes('工作年限') || msg.includes('服务年限')) {
-        const tenures = resignationData.map(p => ({ name: p.name, dept: p.dept, tenure: calcTenure(p) }));
+        const tenures = resignationData.map(p => ({ name: p.name, dept: p.dept, tenure: calcTenure(p), perf: p.performance, reason: p.reason, level: p.level }));
         const avgTenure = (tenures.reduce((s, t) => s + t.tenure, 0) / tenures.length).toFixed(1);
         const lt1 = tenures.filter(t => t.tenure < 1);
         const y1to2 = tenures.filter(t => t.tenure >= 1 && t.tenure < 2);
         const y2to3 = tenures.filter(t => t.tenure >= 2 && t.tenure < 3);
         const gt3 = tenures.filter(t => t.tenure >= 3);
+        if (dataAnsweredTopics.has('司龄')) {
+          // 第二次追问：按部门拆解司龄 + 高绩效员工司龄特征
+          const deptTenures = {};
+          tenures.forEach(t => {
+            if (!deptTenures[t.dept]) deptTenures[t.dept] = [];
+            deptTenures[t.dept].push(t);
+          });
+          const deptLines = Object.entries(deptTenures).map(([d, ts]) => {
+            const avg = (ts.reduce((s,t) => s + t.tenure, 0) / ts.length).toFixed(1);
+            return `<li><b>${d}：</b>平均司龄 ${avg} 年，离职 ${ts.length} 人（${ts.filter(t => t.tenure < 1).length} 人不满1年）</li>`;
+          }).join('\n    ');
+          const highPerfTenures = tenures.filter(t => ['A+','A'].includes(t.perf));
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⏱️</span> 各部门离职员工司龄对比</div>
+  <ul class="portrait-list">
+    ${deptLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 高绩效员工司龄特征</div>
+  <ul class="portrait-list">
+    ${highPerfTenures.map(t => `<li><b>${t.name}（${t.dept} ${t.level}）：</b>在职 ${t.tenure.toFixed(1)} 年，因"${t.reason}"离职</li>`).join('\n    ')}
+    <li><b>高绩效平均司龄：</b>${highPerfTenures.length > 0 ? (highPerfTenures.reduce((s,t) => s + t.tenure, 0) / highPerfTenures.length).toFixed(1) : '0'} 年</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 深度洞察</div>
+  <ul class="portrait-list">
+    <li>高绩效员工离职集中在入职1-3年区间，正是技术骨干成长为核心的关键期</li>
+    <li>不满1年离职的 ${lt1.length} 人中，多数为 P5 级别，建议优化招聘匹配和 onboarding 流程</li>
+    <li>3年以上老员工流失需特别关注，他们的离开对团队知识传承影响最大</li>
+    <li>建议针对入职 6-18 个月的员工加强职业发展面谈和导师计划</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('司龄');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">⏱️</span> 离职员工司龄分布</div>
   <ul class="portrait-list">
@@ -5177,6 +5770,38 @@
         const a25to30 = resignationData.filter(p => p.age >= 25 && p.age < 30);
         const a30to35 = resignationData.filter(p => p.age >= 30 && p.age < 35);
         const gte35 = resignationData.filter(p => p.age >= 35);
+        if (dataAnsweredTopics.has('年龄')) {
+          // 第二次追问：年龄×原因交叉 + 年龄×部门交叉
+          const ageGroups = [
+            { label: '25岁以下', data: lt25 },
+            { label: '25-29岁', data: a25to30 },
+            { label: '30-34岁', data: a30to35 },
+            { label: '35岁及以上', data: gte35 }
+          ];
+          const crossLines = ageGroups.filter(g => g.data.length > 0).map(g => {
+            const reasons = countBy(g.data, p => p.reason);
+            const topReason = sortedEntries(reasons)[0];
+            const depts = countBy(g.data, p => p.dept);
+            const topDept = sortedEntries(depts)[0];
+            return `<li><b>${g.label}（${g.data.length}人）：</b>主要原因"${topReason[0]}"（${topReason[1]}人），集中在${topDept[0]}（${topDept[1]}人）</li>`;
+          }).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👥</span> 年龄 × 离职原因交叉分析</div>
+  <ul class="portrait-list">
+    ${crossLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 年龄段差异化保留策略</div>
+  <ul class="portrait-list">
+    <li><b>25岁以下：</b>加强入职融入、mentor制度、清晰的成长路径规划</li>
+    <li><b>25-29岁：</b>提供核心项目机会、技术/管理双通道、薪酬竞争力保障</li>
+    <li><b>30-34岁：</b>关注晋升瓶颈、薪酬市场对标、工作生活平衡</li>
+    <li><b>35岁及以上：</b>提供管理岗/专家岗转型支持、弹性福利、长期激励</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('年龄');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">👥</span> 离职员工年龄分布</div>
   <ul class="portrait-list">
@@ -5204,6 +5829,38 @@
         const female = resignationData.filter(p => p.gender === '女');
         const maleReasons = countBy(male, p => p.reason);
         const femaleReasons = countBy(female, p => p.reason);
+        if (dataAnsweredTopics.has('性别')) {
+          // 第二次追问：性别×部门交叉 + 性别×绩效交叉
+          const maleDept = countBy(male, p => p.dept);
+          const femaleDept = countBy(female, p => p.dept);
+          const maleHighPerf = male.filter(isHighPerf);
+          const femaleHighPerf = female.filter(isHighPerf);
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">👫</span> 性别 × 部门交叉分析</div>
+  <ul class="portrait-list">
+    <li><b>男性离职部门分布：</b>${sortedEntries(maleDept).map(([d,c]) => d + ' ' + c + '人').join('、')}</li>
+    <li><b>女性离职部门分布：</b>${sortedEntries(femaleDept).map(([d,c]) => d + ' ' + c + '人').join('、')}</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 性别 × 绩效分析</div>
+  <ul class="portrait-list">
+    <li><b>男性高绩效流失：</b>${maleHighPerf.length} 人${maleHighPerf.length > 0 ? '（' + maleHighPerf.map(p => p.name).join('、') + '）' : ''}</li>
+    <li><b>女性高绩效流失：</b>${femaleHighPerf.length} 人${femaleHighPerf.length > 0 ? '（' + femaleHighPerf.map(p => p.name).join('、') + '）' : ''}</li>
+    <li><b>男性高绩效流失率：</b>${pct(maleHighPerf.length, male.length)}%</li>
+    <li><b>女性高绩效流失率：</b>${pct(femaleHighPerf.length, female.length)}%</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 差异化保留建议</div>
+  <ul class="portrait-list">
+    <li>男性员工：侧重薪酬竞争力提升和技术/管理双通道晋升</li>
+    <li>女性员工：侧重弹性工作制度、管理氛围改善和家庭友好福利</li>
+    <li>高绩效女性占女性离职总量 ${pct(femaleHighPerf.length, female.length)}%，建议建立女性人才专项保留计划</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('性别');
         const maleReasonStr = sortedEntries(maleReasons).map(([r, c]) => r + ' ' + c + '人').join('、');
         const femaleReasonStr = sortedEntries(femaleReasons).map(([r, c]) => r + ' ' + c + '人').join('、');
         return `<div class="portrait-section">
@@ -5230,6 +5887,32 @@
       if (msg.includes('职级') || msg.includes('级别') || msg.includes('p5') || msg.includes('p6') || msg.includes('p7') || msg.includes('p8') || (msg.includes('等级') && !msg.includes('绩效'))) {
         const levelCount = countBy(resignationData, p => p.level);
         const sortedLevels = Object.keys(levelCount).sort();
+        if (dataAnsweredTopics.has('职级')) {
+          // 第二次追问：职级×原因交叉 + 职级×薪酬交叉
+          const levelCrossLines = sortedLevels.map(l => {
+            const people = resignationData.filter(p => p.level === l);
+            const reasons = countBy(people, p => p.reason);
+            const topReason = sortedEntries(reasons)[0];
+            const belowMkt = people.filter(p => p.salaryCompetitiveness.includes('低于'));
+            return `<li><b>${l}（${people.length}人）：</b>首要原因"${topReason[0]}"（${topReason[1]}人），薪酬低于市场 ${belowMkt.length} 人</li>`;
+          }).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 职级 × 离职原因 × 薪酬交叉分析</div>
+  <ul class="portrait-list">
+    ${levelCrossLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 各职级保留策略建议</div>
+  <ul class="portrait-list">
+    <li><b>P5：</b>完善技术培训体系、明确P5→P6晋升路径和时间预期、提供导师计划</li>
+    <li><b>P6：</b>提升薪酬竞争力至市场P50以上、提供核心项目机会、加速晋升评审</li>
+    <li><b>P7：</b>对标市场P75薪酬、提供技术/管理双通道选择、股权激励覆盖</li>
+    <li><b>P8+：</b>定制化职业发展路径、战略项目参与权、长期激励绑定</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('职级');
         const levelLines = sortedLevels.map(l => {
           const people = resignationData.filter(p => p.level === l);
           const highP = people.filter(isHighPerf);
@@ -5256,6 +5939,37 @@
       if (msg.includes('薪酬') || msg.includes('薪资') || msg.includes('工资') || msg.includes('待遇') || msg.includes('收入') || msg.includes('涨薪') || msg.includes('调薪') || msg.includes('竞争力')) {
         const salaryReasons = resignationData.filter(p => p.reason === '薪资待遇');
         const belowMarket = resignationData.filter(p => p.salaryCompetitiveness.includes('低于'));
+        if (dataAnsweredTopics.has('薪酬')) {
+          // 第二次追问：薪酬×部门×绩效深度交叉
+          const deptSalary = {};
+          resignationData.forEach(p => {
+            if (!deptSalary[p.dept]) deptSalary[p.dept] = { total: 0, belowMkt: 0, salaryReason: 0, highPerf: 0 };
+            deptSalary[p.dept].total++;
+            if (p.salaryCompetitiveness.includes('低于')) deptSalary[p.dept].belowMkt++;
+            if (p.reason === '薪资待遇') deptSalary[p.dept].salaryReason++;
+            if (isHighPerf(p)) deptSalary[p.dept].highPerf++;
+          });
+          const deptSalaryLines = Object.entries(deptSalary).sort((a,b) => b[1].belowMkt - a[1].belowMkt).map(([d, s]) => {
+            return `<li><b>${d}：</b>薪酬低于市场 ${s.belowMkt}/${s.total} 人，因薪资离职 ${s.salaryReason} 人，高绩效流失 ${s.highPerf} 人</li>`;
+          }).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💰</span> 各部门薪酬竞争力对比</div>
+  <ul class="portrait-list">
+    ${deptSalaryLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 薪酬调整优先级建议</div>
+  <ul class="portrait-list">
+    <li><b>最高优先级：</b>研发部 P7+ 岗位——薪酬差距最大且高绩效流失最严重</li>
+    <li><b>高优先级：</b>产品部核心岗位——低于市场水平比例高</li>
+    <li><b>中优先级：</b>设计部——人数少但流失比例高</li>
+    <li>建议调薪预算向高绩效 + 低于市场水平的员工倾斜，精准投入而非平均分配</li>
+    <li>除薪酬外，可同步考虑股权激励、项目奖金、弹性福利等综合激励方案</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('薪酬');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">💰</span> 薪酬相关离职分析</div>
   <ul class="portrait-list">
@@ -5298,6 +6012,24 @@
   </ul>
 </div>`;
         }
+        if (dataAnsweredTopics.has('人数')) {
+          // 第二次追问：按维度交叉统计
+          const deptCount = countBy(resignationData, p => p.dept);
+          const levelCount = countBy(resignationData, p => p.level);
+          const reasonCount = countBy(resignationData, p => p.reason);
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 离职人数多维交叉统计</div>
+  <ul class="portrait-list">
+    <li><b>按部门：</b>${sortedEntries(deptCount).map(([d,c]) => d + ' ' + c + '人').join('、')}</li>
+    <li><b>按职级：</b>${sortedEntries(levelCount).map(([l,c]) => l + ' ' + c + '人').join('、')}</li>
+    <li><b>按原因：</b>${sortedEntries(reasonCount).map(([r,c]) => r + ' ' + c + '人').join('、')}</li>
+    <li><b>高绩效占比：</b>${resignationData.filter(isHighPerf).length} 人（${pct(resignationData.filter(isHighPerf).length, resignationData.length)}%）</li>
+    <li><b>入职不满1年：</b>${resignationData.filter(p => calcTenure(p) < 1).length} 人</li>
+  </ul>
+</div>
+<div class="portrait-highlight">💡 你可以指定某个部门进一步查看，如"研发部离职了多少人？"</div>`;
+        }
+        dataAnsweredTopics.add('人数');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📋</span> 离职人数统计</div>
   <ul class="portrait-list">
@@ -5314,6 +6046,29 @@
       if (msg.includes('入职') || msg.includes('新人') || msg.includes('新员工') || msg.includes('试用') || msg.includes('不到一年') || msg.includes('一年内')) {
         const shortTenure = resignationData.filter(p => calcTenure(p) < 1);
         const midTenure = resignationData.filter(p => calcTenure(p) >= 1 && calcTenure(p) < 2);
+        if (dataAnsweredTopics.has('新人')) {
+          // 第二次追问：新人离职部门分布 + 招聘源分析
+          const shortDept = countBy(shortTenure, p => p.dept);
+          const midDept = countBy(midTenure, p => p.dept);
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🆕</span> 新人离职部门分布</div>
+  <ul class="portrait-list">
+    <li><b>入职不到1年：</b>${sortedEntries(shortDept).map(([d,c]) => d + ' ' + c + '人').join('、') || '无'}</li>
+    <li><b>入职1-2年：</b>${sortedEntries(midDept).map(([d,c]) => d + ' ' + c + '人').join('、') || '无'}</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 新人保留行动方案</div>
+  <ul class="portrait-list">
+    <li><b>入职前：</b>优化JD描述和面试评估，确保候选人对角色和团队有准确预期</li>
+    <li><b>入职1-3个月：</b>配备 buddy 和 mentor，安排 30/60/90 天入职检查点</li>
+    <li><b>入职3-6个月：</b>参与核心项目，定期职业发展对话，及时反馈调整</li>
+    <li><b>入职6-12个月：</b>绩效初评关怀，评估薪酬竞争力，提供成长规划</li>
+    <li>研发部新人离职占比高，建议重点优化研发团队的 onboarding 和技术成长体系</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('新人');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">🆕</span> 新人离职分析（入职不到1年）</div>
   <ul class="portrait-list">
@@ -5342,11 +6097,39 @@
       // ========== 部门相关（含离职率） ==========
       if (msg.includes('部门') || msg.includes('分布') || msg.includes('哪个部门')) {
         const deptCount = countBy(resignationData, p => p.dept);
+        const topDept = sortedEntries(deptCount)[0];
+        if (dataAnsweredTopics.has('部门')) {
+          // 第二次追问：各部门离职原因×绩效交叉
+          const deptDetailLines = sortedEntries(deptCount).map(([d, c]) => {
+            const people = resignationData.filter(p => p.dept === d);
+            const reasons = countBy(people, p => p.reason);
+            const topReason = sortedEntries(reasons)[0];
+            const hp = people.filter(isHighPerf);
+            const avgEng = (people.reduce((s,p) => s + p.engagement, 0) / people.length).toFixed(1);
+            return `<li><b>${d}（${c}人）：</b>首要原因"${topReason[0]}"（${topReason[1]}人），高绩效流失 ${hp.length} 人，平均敬业度 ${avgEng}/5.0</li>`;
+          }).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🏢</span> 各部门离职深度对比</div>
+  <ul class="portrait-list">
+    ${deptDetailLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 部门针对性保留策略</div>
+  <ul class="portrait-list">
+    <li><b>研发部：</b>优先薪酬对标调整 + 技术成长通道建设 + 减少非核心会议</li>
+    <li><b>产品部：</b>改善管理沟通 + 明确晋升标准 + 增加跨部门协作机会</li>
+    <li><b>运营部：</b>职业发展规划 + 轮岗机会 + 工作内容丰富化</li>
+    <li><b>设计部：</b>工作负荷优化 + 创意自主权 + 设计影响力展示</li>
+    <li>建议各部门负责人每季度开展一次团队健康度复盘，及时发现流失风险信号</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('部门');
         const deptLines = sortedEntries(deptCount).map(([d, c]) => {
           const hc = deptHeadcount[d] || 30;
           return `<li><b>${d}：</b>${c} 人（占比 ${pct(c, resignationData.length)}%，部门离职率 ${pct(c, hc)}%）</li>`;
         }).join('\n    ');
-        const topDept = sortedEntries(deptCount)[0];
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">🏢</span> 按部门统计离职分布</div>
   <ul class="portrait-list">
@@ -5367,8 +6150,42 @@
       // ========== 离职原因分析 ==========
       if (msg.includes('原因') || msg.includes('为什么') || msg.includes('走') || msg.includes('离开')) {
         const reasonCount = countBy(resignationData, p => p.reason);
-        const reasonLines = sortedEntries(reasonCount).map(([r, c]) => `<li><b>${r}：</b>${c} 人（${pct(c, resignationData.length)}%）</li>`).join('\n    ');
         const topReason = sortedEntries(reasonCount)[0];
+        if (dataAnsweredTopics.has('原因')) {
+          // 第二次追问：原因×部门交叉 + 可预防性分析
+          const reasonDeptLines = sortedEntries(reasonCount).map(([r, c]) => {
+            const people = resignationData.filter(p => p.reason === r);
+            const depts = countBy(people, p => p.dept);
+            return `<li><b>${r}（${c}人）：</b>${sortedEntries(depts).map(([d,dc]) => d + ' ' + dc + '人').join('、')}</li>`;
+          }).join('\n    ');
+          const preventable = resignationData.filter(p => ['薪资待遇','个人发展','管理问题','工作压力'].includes(p.reason));
+          const unpreventable = resignationData.filter(p => ['家庭原因','健康原因','深造'].includes(p.reason));
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🔍</span> 离职原因 × 部门交叉分析</div>
+  <ul class="portrait-list">
+    ${reasonDeptLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 可预防性评估</div>
+  <ul class="portrait-list">
+    <li><b>可预防离职：</b>${preventable.length} 人（${pct(preventable.length, resignationData.length)}%）— 薪资、发展、管理、压力</li>
+    <li><b>不可预防离职：</b>${unpreventable.length} 人（${pct(unpreventable.length, resignationData.length)}%）— 家庭、健康、深造</li>
+    <li><b>可预防中的高绩效：</b>${preventable.filter(isHighPerf).length} 人，这些人本可以通过早期干预保留</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 原因治理优先级</div>
+  <ul class="portrait-list">
+    <li><b>P0 - ${topReason[0]}：</b>${topReason[0] === '个人发展' ? '完善晋升通道、增加核心项目机会、定期职业对话' : topReason[0] === '薪资待遇' ? '启动薪酬市场对标、差异化调薪、长期激励计划' : '管理者能力评估与辅导、团队氛围优化'}</li>
+    <li><b>P1 - 高绩效流失原因：</b>对高绩效离职原因逐一制定保留方案</li>
+    <li><b>P2 - 管理问题：</b>管理者360评估 + 领导力培训 + 跳级反馈通道</li>
+    <li>整体可预防率 ${pct(preventable.length, resignationData.length)}%，说明大部分离职可以通过组织优化降低</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('原因');
+        const reasonLines = sortedEntries(reasonCount).map(([r, c]) => `<li><b>${r}：</b>${c} 人（${pct(c, resignationData.length)}%）</li>`).join('\n    ');
         // 原因与绩效交叉
         const reasonPerfLines = sortedEntries(reasonCount).map(([r, c]) => {
           const hp = resignationData.filter(p => p.reason === r && isHighPerf(p)).length;
@@ -5400,12 +6217,35 @@
       // ========== 绩效分析 ==========
       if (msg.includes('绩效') || msg.includes('表现') || msg.includes('优秀') || msg.includes('高绩效') || msg.includes('a级') || msg.includes('a+')) {
         const perfCount = countBy(resignationData, p => p.performance);
+        const highPerf = resignationData.filter(isHighPerf);
+        const highPerfReasons = countBy(highPerf, p => p.reason);
+        if (dataAnsweredTopics.has('绩效')) {
+          // 第二次追问：高绩效员工逐人分析 + 保留方案
+          const hpDetailLines = highPerf.map(p => {
+            return `<li><b>${p.name}（${p.dept} ${p.level} ${p.performance}）：</b>因"${p.reason}"离职，薪酬${p.salaryCompetitiveness}，敬业度 ${p.engagement}/5.0</li>`;
+          }).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 高绩效离职员工逐人分析</div>
+  <ul class="portrait-list">
+    ${hpDetailLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">💡</span> 高绩效保留专项方案</div>
+  <ul class="portrait-list">
+    <li><b>识别：</b>建立高绩效员工关注名单，每季度更新，HR和直线经理共同负责</li>
+    <li><b>预警：</b>当出现敬业度下降、工作量异常、更新简历等信号时触发预警</li>
+    <li><b>保留：</b>主动发起保留面谈，制定个性化保留方案（薪酬/晋升/项目/弹性）</li>
+    <li><b>复盘：</b>每位高绩效离职后必须做根因复盘，结论纳入管理者考核指标</li>
+    <li>本批高绩效流失的首要原因是"${sortedEntries(highPerfReasons)[0] ? sortedEntries(highPerfReasons)[0][0] : '个人发展'}"，需要系统性改善</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('绩效');
         const perfLines = ['A+', 'A', 'B+', 'B', 'B-'].filter(l => perfCount[l]).map(l => {
           const people = resignationData.filter(p => p.performance === l);
           return `<li><b>${l}：</b>${perfCount[l]} 人（${pct(perfCount[l], resignationData.length)}%）— ${people.map(p => p.name).join('、')}</li>`;
         }).join('\n    ');
-        const highPerf = resignationData.filter(isHighPerf);
-        const highPerfReasons = countBy(highPerf, p => p.reason);
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📈</span> 离职员工绩效分布</div>
   <ul class="portrait-list">
@@ -5430,6 +6270,37 @@
         const avgSat = (resignationData.reduce((s, p) => s + p.satisfaction, 0) / resignationData.length).toFixed(2);
         const lowEng = resignationData.filter(p => p.engagement <= 2.5).sort((a,b) => a.engagement - b.engagement);
         const lowSat = resignationData.filter(p => p.satisfaction <= 2.0).sort((a,b) => a.satisfaction - b.satisfaction);
+        if (dataAnsweredTopics.has('敬业度')) {
+          // 第二次追问：敬业度×部门交叉 + 预警模型
+          const deptEng = {};
+          resignationData.forEach(p => {
+            if (!deptEng[p.dept]) deptEng[p.dept] = { engSum: 0, satSum: 0, count: 0, lowEng: 0 };
+            deptEng[p.dept].engSum += p.engagement;
+            deptEng[p.dept].satSum += p.satisfaction;
+            deptEng[p.dept].count++;
+            if (p.engagement <= 2.5) deptEng[p.dept].lowEng++;
+          });
+          const deptEngLines = Object.entries(deptEng).map(([d, e]) => {
+            return `<li><b>${d}：</b>平均敬业度 ${(e.engSum/e.count).toFixed(1)}/5.0，平均满意度 ${(e.satSum/e.count).toFixed(1)}/5.0，低敬业度 ${e.lowEng} 人</li>`;
+          }).join('\n    ');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📊</span> 各部门敬业度 & 满意度对比</div>
+  <ul class="portrait-list">
+    ${deptEngLines}
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">⚠️</span> 离职预警模型建议</div>
+  <ul class="portrait-list">
+    <li><b>高风险信号：</b>敬业度≤2.5 + 满意度≤2.0 + 最近12个月未晋升</li>
+    <li><b>中风险信号：</b>敬业度≤3.0 + 薪酬低于市场水平</li>
+    <li><b>早期信号：</b>敬业度环比下降≥0.5分 或 满意度连续下降</li>
+    <li>建议将以上信号纳入HR系统的离职预警仪表盘，实现早期干预</li>
+    <li>数据证实：离职员工的敬业度平均 ${avgEng}，远低于公司均值3.4，预警有效性高</li>
+  </ul>
+</div>`;
+        }
+        dataAnsweredTopics.add('敬业度');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📊</span> 离职员工敬业度 & 满意度分析</div>
   <ul class="portrait-list">
@@ -5458,6 +6329,50 @@
         const highPerf = resignationData.filter(isHighPerf);
         const levels = [...new Set(resignationData.map(p => p.level))].sort();
         const overallRate = pct(resignationData.length, totalHeadcount);
+        if (dataAnsweredTopics.has('总览')) {
+          // 深化版本：多维交叉总览 + 风险矩阵
+          const deptRates = Object.entries(deptHeadcount).map(([d, hc]) => {
+            const cnt = deptCount[d] || 0;
+            return `${d} ${pct(cnt, hc)}%`;
+          }).join('、');
+          const tenureGroups = { '不足1年': 0, '1-2年': 0, '2-3年': 0, '3年以上': 0 };
+          resignationData.forEach(p => {
+            if (p.tenure < 12) tenureGroups['不足1年']++;
+            else if (p.tenure < 24) tenureGroups['1-2年']++;
+            else if (p.tenure < 36) tenureGroups['2-3年']++;
+            else tenureGroups['3年以上']++;
+          });
+          const tenureSummary = Object.entries(tenureGroups).map(([k,v]) => `${k} ${v}人`).join('、');
+          const highPerfByDept = countBy(highPerf, p => p.dept);
+          const highPerfDeptSummary = sortedEntries(highPerfByDept).map(([d,c]) => `${d} ${c}人`).join('、');
+          return `<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📋</span> 离职数据深度总览（多维交叉分析）</div>
+  <ul class="portrait-list">
+    <li><b>各部门离职率：</b>${deptRates}</li>
+    <li><b>司龄分布：</b>${tenureSummary}</li>
+    <li><b>高绩效流失分布：</b>${highPerfDeptSummary}，合计 ${highPerf.length} 人</li>
+    <li><b>Top3 离职原因：</b>${topReasons}</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">🎯</span> 风险矩阵与优先级</div>
+  <ul class="portrait-list">
+    <li><b>🔴 高风险：</b>研发部 — 离职率最高且高绩效流失集中，需紧急干预（建议2周内完成骨干1v1面谈）</li>
+    <li><b>🟡 中风险：</b>产品部 — 离职率中等但新人流失比例高，需优化入职体验和导师制</li>
+    <li><b>🟢 低风险：</b>设计部/市场部 — 离职率可控，持续关注即可</li>
+  </ul>
+</div>
+<div class="portrait-section">
+  <div class="portrait-section-title"><span class="section-icon">📌</span> 综合行动建议</div>
+  <ol class="portrait-suggestion-list">
+    <li><b>短期（1个月）：</b>完成研发部高绩效员工1v1面谈，启动薪酬竞争力评估</li>
+    <li><b>中期（1个季度）：</b>建立离职预警模型（敬业度+绩效+行为数据），覆盖全部门</li>
+    <li><b>长期（半年）：</b>优化职级晋升通道，建立差异化保留策略（按部门/职级/司龄定制）</li>
+  </ol>
+</div>
+<div class="portrait-highlight">💡 以上是基于多维交叉分析的综合视图。如需进一步下钻某个维度，可以继续提问。</div>`;
+        }
+        dataAnsweredTopics.add('总览');
         return `<div class="portrait-section">
   <div class="portrait-section-title"><span class="section-icon">📋</span> 离职数据总览</div>
   <ul class="portrait-list">
@@ -5484,16 +6399,7 @@
       }
 
       // ========== 兜底 ==========
-      const deptCount = countBy(resignationData, p => p.dept);
-      const deptNames = Object.keys(deptCount).join('、');
-      return `<div class="portrait-section">
-  <div class="portrait-section-title"><span class="section-icon">📋</span> 当前数据概要</div>
-  <ul class="portrait-list">
-    <li>共 ${resignationData.length} 条离职记录，覆盖 ${Object.keys(deptCount).length} 个部门（${deptNames}）</li>
-    <li>时间范围：2024年1月 ~ 2024年11月，职级 P5 ~ P8</li>
-  </ul>
-</div>
-<div class="portrait-highlight">💡 你可以试着这样问我：<br>• "离职总人数是多少？整体离职率是多少？"<br>• "各部门离职率分别是多少？"<br>• "离职原因分布是怎样的？"<br>• "高绩效员工流失情况如何？"<br>• "离职趋势按月度有什么变化？"<br>• "入职不到一年就离职的有哪些人？"<br>• "男女离职比例如何？"<br>• "薪酬竞争力和离职有什么关联？"<br>• "张三/李四的离职情况是什么？"<br>• "敬业度和满意度数据如何？"</div>`;
+      return '我只是个小demo，不是真实的AI~';
     }
 
     // 离职面谈智能回复（除活水外，默认走离职画像分析）
@@ -5678,7 +6584,8 @@
 <div class="portrait-highlight">💡 如果你需要更详细的某位员工画像报告，可以直接告诉我名字，比如"详细分析李四"，我会生成包含完整绩效、项目、360反馈的全面画像。</div>`;
       }
 
-      // 第三次及以后
+      // 第三次：补充分析
+      if (interviewMsgCount === 3) {
       return `<div class="portrait-intro">基于你的持续关注，我补充了更多维度的分析数据：</div>
 
 <div class="portrait-section">
@@ -5700,6 +6607,10 @@
 </div>
 
 <div class="portrait-highlight">📌 你还可以继续问我任何关于离职面谈的问题，我会持续提供数据支撑和分析建议。也可以指定某位员工查看其完整画像。</div>`;
+      }
+
+      // 第四次及以后：兜底话术
+      return '我只是个小demo，不是真实的AI~';
     }
 
     // 离职画像引导 — 展示离职流程中的员工列表
@@ -5908,7 +6819,7 @@
 
       // 兜底：超过3次追问
       if (count > 3) {
-        return '我只是demo，背后不是真的有模型哟，嘻嘻 😄';
+        return '我只是个小demo，不是真实的AI~';
       }
 
       // 通用兜底
@@ -6082,29 +6993,7 @@
       }
 
       // 兜底：没匹配到具体方向的追问
-      const generalJobResponses = [
-        `<div class="portrait-section">
-  <div class="portrait-section-title"><span class="section-icon">📊</span> 岗位综合对比分析</div>
-  <ul class="portrait-list">
-    <li><b>最佳匹配：</b>高级产品经理（战略产品部）— 匹配度 97%，与你的用户增长经验高度吻合，战略重要性最高</li>
-    <li><b>成长最快：</b>数据分析专家（数据智能中心）— 匹配度 93%，部门处于快速上升期，晋升机会多</li>
-    <li><b>平衡最佳：</b>项目管理专家（企业发展部）— 匹配度 85%，工作节奏合理，适合追求工作生活平衡</li>
-    <li><b>前景最好：</b>AI产品运营经理（AI应用事业部）— 匹配度 78%，AI赛道长期前景广阔，但需要一定学习成本</li>
-  </ul>
-</div>
-<div class="portrait-highlight">💡 建议你优先考虑排名前两位的岗位。你可以告诉我你最关心哪个方面（薪资、发展、工作内容、团队氛围等），我帮你做更有针对性的分析。</div>`,
-        `<div class="portrait-section">
-  <div class="portrait-section-title"><span class="section-icon">🎯</span> 个性化推荐建议</div>
-  <ul class="portrait-list">
-    <li><b>如果你更看重薪酬：</b>高级产品经理（战略产品部）薪资区间最高，年终奖系数也领先</li>
-    <li><b>如果你更看重成长：</b>数据分析专家（数据智能中心）晋升通道最清晰，部门晋升率高出平均 8%</li>
-    <li><b>如果你更看重平衡：</b>用户增长运营负责人（平台运营部）工作节奏最合理，团队满意度评分最高</li>
-    <li><b>如果你想尝试新方向：</b>AI产品运营经理（AI应用事业部）是全新赛道，长期发展潜力大</li>
-  </ul>
-</div>
-<div class="portrait-highlight">📌 你最看重哪个方面？告诉我，我可以帮你做更深入的分析和建议，也可以帮你预约与岗位负责人的沟通。</div>`
-      ];
-      return generalJobResponses[Math.floor(Math.random() * generalJobResponses.length)];
+      return '我只是个小demo，不是真实的AI~';
     }
 
     // 活水推荐
@@ -6119,7 +7008,7 @@
       setTimeout(() => {
         const jobRecommendHTML = `
           <div class="job-recommend-intro">
-            同学，基于你的岗位经历和职业技能，小助理为你筛选了以下适合的活水岗位，供你参考～过去你的绩效表现一直非常不错，小助理希望能在公司内找到更合适你的环境～
+            你好，公司关注每一个优秀人才，如果当前岗位不合适，基于你的岗位经历和职业技能，小助理为你筛选了以下活水岗位，供你参考～小助理希望你能在公司内找到更合适你的环境~
           </div>
           <div class="job-card-list">
             <div class="job-card">
@@ -6451,10 +7340,15 @@
         portraitTargetName = '';
         portraitFollowupCount = 0;
         dataMsgCount = 0;
+        dataAnsweredTopics = new Set();
         lastDataReportType = null;
         reportAddedSections = [];
         reportFollowupRound = 0;
         policyMsgCount = 0;
+        policyAnsweredTopics = new Set();
+        policyCurrentRole = 'hr';
+        document.getElementById('policyRoleEmployee').classList.remove('active');
+        document.getElementById('policyRoleHR').classList.add('active');
         chatSmallTalkCount = 0;
         emotionSupportCount = 0;
         inEmotionContext = false;
