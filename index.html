@@ -1951,7 +1951,7 @@
                 <span>技能</span>
                 <!-- 下拉面板 -->
                 <div class="skill-dropdown" id="skillDropdown" onclick="event.stopPropagation()">
-                  <div class="skill-item" onclick="useSkill('interview','askQuestion',&quot;请帮我进行AI离职沟通&quot;)"><span class="skill-item-icon">🎙️</span>AI访谈</div>
+                  <div class="skill-item" onclick="useSkill('interview','showInterviewBuilding')"><span class="skill-item-icon">🎙️</span>AI访谈</div>
                   <div class="skill-item" onclick="useSkill('interview','showJobRecommend')"><span class="skill-item-icon">💧</span>活水机会</div>
                   <div class="skill-item" onclick="useSkill('interview','showPortraitGuide')"><span class="skill-item-icon">👤</span>离职画像</div>
                   <div class="skill-item" onclick="useSkill('data','showDataWidetable')"><span class="skill-item-icon">📋</span>宽表问数</div>
@@ -2049,7 +2049,7 @@
               <span class="quick-action-icon">👤</span>
               <span>离职画像</span>
             </button>
-            <button class="quick-action-btn" id="btn-interview" onclick="askQuestion('请帮我进行AI离职沟通')" style="display:none;">
+            <button class="quick-action-btn" id="btn-interview" onclick="showInterviewBuilding()" style="display:none;">
               <span class="quick-action-icon">🎙️</span>
               <span>AI访谈</span>
             </button>
@@ -3016,6 +3016,8 @@
           showDataInsightReports();
         } else if (action === 'transferToHuman') {
           transferToHuman();
+        } else if (action === 'showInterviewBuilding') {
+          showInterviewBuilding();
         }
       }, 300);
     }
@@ -6994,6 +6996,17 @@
 
       // 兜底：没匹配到具体方向的追问
       return '我只是个小demo，不是真实的AI~';
+    }
+
+    // AI访谈 - 功能建设中
+    function showInterviewBuilding() {
+      if (isTyping) return;
+      const buildingHTML = `<div class="portrait-section" style="text-align:center;padding:24px 16px;">
+  <div style="font-size:40px;margin-bottom:12px;">🚧</div>
+  <div style="font-size:15px;font-weight:600;color:#1D2129;margin-bottom:8px;">AI访谈功能建设中</div>
+  <div style="font-size:13px;color:#86909C;line-height:1.8;">该功能正在开发中，敬请期待！<br>你可以先体验其他功能，如<b>活水机会推荐</b>、<b>离职画像分析</b>等。</div>
+</div>`;
+      addMessage('assistant', buildingHTML, true);
     }
 
     // 活水推荐
