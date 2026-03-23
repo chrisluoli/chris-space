@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="scroll-behavior:smooth;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI调研能力建设需求分析</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #f7f9fc;
+      color: #1a1a1a;
+      padding: 0;
+    }
+
+    /* 整体布局：左侧固定导航 + 右侧内容 */
+    .layout-wrap {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* 左侧固定侧边栏 */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 240px;
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid #e8ecf2;
+      box-shadow: 2px 0 16px rgba(0,82,217,0.06);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid #eef1f6;
+    }
+    .sidebar-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0052d9;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sidebar-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+    .sidebar-body a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #444;
+      text-decoration: none;
+      padding: 10px 20px;
+      transition: all 0.18s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-body a:hover,
+    .sidebar-body a.active {
+      background: #f0f5ff;
+      color: #0052d9;
+      border-left-color: #0052d9;
+    }
+    .sidebar-body a .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #0052d9, #4d8ff7);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* 右侧主内容区 */
+    .main-content {
+      margin-left: 240px;
+      flex: 1;
+      padding: 40px 40px 80px;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* 标题区 */
+    .title-bar {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .title-bar h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0052d9;
+      margin-bottom: 8px;
+    }
+    .title-bar .subtitle {
+      font-size: 14px;
+      color: #8590a6;
+    }
+    .title-bar .version {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 12px;
+      background: linear-gradient(135deg, #0052d9, #4d8ff7);
+      color: #fff;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* 通用卡片 */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 8px rgba(0,82,217,0.06);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+    .card h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0052d9;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h2 .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #0052d9, #4d8ff7);
+      color: #fff;
+      border-radius: 7px;
+      font-size: 15px;
+    }
+    .card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin: 16px 0 8px;
+    }
+    .card p, .card li {
+      font-size: 13.5px;
+      line-height: 1.9;
+      color: #444;
+    }
+    .card ul {
+      padding-left: 20px;
+    }
+    .card ul li {
+      margin-bottom: 4px;
+    }
+
+    /* 标签 */
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .tag-blue { background: #e8f0fe; color: #0052d9; }
+    .tag-green { background: #e6f7f0; color: #00a870; }
+    .tag-orange { background: #fff4e5; color: #e37318; }
+    .tag-red { background: #fde8ea; color: #e34d59; }
+    .tag-purple { background: #f0e8fe; color: #7b61ff; }
+
+    /* 三方角色概览 */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .role-card {
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      border: 1.5px solid #e8ecf2;
+    }
+    .role-card.platform {
+      border-color: #0052d9;
+      background: #f0f5ff;
+    }
+    .role-card.survey {
+      border-color: #00a870;
+      background: #f0faf5;
+    }
+    .role-card.resign {
+      border-color: #e37318;
+      background: #fff7ed;
+    }
+    .role-card .role-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .role-card .role-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .role-card.platform .role-name { color: #0052d9; }
+    .role-card.survey .role-name { color: #00a870; }
+    .role-card.resign .role-name { color: #e37318; }
+    .role-card .role-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* SVG 图 */
+    .diagram-wrap {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 8px rgba(0,82,217,0.06);
+      padding: 32px 24px;
+      margin-bottom: 28px;
+      overflow-x: auto;
+    }
+    .diagram-wrap h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0052d9;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .diagram-wrap h2 .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #0052d9, #4d8ff7);
+      color: #fff;
+      border-radius: 7px;
+      font-size: 15px;
+    }
+    svg { display: block; margin: 0 auto; }
+    svg text {
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    /* 数据流表格 */
+    .flow-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .flow-table th {
+      background: #0052d9;
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .flow-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #eef1f6;
+      color: #444;
+      line-height: 1.6;
+    }
+    .flow-table tr:nth-child(even) td {
+      background: #f9fbfe;
+    }
+
+    /* 高亮框 */
+    .highlight-box {
+      border-left: 4px solid #0052d9;
+      background: #f0f5ff;
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+    }
+    .highlight-box.green {
+      border-left-color: #00a870;
+      background: #f0faf5;
+    }
+    .highlight-box.red {
+      border-left-color: #e34d59;
+      background: #fef3f4;
+    }
+    .highlight-box.purple {
+      border-left-color: #7b61ff;
+      background: #f5f0ff;
+    }
+    .highlight-box p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #333;
+    }
+    .highlight-box strong {
+      color: #0052d9;
+    }
+    .highlight-box.green strong {
+      color: #00a870;
+    }
+    .highlight-box.red strong {
+      color: #e34d59;
+    }
+    .highlight-box.purple strong {
+      color: #7b61ff;
+    }
+
+    /* 比较卡片 */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .compare-card {
+      border-radius: 10px;
+      padding: 20px;
+      border: 1.5px solid #e8ecf2;
+    }
+    .compare-card.recommended {
+      border-color: #0052d9;
+      box-shadow: 0 2px 12px rgba(0,82,217,0.1);
+    }
+    .compare-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .compare-card ul {
+      padding-left: 18px;
+      font-size: 12.5px;
+      line-height: 1.8;
+      color: #555;
+    }
+    .compare-card .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #0052d9;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* Skill架构图 */
+    .skill-arch {
+      background: #f9fbfe;
+      border: 1.5px solid #e0e8f5;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .skill-layer {
+      border-radius: 8px;
+      padding: 16px 16px;
+      margin-bottom: 0;
+    }
+    .skill-layer h4 {
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .skill-layer ul {
+      padding-left: 16px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #555;
+    }
+    .layer-blue { background: #f0f5ff; border-left: 4px solid #0052d9; }
+    .layer-blue h4 { color: #0052d9; }
+    .layer-green { background: #f0faf5; border-left: 4px solid #00a870; }
+    .layer-green h4 { color: #00a870; }
+    .layer-orange { background: #fff7ed; border-left: 4px solid #e37318; }
+    .layer-orange h4 { color: #e37318; }
+
+    /* 分隔线 */
+    .divider {
+      height: 1px;
+      background: #e8ecf2;
+      margin: 20px 0;
+    }
+
+
+    @media (max-width: 900px) {
+      .sidebar { width: 200px; }
+      .main-content { margin-left: 200px; padding: 20px; }
+      .roles-grid, .compare-grid, .skill-arch { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 20px; }
+      .roles-grid, .compare-grid, .skill-arch { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 整体布局 -->
+<div class="layout-wrap">
+
+<!-- 左侧固定侧边栏 -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h3>📑 文档目录</h3>
+  </div>
+  <div class="sidebar-body" id="tocBody">
+    <a href="#sec1"><span class="num">01</span> 需求点分解</a>
+    <a href="#sec2"><span class="num">02</span> 三方角色定义</a>
+    <a href="#sec3"><span class="num">03</span> 三方交互逻辑图</a>
+    <a href="#sec4"><span class="num">04</span> 数据存储方案</a>
+    <a href="#sec5"><span class="num">05</span> 对话页面提供方案</a>
+    <a href="#sec6"><span class="num">06</span> Skill 工程</a>
+    <a href="#sec7"><span class="num">07</span> 接口需求列表</a>
+    <a href="#sec-meeting"><span class="num">08</span> 下次会议内容</a>
+  </div>
+</nav>
+
+<!-- 右侧主内容区 -->
+<div class="main-content">
+<div class="page">
+
+  <!-- 标题 -->
+  <div class="title-bar">
+    <h1>🤖 AI调研能力建设需求分析</h1>
+    <p class="subtitle">智能体平台 × 测温系统 × 业务系统</p>
+  </div>
+
+
+
+  <!-- 一、需求点分解 -->
+  <div class="card" id="sec1">
+    <h2><span class="icon">1</span> 需求点分解</h2>
+    <p>以离职系统为例，当前业务系统面向用户开展调研时，传统方式依赖人工推送问卷、人工整理数据，效率低且覆盖率有限。希望引入 <strong>AI 智能体</strong> 来完成问卷调研动作，实现：</p>
+    <ul style="margin-top:10px;">
+      <li><strong>自动化调研</strong>：AI Agent 按预设题目与用户进行多轮对话式调研</li>
+      <li><strong>灵活配置</strong>：业务方可自主配置推送时间、渠道、题目、截止日期等</li>
+      <li><strong>数据合规</strong>：智能体平台不存储或仅加密存储敏感数据，完整数据归属业务方</li>
+      <li><strong>前端统一</strong>：智能体平台提供标准对话 SDK，业务方嵌入即可使用</li>
+      <li><strong>自主规划 +Skill</strong>：通过接口注入动态参数</li>
+    </ul>
+  </div>
+
+  <!-- 二、三方角色定义 -->
+  <div class="card" id="sec2">
+    <h2><span class="icon">2</span> 三方角色定义</h2>
+    <div class="roles-grid">
+      <div class="role-card platform">
+        <div class="role-icon">🧠</div>
+        <div class="role-name">智能体平台</div>
+        <div class="role-desc">AI 调研执行引擎<br>维护 Skill 模板 + 对话 SDK<br>不持久化业务数据</div>
+      </div>
+      <div class="role-card survey">
+        <div class="role-icon">📋</div>
+        <div class="role-name">测温系统</div>
+        <div class="role-desc">场景配置中心 + 数据中心<br>推送策略 / 题目管理 / 数据归集<br>拥有完整数据</div>
+      </div>
+      <div class="role-card resign">
+        <div class="role-icon">🎓</div>
+        <div class="role-name">业务系统（如离职系统）</div>
+        <div class="role-desc">业务触发方 + 结果消费方<br>推送名单和触发信号<br>消费调研结果报告</div>
+      </div>
+    </div>
+
+    <h3>各方职责边界</h3>
+    <table class="flow-table">
+      <tr>
+        <th style="width:18%">角色</th>
+        <th style="width:38%">✅ 负责</th>
+        <th>❌ 不负责</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-blue">智能体平台</span></td>
+        <td>
+          • 维护「结构化调研」Skill 模板（对话框架、追问策略、情感分析、安全护栏）<br>
+          • 提供可嵌入的对话前端 SDK<br>
+          • 执行调研对话、实时回传数据
+        </td>
+        <td>
+          • 不存储任何业务数据<br>
+          • 不管题目内容、推送策略<br>
+          • 不面向业务人员提供操作界面
+        </td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-green">测温系统</span></td>
+        <td>
+          • 场景配置（题目编排、追问规则、跳转逻辑、渠道策略）<br>
+          • 调度推送、创建智能体会话<br>
+          • 接收并持久化完整对话数据<br>
+          • 生成分析报告推送给业务方
+        </td>
+        <td>
+          • 不负责 AI 对话能力<br>
+          • 不直接面向用户
+        </td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-orange">业务系统</span></td>
+        <td>
+          • 感知业务事件（如谁离职了、什么时候离的）<br>
+          • 推送用户名单 + 业务上下文给测温系统<br>
+          • 触发调研启动信号<br>
+          • 消费调研结果报告
+        </td>
+        <td>
+          • 不管怎么推送、怎么问、怎么存<br>
+          • 不配置题目或渠道策略
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 三、核心交互逻辑图（简化版） -->
+  <div class="diagram-wrap" id="sec3">
+    <h2><span class="icon">3</span> 三方交互逻辑图</h2>
+
+    <svg width="1050" height="820" viewBox="0 0 1050 820">
+      <defs>
+        <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#0052d9"/>
+        </marker>
+        <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#00a870"/>
+        </marker>
+        <marker id="arrow-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#e37318"/>
+        </marker>
+        <marker id="arrow-gray" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#8590a6"/>
+        </marker>
+        <filter id="shadow">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(0,82,217,0.1)"/>
+        </filter>
+        <filter id="shadow-green">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(0,168,112,0.1)"/>
+        </filter>
+        <filter id="shadow-orange">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(227,115,24,0.1)"/>
+        </filter>
+        <linearGradient id="grad-orange" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#e37318"/><stop offset="100%" stop-color="#f5a623"/>
+        </linearGradient>
+        <linearGradient id="grad-green" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#00a870"/><stop offset="100%" stop-color="#34c98f"/>
+        </linearGradient>
+        <linearGradient id="grad-blue" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0052d9"/><stop offset="100%" stop-color="#4d8ff7"/>
+        </linearGradient>
+      </defs>
+
+      <!-- 三个系统主体 -->
+      <g transform="translate(60, 30)">
+        <rect width="220" height="70" rx="12" fill="url(#grad-orange)" filter="url(#shadow-orange)"/>
+        <text x="110" y="30" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">🎓 业务系统</text>
+        <text x="110" y="50" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11">触发方 + 结果消费方</text>
+      </g>
+      <g transform="translate(410, 30)">
+        <rect width="220" height="70" rx="12" fill="url(#grad-blue)" filter="url(#shadow)"/>
+        <text x="110" y="30" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">🧠 智能体平台</text>
+        <text x="110" y="50" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11">AI 执行引擎 · SDK</text>
+      </g>
+      <g transform="translate(760, 30)">
+        <rect width="220" height="70" rx="12" fill="url(#grad-green)" filter="url(#shadow-green)"/>
+        <text x="110" y="30" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">📋 测温系统</text>
+        <text x="110" y="50" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11">调研场景配置 · 数据归集</text>
+      </g>
+
+      <!-- 用户 -->
+      <g transform="translate(420, 740)">
+        <rect width="200" height="50" rx="25" fill="#f0f5ff" stroke="#0052d9" stroke-width="2"/>
+        <text x="100" y="30" text-anchor="middle" fill="#0052d9" font-size="14" font-weight="600">👤 用户</text>
+      </g>
+
+      <!-- 阶段一：业务触发 + 场景配置 -->
+      <g transform="translate(0, 130)">
+        <rect x="30" y="0" width="990" height="150" rx="10" fill="#fff" stroke="#e8ecf2" stroke-width="1" filter="url(#shadow)"/>
+        <rect x="30" y="0" width="990" height="32" rx="10" fill="#e37318"/>
+        <rect x="30" y="16" width="990" height="16" fill="#e37318"/>
+        <text x="525" y="22" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">阶段一：业务触发 + 场景配置</text>
+
+        <g transform="translate(60, 46)">
+          <rect width="190" height="88" rx="8" fill="#fff7ed" stroke="#f5a623" stroke-width="1.5"/>
+          <text x="95" y="20" text-anchor="middle" fill="#e37318" font-size="11" font-weight="600">业务系统</text>
+          <text x="95" y="40" text-anchor="middle" fill="#555" font-size="10">推送用户名单 + 上下文</text>
+          <text x="95" y="58" text-anchor="middle" fill="#555" font-size="10">发送触发信号</text>
+          <text x="95" y="76" text-anchor="middle" fill="#888" font-size="9">（部门/岗位/业务参数）</text>
+        </g>
+
+        <line x1="260" y1="88" x2="420" y2="88" stroke="#e37318" stroke-width="2" marker-end="url(#arrow-orange)"/>
+        <text x="340" y="80" text-anchor="middle" fill="#e37318" font-size="10">名单 + 触发信号</text>
+
+        <g transform="translate(430, 46)">
+          <rect width="220" height="88" rx="8" fill="#f0faf5" stroke="#00a870" stroke-width="1.5"/>
+          <text x="110" y="20" text-anchor="middle" fill="#00a870" font-size="11" font-weight="600">测温系统</text>
+          <text x="110" y="40" text-anchor="middle" fill="#555" font-size="10">匹配场景模板 + 编排题目</text>
+          <text x="110" y="58" text-anchor="middle" fill="#555" font-size="10">配置推送策略和渠道</text>
+          <text x="110" y="76" text-anchor="middle" fill="#555" font-size="10">打包场景参数下发</text>
+        </g>
+
+        <line x1="660" y1="88" x2="770" y2="88" stroke="#00a870" stroke-width="2" marker-end="url(#arrow-green)"/>
+        <text x="715" y="80" text-anchor="middle" fill="#00a870" font-size="10">创建会话 + 参数</text>
+
+        <g transform="translate(780, 46)">
+          <rect width="190" height="88" rx="8" fill="#f0f5ff" stroke="#0052d9" stroke-width="1.5"/>
+          <text x="95" y="20" text-anchor="middle" fill="#0052d9" font-size="11" font-weight="600">智能体平台</text>
+          <text x="95" y="40" text-anchor="middle" fill="#555" font-size="10">加载 Skill 模板</text>
+          <text x="95" y="58" text-anchor="middle" fill="#555" font-size="10">注入动态参数</text>
+          <text x="95" y="76" text-anchor="middle" fill="#555" font-size="10">就绪等待用户接入</text>
+        </g>
+      </g>
+
+      <!-- 阶段二：推送 + AI 调研执行 -->
+      <g transform="translate(0, 315)">
+        <rect x="30" y="0" width="990" height="150" rx="10" fill="#fff" stroke="#e8ecf2" stroke-width="1" filter="url(#shadow)"/>
+        <rect x="30" y="0" width="990" height="32" rx="10" fill="#0052d9"/>
+        <rect x="30" y="16" width="990" height="16" fill="#0052d9"/>
+        <text x="525" y="22" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">阶段二：推送触达 + AI 调研执行</text>
+
+        <g transform="translate(60, 46)">
+          <rect width="190" height="88" rx="8" fill="#f0faf5" stroke="#00a870" stroke-width="1.5"/>
+          <text x="95" y="20" text-anchor="middle" fill="#00a870" font-size="11" font-weight="600">测温系统 · 推送</text>
+          <text x="95" y="40" text-anchor="middle" fill="#555" font-size="10">定时触发推送</text>
+          <text x="95" y="58" text-anchor="middle" fill="#555" font-size="10">生成调研链接</text>
+          <text x="95" y="76" text-anchor="middle" fill="#555" font-size="10">企微/邮件/短信触达</text>
+        </g>
+
+        <g transform="translate(310, 46)">
+          <rect width="240" height="88" rx="8" fill="#f0f5ff" stroke="#0052d9" stroke-width="2" stroke-dasharray="4,2"/>
+          <text x="120" y="20" text-anchor="middle" fill="#0052d9" font-size="11" font-weight="700">🖥️ SDK 对话组件</text>
+          <text x="120" y="40" text-anchor="middle" fill="#555" font-size="10">流式输出 + 多轮对话</text>
+          <text x="120" y="58" text-anchor="middle" fill="#555" font-size="10">主题色 / 引导语可定制</text>
+          <text x="120" y="76" text-anchor="middle" fill="#555" font-size="10">对话结束回调通知</text>
+        </g>
+
+        <line x1="560" y1="80" x2="620" y2="80" stroke="#0052d9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+        <line x1="620" y1="98" x2="560" y2="98" stroke="#0052d9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+        <text x="590" y="74" text-anchor="middle" fill="#0052d9" font-size="9">请求</text>
+        <text x="590" y="112" text-anchor="middle" fill="#0052d9" font-size="9">流式响应</text>
+
+        <g transform="translate(630, 46)">
+          <rect width="220" height="88" rx="8" fill="#f0f5ff" stroke="#0052d9" stroke-width="1.5"/>
+          <text x="110" y="20" text-anchor="middle" fill="#0052d9" font-size="11" font-weight="600">智能体平台 · 对话引擎</text>
+          <text x="110" y="40" text-anchor="middle" fill="#555" font-size="10">多轮对话 + 追问补充</text>
+          <text x="110" y="58" text-anchor="middle" fill="#555" font-size="10">情感分析 + 安全护栏</text>
+          <text x="110" y="76" text-anchor="middle" fill="#0052d9" font-size="10" font-weight="600">实时回传对话 → 测温系统</text>
+        </g>
+      </g>
+
+      <!-- 阶段三：数据归集与消费 -->
+      <g transform="translate(0, 500)">
+        <rect x="30" y="0" width="990" height="150" rx="10" fill="#fff" stroke="#e8ecf2" stroke-width="1" filter="url(#shadow)"/>
+        <rect x="30" y="0" width="990" height="32" rx="10" fill="#00a870"/>
+        <rect x="30" y="16" width="990" height="16" fill="#00a870"/>
+        <text x="525" y="22" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">阶段三：数据归集、分析与业务消费</text>
+
+        <g transform="translate(60, 46)">
+          <rect width="190" height="88" rx="8" fill="#f0f5ff" stroke="#0052d9" stroke-width="1.5"/>
+          <text x="95" y="20" text-anchor="middle" fill="#0052d9" font-size="11" font-weight="600">智能体平台 · 清理</text>
+          <text x="95" y="40" text-anchor="middle" fill="#555" font-size="10">会话结束清除内存</text>
+          <text x="95" y="58" text-anchor="middle" fill="#e34d59" font-size="10" font-weight="600">🔒 零存储 / 仅加密暂存</text>
+          <text x="95" y="76" text-anchor="middle" fill="#555" font-size="10">发送会话结束回调</text>
+        </g>
+
+        <line x1="260" y1="88" x2="420" y2="88" stroke="#0052d9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+        <text x="340" y="80" text-anchor="middle" fill="#0052d9" font-size="10">会话结束回调</text>
+
+        <g transform="translate(430, 46)">
+          <rect width="220" height="88" rx="8" fill="#f0faf5" stroke="#00a870" stroke-width="1.5"/>
+          <text x="110" y="20" text-anchor="middle" fill="#00a870" font-size="11" font-weight="600">测温系统 · 数据中心</text>
+          <text x="110" y="40" text-anchor="middle" fill="#555" font-size="10">汇总完整调研数据</text>
+          <text x="110" y="58" text-anchor="middle" fill="#555" font-size="10">提取结构化答案</text>
+          <text x="110" y="76" text-anchor="middle" fill="#00a870" font-size="10" font-weight="600">📊 拥有最完整的数据</text>
+        </g>
+
+        <line x1="660" y1="88" x2="770" y2="88" stroke="#00a870" stroke-width="2" marker-end="url(#arrow-green)"/>
+        <text x="715" y="80" text-anchor="middle" fill="#00a870" font-size="10">推送分析报告</text>
+
+        <g transform="translate(780, 46)">
+          <rect width="190" height="88" rx="8" fill="#fff7ed" stroke="#f5a623" stroke-width="1.5"/>
+          <text x="95" y="20" text-anchor="middle" fill="#e37318" font-size="11" font-weight="600">业务系统 · 消费</text>
+          <text x="95" y="40" text-anchor="middle" fill="#555" font-size="10">获取调研报告</text>
+          <text x="95" y="58" text-anchor="middle" fill="#555" font-size="10">展示分析结果</text>
+          <text x="95" y="76" text-anchor="middle" fill="#555" font-size="10">业务闭环</text>
+        </g>
+      </g>
+
+      <!-- 底部用户连线 -->
+      <line x1="520" y1="470" x2="520" y2="740" stroke="#8590a6" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <text x="540" y="720" fill="#8590a6" font-size="10">对话页面触达</text>
+
+    </svg>
+  </div>
+
+  <!-- 四、数据存储策略 -->
+  <div class="card" id="sec4">
+    <h2><span class="icon">4</span> 数据存储方案</h2>
+    <h3>4.1 智能体平台数据处理策略</h3>
+
+    <table class="flow-table" style="margin-top:12px;">
+      <tr>
+        <th style="width:16%">方案</th>
+        <th style="width:34%">描述</th>
+        <th style="width:28%">优劣势</th>
+        <th>参考案例</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-blue">方案A：零存储</span><br><span style="font-size:11px;color:#888;">（推荐）</span></td>
+        <td>
+          ① 题目配置通过 API 实时下发，仅驻留内存<br>
+          ② 对话过程中实时通过 <b>Webhook/回调</b> 将每轮对话回传测温系统<br>
+          ③ 会话结束后，智能体平台清除所有会话内存<br>
+          ④ 不写入任何磁盘/数据库
+        </td>
+        <td>
+          <span class="tag tag-green">数据合规性最强</span><br>
+          <span class="tag tag-red">对网络稳定性要求高</span><br>
+          需要设计重试机制保障数据不丢
+        </td>
+        <td>无</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-blue">方案B：加密暂存</span></td>
+        <td>
+          ① 对话过程中以 <b>AES-256 加密</b> 暂存到智能体平台<br>
+          ② 密钥由测温系统管理（智能体平台不持有明文密钥）<br>
+          ③ <span style="color:#e34d59;font-weight:700;background:#fde8ea;padding:2px 6px;border-radius:4px;">会话结束后批量回传测温系统，确认接收后立即删除</span><br>
+          ④ 设置 <b>TTL 兜底</b>（如24h自动清除）
+        </td>
+        <td>
+          <span class="tag tag-green">数据不丢失风险低</span><br>
+          <span class="tag tag-orange">合规性略低于方案A</span><br>
+          适合网络不稳定场景
+        </td>
+        <td>敏感知识、AI问数，加密不存，通过密钥获取用于加载对话页面的聊天记录；如果是访谈调研场景，不需要渲染历史聊天记录，可以考虑直接不存的方案</td>
+      </tr>
+    </table>
+
+    <h3>4.2 数据流转全链路</h3>
+    <div class="highlight-box green">
+      <p><strong>完整链路（推荐方案A）：</strong><br>
+      业务系统<b>「推送名单」</b>→ 测温系统<b>「配置场景 + 下发参数」</b>→ 智能体平台<b>「模板+参数拼装」</b>→ 用户<b>「SDK对话」</b>→ 智能体平台<b>「实时回传」</b>→ 测温系统<b>「持久存储」</b>→ 智能体平台<b>「清除内存」</b>→ 测温系统<b>「数据分析」</b>→ 业务系统<b>「业务消费」</b></p>
+    </div>
+  </div>
+
+  <!-- 五、前端页面方案建议 -->
+  <div class="card" id="sec5">
+    <h2><span class="icon">5</span> 对话页面提供方案</h2>
+
+    <h3>5.1 方案说明</h3>
+    <div class="highlight-box" style="margin-top:12px;">
+      <p><strong>智能体平台提供可嵌入的对话 JS插件供业务系统引入，业务方零开发成本：</strong></p>
+      <p style="margin-top:8px;">
+        • 支持主题色、Logo、引导语定制<br>
+        • 内置流式输出、追问、打字机效果<br>
+        • 业务方一行代码嵌入，平台统一升级自动受益
+      </p>
+    </div>
+
+    <h3>5.2 数据流</h3>
+    <div class="highlight-box">
+      <p><strong>SDK 只是前端渲染层，不改变数据存储策略。</strong><br>
+      数据流仍然是：用户 → <b>[SDK 前端]</b> → 智能体平台（内存处理）→ <b>实时回传</b> → 测温系统（持久化）→ 业务系统（消费报告）。<br>
+      智能体平台仍然是无状态执行引擎，SDK 前端直连智能体 API，对话数据实时旁路回传测温系统。</p>
+    </div>
+
+  </div>
+
+  <!-- 六、Skill 架构设计 -->
+  <div class="card" id="sec6">
+    <h2><span class="icon">6</span> Skill 工程</h2>
+
+    <h3>6.1 需求</h3>
+    <div class="skill-arch">
+      <div class="skill-layer layer-blue">
+        <h4>🧠 智能体平台 — 「结构化调研」Skill 模板</h4>
+        <ul>
+          <li><strong>固定部分</strong>（平台维护）：</li>
+          <li style="margin-left:16px;">System Prompt 框架 · 多轮对话管理策略 · 追问引擎（何时追问、几轮、方式）</li>
+          <li style="margin-left:16px;">情感识别 + 安全护栏 · 回答质量评估 · 超时/异常处理</li>
+          <li style="margin-top:8px;"><strong>动态部分</strong>（每次会话由外部注入）：</li>
+          <li style="margin-left:16px;">场景描述（离职调研 / 满意度调研 / …） · 题目列表 + 分支逻辑</li>
+          <li style="margin-left:16px;">语气风格（温和 / 正式 / 轻松） · 开场白 / 结束语 · 业务自定义规则</li>
+        </ul>
+      </div>
+      <div class="skill-layer layer-green">
+        <h4>📋 测温系统 — 场景配置（业务人员操作）</h4>
+        <ul>
+          <li>题目编排（顺序、分支、必答/选答）</li>
+          <li>追问规则（什么情况下追问、追问几轮）</li>
+          <li>跳转逻辑（答了A跳到第3题，答了B跳到第5题）</li>
+          <li>场景描述片段（开场白、结束语、语气风格）</li>
+          <li>结束条件（全部答完 / 超时 / 用户主动退出）</li>
+          <li style="margin-top:6px;"><strong>配置完成后，按智能体平台的 Skill 协议标准打包下发</strong></li>
+        </ul>
+      </div>
+      <div class="skill-layer layer-orange">
+        <h4>🎓 业务系统 — 不与 AI 能力侧直接交互</h4>
+        <ul>
+          <li>只负责提供业务上下文（用户部门、岗位等），影响调研策略的参数</li>
+          <li>这些参数随名单一起传给测温系统，由测温系统注入场景配置中</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>6.2 新场景扩展方式</h3>
+    <div class="highlight-box green">
+      <p><strong>每创建一个新的调研场景（如满意度调研），流程是：</strong></p>
+      <p style="margin-top:8px;">
+        ① 测温系统新建一个场景模板，配好题目、规则、风格等<strong>「业务参数」</strong><br>
+        ② 创建会话时按 Skill 协议打包下发给智能体平台<br>
+        ③ 智能体平台用<strong>同一个「结构化调研」Skill 模板</strong>执行<br>
+        ④ <strong>智能体平台侧不需要任何新增配置</strong>——不同场景只是注入的参数不同
+      </p>
+    </div>
+  </div>
+
+  <!-- 七、关键接口设计 -->
+  <div class="card" id="sec7">
+    <h2><span class="icon">7</span> 接口需求列表</h2>
+
+    <table class="flow-table">
+      <tr>
+        <th style="width:5%">#</th>
+        <th style="width:18%">接口名称</th>
+        <th style="width:14%">调用方向</th>
+        <th style="width:16%">接口提供方</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>推送触发信号</td>
+        <td><span class="tag tag-orange">业务</span>→<span class="tag tag-green">测温</span></td>
+        <td><span class="tag tag-green">测温系统</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>创建调研会话</td>
+        <td><span class="tag tag-green">测温</span>→<span class="tag tag-blue">智能体</span></td>
+        <td><span class="tag tag-blue">智能体平台</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>SDK 初始化</td>
+        <td><span class="tag tag-green">测温页面</span>→<span class="tag tag-blue">SDK</span></td>
+        <td><span class="tag tag-blue">智能体平台</span></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>实时对话回传</td>
+        <td><span class="tag tag-blue">智能体</span>→<span class="tag tag-green">测温</span></td>
+        <td><span class="tag tag-green">测温系统</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>会话结束回调</td>
+        <td><span class="tag tag-blue">智能体</span>→<span class="tag tag-green">测温</span></td>
+        <td><span class="tag tag-green">测温系统</span></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>调研报告推送</td>
+        <td><span class="tag tag-green">测温</span>→<span class="tag tag-orange">业务</span></td>
+        <td><span class="tag tag-orange">业务系统</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 八、下次会议内容 -->
+  <div class="card" id="sec-meeting">
+    <h2><span class="icon">8</span> 下次会议内容</h2>
+    <div class="highlight-box purple" style="margin-top: 12px;">
+      <p><strong>待确认事项：</strong></p>
+    </div>
+    <table class="flow-table" style="margin-top: 12px;">
+      <tr>
+        <th style="width:8%">#</th>
+        <th>议题内容</th>
+      </tr>
+      <tr>
+        <td style="text-align:center;font-weight:700;color:#0052d9;">1</td>
+        <td>以离职系统为例，离职系统唤起对话能力的交互路径确认</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;font-weight:700;color:#0052d9;">2</td>
+        <td>三方技术路径和方案确认，数据落地的安全方案</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;font-weight:700;color:#0052d9;">3</td>
+        <td>后续排期和计划</td>
+      </tr>
+    </table>
+  </div>
+
+</div><!-- end .page -->
+</div><!-- end .main-content -->
+</div><!-- end .layout-wrap -->
+
+<script>
+// 侧边栏点击高亮 + 滚动高亮
+(function() {
+  var links = document.querySelectorAll('.sidebar-body a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var sec = document.getElementById(id);
+    if (sec) sections.push({ el: sec, link: link });
+  });
+
+  // 点击高亮
+  links.forEach(function(link) {
+    link.addEventListener('click', function() {
+      links.forEach(function(l) { l.classList.remove('active'); });
+      link.classList.add('active');
+    });
+  });
+
+  // 滚动高亮
+  function onScroll() {
+    var current = null;
+    for (var i = 0; i < sections.length; i++) {
+      var rect = sections[i].el.getBoundingClientRect();
+      if (rect.top <= 120) {
+        current = sections[i];
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>
