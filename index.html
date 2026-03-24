@@ -1786,6 +1786,43 @@
       max-width: 60px;
     }
 
+    /* 企微洞察报告消息卡片 */
+    .wecom-report-card {
+      border: 1px solid #E5E6EB;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .wecom-report-card-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1D2129;
+      padding: 12px 14px 8px;
+    }
+    .wecom-report-card-desc {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #4E5969;
+      padding: 0 14px 12px;
+    }
+    .wecom-report-card-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-top: 1px solid #E5E6EB;
+      font-size: 13px;
+      color: #3370FF;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .wecom-report-card-link:hover {
+      background: #F7F8FA;
+    }
+
     /* 底部输入栏 */
     .wecom-chat-footer {
       padding: 12px 24px 16px;
@@ -1951,7 +1988,7 @@
                 <span>技能</span>
                 <!-- 下拉面板 -->
                 <div class="skill-dropdown" id="skillDropdown" onclick="event.stopPropagation()">
-                  <div class="skill-item" onclick="useSkill('interview','showInterviewBuilding')"><span class="skill-item-icon">🎙️</span>AI访谈</div>
+                  <div class="skill-item" onclick="useSkill('interview','askQuestion',&quot;请帮我进行AI离职沟通&quot;)"><span class="skill-item-icon">🎙️</span>AI访谈</div>
                   <div class="skill-item" onclick="useSkill('interview','showJobRecommend')"><span class="skill-item-icon">💧</span>活水机会</div>
                   <div class="skill-item" onclick="useSkill('interview','showPortraitGuide')"><span class="skill-item-icon">👤</span>离职画像</div>
                   <div class="skill-item" onclick="useSkill('data','showDataWidetable')"><span class="skill-item-icon">📋</span>宽表问数</div>
@@ -2049,7 +2086,7 @@
               <span class="quick-action-icon">👤</span>
               <span>离职画像</span>
             </button>
-            <button class="quick-action-btn" id="btn-interview" onclick="showInterviewBuilding()" style="display:none;">
+            <button class="quick-action-btn" id="btn-interview" onclick="askQuestion('请帮我进行AI离职沟通')" style="display:none;">
               <span class="quick-action-icon">🎙️</span>
               <span>AI访谈</span>
             </button>
@@ -2134,7 +2171,7 @@
           <div class="wecom-contact-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
           <div class="wecom-contact-info">
             <div class="wecom-contact-name">离职小助理</div>
-            <div class="wecom-contact-msg">好的，已为您生成离职分析报告</div>
+            <div class="wecom-contact-msg">已为您生成本部门离职洞察报告</div>
           </div>
           <div class="wecom-contact-meta">
             <span class="wecom-contact-time">10:32</span>
@@ -2235,8 +2272,8 @@
               </a>
               <div class="wecom-welcome-divider"></div>
               <div class="wecom-welcome-hint">试试这样问</div>
-              <div class="wecom-welcome-question" onclick="wecomQuickAsk('生成一份组织离职分析报告')">
-                <span>生成一份组织离职分析报告</span>
+              <div class="wecom-welcome-question" onclick="showWecomInsightCard()">
+                <span>获取本部门离职洞察报告</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
               </div>
               <div class="wecom-welcome-question" onclick="wecomQuickAsk('看看青云AI大模型人才的离职分析')">
@@ -2288,7 +2325,7 @@
           <div class="wecom-msg-avatar" style="background:#3370FF;">HR</div>
           <div class="wecom-msg-content">
             <div class="wecom-msg-sender">我</div>
-            <div class="wecom-msg-bubble">生成一份组织离职分析报告</div>
+            <div class="wecom-msg-bubble">获取本部门离职洞察报告</div>
           </div>
         </div>
         <div class="wecom-msg-time">10:32</div>
@@ -2296,13 +2333,7 @@
           <div class="wecom-msg-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
           <div class="wecom-msg-content">
             <div class="wecom-msg-sender">离职小助理</div>
-            <div class="wecom-msg-bubble">📋 已为你生成<b>组织离职分析报告</b>，以下是核心摘要：<br><br>
-📊 <b>整体概况</b><br>· 统计周期离职 20 人，整体离职率 7.7%<br>· 高绩效流失占比 30%，需重点关注<br><br>
-🏢 <b>部门分布</b><br>· 研发部离职最多（7人），运营部离职率最高（8.9%）<br>· 设计部和市场部相对稳定<br><br>
-🔍 <b>核心原因</b><br>· 个人发展（30%）> 薪资待遇（25%）> 工作压力（20%）<br>· 管理问题集中在运营部和产品部<br><br>
-⚠️ <b>风险预警</b><br>· 6名高绩效员工流失，研发部占4人<br>· 入职1年内新人离职占35%<br><br>
-💡 你可以追问补充更多维度，如"补充薪酬分析"、"加入司龄分析"等，持续定制这份报告。<br><br>
-<span style="color:#999;font-size:12px;">点击 👉 <a onclick="closeWeCom()" style="color:#3370FF;cursor:pointer;">离职小助理完整版</a> 查看带图表的完整报告</span></div>
+            <div class="wecom-msg-bubble">📊 已为你生成本部门离职洞察报告摘要：<br><br>· 2025年Q1离职<b>47人</b>，整体离职率<b>4.8%</b>，同比上升0.5pct<br>· 主动离职率3.9%，高于公司均值；高绩效流失占比<b>28%</b><br>· 核心归因：薪酬竞争力不足（34%）、发展空间受限（26%）<br>· 风险提示：技术研发中心AI算法组离职率8.2%为最高<br><div class="wecom-report-card"><div class="wecom-report-card-title">📄 本部门离职洞察报告（完整版）</div><div class="wecom-report-card-desc">含详细数据图表、部门对比、归因分析、改善建议等完整内容</div><div class="wecom-report-card-link" onclick="openWecomInsightDoc()"><span>查看完整报告</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div></div></div>
           </div>
         </div>
       </div>
@@ -2437,6 +2468,36 @@
       document.getElementById('wecomPage').classList.remove('show');
     }
 
+    // 企微洞察报告 — 以消息卡片形式发送
+    function showWecomInsightCard() {
+      // 先发送用户消息
+      appendWecomMsg('self', '获取本部门离职洞察标准报告');
+      // 先发送等待提示
+      setTimeout(function() {
+        appendWecomMsg('bot', '小助理分析中，大约需要3-5分钟，报告制作完成后会提醒你，请耐心等待~');
+      }, 600);
+      // 延迟后发送报告卡片
+      setTimeout(function() {
+        var cardHtml = '📊 已为你生成本部门离职洞察报告摘要：<br><br>'
+          + '· 2025年Q1离职<b>47人</b>，整体离职率<b>4.8%</b>，同比上升0.5pct<br>'
+          + '· 主动离职率3.9%，高于公司均值；高绩效流失占比<b>28%</b><br>'
+          + '· 核心归因：薪酬竞争力不足（34%）、发展空间受限（26%）<br>'
+          + '· 风险提示：技术研发中心AI算法组离职率8.2%为最高<br>'
+          + '<div class="wecom-report-card">'
+          + '<div class="wecom-report-card-title">📄 本部门离职洞察报告（完整版）</div>'
+          + '<div class="wecom-report-card-desc">含详细数据图表、部门对比、归因分析、改善建议等完整内容</div>'
+          + '<div class="wecom-report-card-link" onclick="openWecomInsightDoc()"><span>查看完整报告</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div>'
+          + '</div>';
+        appendWecomMsg('bot', cardHtml);
+      }, 2100);
+    }
+    // 打开完整版报告文档（暂用弹窗提示，后续替换为企微文档链接）
+    function openWecomInsightDoc() {
+      alert('企微文档链接待配置，后续将跳转至完整版报告文档。');
+      // TODO: 替换为企微文档链接，如：
+      // window.open('企微文档URL', '_blank');
+    }
+
     // 企微快捷提问（点击卡片示例问题）
     function wecomQuickAsk(question) {
       appendWecomMsg('self', question);
@@ -2468,7 +2529,7 @@
         + '<a class="wecom-welcome-link" onclick="closeWeCom()"><span>点击 👉 离职小助理完整版</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></a>'
         + '<div class="wecom-welcome-divider"></div>'
         + '<div class="wecom-welcome-hint">试试这样问</div>'
-        + '<div class="wecom-welcome-question" onclick="wecomQuickAsk(\'生成一份组织离职分析报告\')"><span>生成一份组织离职分析报告</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div>'
+        + '<div class="wecom-welcome-question" onclick="showWecomInsightCard()"><span>获取本部门离职洞察标准报告</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div>'
         + '<div class="wecom-welcome-question" onclick="wecomQuickAsk(\'看看青云AI大模型人才的离职分析\')"><span>看看青云AI大模型人才的离职分析</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div>'
         + '<div class="wecom-welcome-question" onclick="wecomQuickAsk(\'各部门离职率是多少\')"><span>各部门离职率是多少</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div>'
         + '<div class="wecom-welcome-question" onclick="wecomQuickAsk(\'查一下张三的离职原因\')"><span>查一下张三的离职原因</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></div>'
@@ -2620,7 +2681,7 @@
   </ul>
 </div>
 <div class="portrait-highlight" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-  📋 组织离职详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=na2c0DE0AXeJAj48aPvJ&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
+  📋 请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZTepCJG9LQjMzwxrffU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">企微文档</a> 查看完整版
 </div>
 
 <div class="portrait-section">
@@ -2634,7 +2695,7 @@
   </ul>
 </div>
 <div class="portrait-highlight" style="display:flex;align-items:center;gap:8px;">
-  📋 离职归因详细分析报告请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=na6Ydc9m1sJzwp0zeLVv&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">tomoro平台</a> 查看
+  📋 请前往 <a href="https://beacon.woa.com/tomoro/HRBI_TEST/file?tab=nZUm0Bq1tWQ5rVya3JMU&type=DOC" target="_blank" style="color:#0052D9;font-weight:600;text-decoration:underline;cursor:pointer;">企微文档</a> 查看完整版
 </div>`;
         addMessage('assistant', html, true);
       }, 800);
@@ -3016,8 +3077,6 @@
           showDataInsightReports();
         } else if (action === 'transferToHuman') {
           transferToHuman();
-        } else if (action === 'showInterviewBuilding') {
-          showInterviewBuilding();
         }
       }, 300);
     }
@@ -6998,17 +7057,6 @@
       return '我只是个小demo，不是真实的AI~';
     }
 
-    // AI访谈 - 功能建设中
-    function showInterviewBuilding() {
-      if (isTyping) return;
-      const buildingHTML = `<div class="portrait-section" style="text-align:center;padding:24px 16px;">
-  <div style="font-size:40px;margin-bottom:12px;">🚧</div>
-  <div style="font-size:15px;font-weight:600;color:#1D2129;margin-bottom:8px;">AI访谈功能建设中</div>
-  <div style="font-size:13px;color:#86909C;line-height:1.8;">该功能正在开发中，敬请期待！<br>你可以先体验其他功能，如<b>活水机会推荐</b>、<b>离职画像分析</b>等。</div>
-</div>`;
-      addMessage('assistant', buildingHTML, true);
-    }
-
     // 活水推荐
     function showJobRecommend() {
       if (isTyping) return;
@@ -7399,5 +7447,6 @@
       }
     });
   </script>
+
 </body>
 </html>
