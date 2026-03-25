@@ -1,0 +1,3783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测温+离职访谈联动效果演示</title>
+  <style>
+    :root {
+      --td-brand-color: #0052D9;
+      --td-brand-color-hover: #4787F0;
+      --td-brand-color-active: #0034B5;
+      --td-brand-color-light: #ECF2FE;
+      --td-text-color-primary: #000000E6;
+      --td-text-color-secondary: #00000099;
+      --td-text-color-placeholder: #00000066;
+      --td-bg-color-page: #F5F7FA;
+      --td-bg-color-container: #FFFFFF;
+      --td-border-color: #E7E7E7;
+      --td-border-radius: 8px;
+      --td-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --td-shadow-2: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--td-bg-color-page);
+      color: var(--td-text-color-primary);
+      min-height: 100vh;
+    }
+
+    /* ========== 首页 ========== */
+    .home-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .home-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .home-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #0052D9, #4787F0);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 24px rgba(0, 82, 217, 0.25);
+    }
+
+    .home-icon svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .home-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1D2129;
+      margin-bottom: 8px;
+    }
+
+    .home-subtitle {
+      font-size: 15px;
+      color: #86909C;
+      line-height: 1.6;
+    }
+
+    /* 方案卡片容器 */
+    .scheme-cards {
+      display: flex;
+      gap: 24px;
+      max-width: 1080px;
+      width: 100%;
+    }
+
+    /* 单个方案卡片 */
+    .scheme-card {
+      flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 28px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scheme-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+      border-color: var(--td-brand-color);
+    }
+
+    .scheme-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .scheme-card:nth-child(1)::before {
+      background: linear-gradient(90deg, #0052D9, #4787F0);
+    }
+    .scheme-card:nth-child(2)::before {
+      background: linear-gradient(90deg, #2BA471, #56C08D);
+    }
+    .scheme-card:nth-child(3)::before {
+      background: linear-gradient(90deg, #E37318, #F0A04B);
+    }
+
+    .scheme-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .scheme-card:nth-child(1) .scheme-badge {
+      background: #ECF2FE;
+      color: #0052D9;
+    }
+    .scheme-card:nth-child(2) .scheme-badge {
+      background: #E8F8EF;
+      color: #2BA471;
+    }
+    .scheme-card:nth-child(3) .scheme-badge {
+      background: #FFF1E5;
+      color: #E37318;
+    }
+
+    .scheme-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .scheme-card:nth-child(1) .scheme-card-icon {
+      background: #ECF2FE;
+    }
+    .scheme-card:nth-child(2) .scheme-card-icon {
+      background: #E8F8EF;
+    }
+    .scheme-card:nth-child(3) .scheme-card-icon {
+      background: #FFF1E5;
+    }
+
+    .scheme-card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1D2129;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .scheme-card-desc {
+      font-size: 14px;
+      color: #86909C;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .scheme-card-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .scheme-flow-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #4E5969;
+    }
+
+    .scheme-flow-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .scheme-card:nth-child(1) .scheme-flow-num { background: #0052D9; }
+    .scheme-card:nth-child(2) .scheme-flow-num { background: #2BA471; }
+    .scheme-card:nth-child(3) .scheme-flow-num { background: #E37318; }
+
+    .scheme-card-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #fff;
+    }
+
+    .scheme-card:nth-child(1) .scheme-card-btn {
+      background: #0052D9;
+    }
+    .scheme-card:nth-child(1) .scheme-card-btn:hover {
+      background: #0034B5;
+    }
+    .scheme-card:nth-child(2) .scheme-card-btn {
+      background: #2BA471;
+    }
+    .scheme-card:nth-child(2) .scheme-card-btn:hover {
+      background: #008858;
+    }
+    .scheme-card:nth-child(3) .scheme-card-btn {
+      background: #E37318;
+    }
+    .scheme-card:nth-child(3) .scheme-card-btn:hover {
+      background: #BE5A06;
+    }
+
+    .scheme-card-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ========== 方案详情页（通用框架） ========== */
+    .demo-page {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .demo-page.active {
+      display: flex;
+    }
+
+    /* 详情页顶部导航 */
+    .demo-topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px;
+      background: #fff;
+      border-bottom: 1px solid var(--td-border-color);
+    }
+
+    .demo-back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid #E5E6EB;
+      background: #fff;
+      font-size: 13px;
+      color: #4E5969;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .demo-back-btn:hover {
+      background: #F7F8FA;
+      border-color: #C9CDD4;
+    }
+
+    .demo-topbar-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1D2129;
+    }
+
+    .demo-topbar-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    /* 详情页内容区域（占位） */
+    .demo-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .demo-placeholder {
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .demo-placeholder-icon {
+      font-size: 56px;
+      margin-bottom: 20px;
+    }
+
+    .demo-placeholder-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1D2129;
+      margin-bottom: 8px;
+    }
+
+    .demo-placeholder-desc {
+      font-size: 14px;
+      color: #86909C;
+      line-height: 1.7;
+    }
+
+    /* ========== 企微版样式 ========== */
+    .wecom-page {
+      display: none;
+      height: 100vh;
+      width: 100%;
+    }
+    .wecom-page.active {
+      display: flex;
+    }
+
+    /* 企微最左侧导航栏 */
+    .wecom-nav {
+      width: 56px;
+      background: #E0EAFF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+      flex-shrink: 0;
+    }
+    .wecom-nav-avatar {
+      width: 36px; height: 36px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #3370FF, #5B93FF);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .wecom-nav-item {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6B8ABF;
+      font-size: 20px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .wecom-nav-item:hover { background: rgba(51,112,255,0.1); color: #3370FF; }
+    .wecom-nav-item.active { color: #3370FF; background: rgba(51,112,255,0.15); }
+    .wecom-nav-item .nav-badge {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #E34D59;
+    }
+    .wecom-nav-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 会话列表面板 */
+    .wecom-sidebar {
+      width: 280px;
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #E5E6EB;
+      flex-shrink: 0;
+    }
+    .wecom-sidebar-header {
+      padding: 14px 16px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .wecom-search {
+      flex: 1;
+      height: 32px;
+      border: none;
+      border-radius: 6px;
+      background: #F2F3F5;
+      padding: 0 12px 0 32px;
+      font-size: 13px;
+      color: #999;
+      outline: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
+    }
+    .wecom-contact-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .wecom-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .wecom-contact-item:hover { background: #F2F3F5; }
+    .wecom-contact-item.active { background: #ECF2FE; }
+    .wecom-contact-avatar {
+      width: 40px; height: 40px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .wecom-contact-info { flex: 1; min-width: 0; }
+    .wecom-contact-name {
+      font-size: 14px;
+      color: #1D2129;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .wecom-contact-msg {
+      font-size: 12px;
+      color: #86909C;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .wecom-contact-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .wecom-contact-time {
+      font-size: 11px;
+      color: #C0C4CC;
+    }
+    .wecom-badge {
+      min-width: 18px; height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: #E34D59;
+      color: #fff;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 右侧聊天区 */
+    .wecom-chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #FFFFFF;
+    }
+    .wecom-chat-header {
+      height: 56px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #E5E6EB;
+      background: #FFFFFF;
+    }
+    .wecom-chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .wecom-chat-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1D2129;
+    }
+    .wecom-chat-tag {
+      font-size: 11px;
+      color: #86909C;
+      background: #F2F3F5;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .wecom-chat-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .wecom-action-btn {
+      width: 32px; height: 32px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #86909C;
+      font-size: 18px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .wecom-action-btn:hover {
+      background: #E8EAF0;
+      color: #4E5969;
+    }
+    .wecom-back-btn {
+      padding: 6px 14px;
+      border: 1px solid #DEE1E6;
+      background: #fff;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #4E5969;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .wecom-back-btn:hover {
+      background: #F2F3F5;
+      border-color: #C0C4CC;
+      color: #1D2129;
+    }
+
+    .wecom-chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .wecom-msg {
+      display: flex;
+      gap: 10px;
+      max-width: 70%;
+    }
+    .wecom-msg.self {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .wecom-msg-avatar {
+      width: 36px; height: 36px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .wecom-msg-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .wecom-msg-sender {
+      font-size: 12px;
+      color: #86909C;
+    }
+    .wecom-msg.self .wecom-msg-sender {
+      text-align: right;
+    }
+    .wecom-msg-bubble {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #1D2129;
+      background: #F2F3F5;
+      word-break: break-word;
+      box-shadow: none;
+    }
+    .wecom-msg.self .wecom-msg-bubble {
+      background: #3370FF;
+      color: #fff;
+    }
+    .wecom-msg.self .wecom-msg-bubble b {
+      color: #fff;
+    }
+    .wecom-msg-time {
+      text-align: center;
+      font-size: 12px;
+      color: #C0C4CC;
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .wecom-msg-time::before,
+    .wecom-msg-time::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #E5E6EB;
+      max-width: 80px;
+    }
+
+    /* 企微开场卡片 */
+    .wecom-welcome-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #E5E6EB;
+      padding: 16px 18px;
+      max-width: 340px;
+    }
+    .wecom-welcome-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1D2129;
+      margin-bottom: 8px;
+    }
+    .wecom-welcome-desc {
+      font-size: 13px;
+      color: #646A73;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .wecom-welcome-divider {
+      height: 1px;
+      background: #E5E6EB;
+      margin-bottom: 4px;
+    }
+    .wecom-welcome-hint {
+      font-size: 12px;
+      color: #86909C;
+      padding: 8px 0 4px;
+    }
+    .wecom-welcome-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #F2F3F5;
+      font-size: 14px;
+      color: #1D2129;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .wecom-welcome-question:last-child {
+      border-bottom: none;
+    }
+    .wecom-welcome-question:hover {
+      color: #3370FF;
+    }
+    .wecom-welcome-question svg {
+      color: #C0C4CC;
+      flex-shrink: 0;
+    }
+    .wecom-welcome-question:hover svg {
+      color: #3370FF;
+    }
+    .wecom-welcome-newchat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0 0;
+      font-size: 14px;
+      color: #3370FF;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .wecom-welcome-newchat:hover {
+      opacity: 0.8;
+    }
+    .wecom-welcome-newchat svg {
+      color: #3370FF;
+      flex-shrink: 0;
+    }
+    .wecom-newchat-divider {
+      text-align: center;
+      font-size: 12px;
+      color: #C0C4CC;
+      padding: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .wecom-newchat-divider::before,
+    .wecom-newchat-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #E5E6EB;
+      max-width: 60px;
+    }
+
+    /* 底部输入栏 */
+    .wecom-chat-footer {
+      padding: 12px 24px 16px;
+      border-top: 1px solid #E5E6EB;
+      background: #FFFFFF;
+    }
+    .wecom-toolbar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 10px;
+      color: #86909C;
+      font-size: 18px;
+    }
+    .wecom-toolbar span {
+      cursor: pointer;
+      transition: color 0.15s;
+      display: flex;
+      align-items: center;
+    }
+    .wecom-toolbar span:hover { color: #4E5969; }
+    .wecom-input-area {
+      width: 100%;
+      height: 70px;
+      border: none;
+      resize: none;
+      font-size: 14px;
+      color: #1D2129;
+      background: transparent;
+      outline: none;
+      font-family: inherit;
+      line-height: 1.6;
+    }
+    .wecom-send-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 6px;
+      gap: 12px;
+    }
+    .wecom-send-hint {
+      font-size: 11px;
+      color: #C0C4CC;
+    }
+    .wecom-send-btn {
+      padding: 6px 24px;
+      background: #3370FF;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .wecom-send-btn:hover { background: #2860E1; }
+
+    /* ========== 问卷卡片样式 ========== */
+    .survey-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #D4E3FC;
+      padding: 0;
+      max-width: 1040px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 82, 217, 0.08);
+    }
+    .survey-card-welcome {
+      padding: 20px 24px 0;
+    }
+    .survey-card-welcome-text {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: #4E5969;
+      line-height: 1.8;
+    }
+    .survey-card-welcome-emoji {
+      font-size: 16px;
+      margin-right: 2px;
+    }
+    .survey-card-body {
+      padding: 20px 24px 24px;
+    }
+
+    /* 题目通用 */
+    .survey-question {
+      margin-bottom: 22px;
+    }
+    .survey-question:last-of-type {
+      margin-bottom: 20px;
+    }
+    .survey-q-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1D2129;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .survey-q-num {
+      width: 22px; height: 22px;
+      min-width: 22px;
+      border-radius: 50%;
+      background: #0052D9;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .survey-q-required {
+      color: #E34D59;
+      margin-left: 2px;
+    }
+
+    /* 评分题（保留兼容） */
+    .survey-score-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 6px;
+    }
+    .survey-score-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #86909C;
+      margin-bottom: 6px;
+    }
+    .survey-score-btn {
+      flex: 1;
+      height: 36px;
+      border: 1px solid #E5E6EB;
+      background: #fff;
+      color: #4E5969;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-left: -1px;
+      position: relative;
+    }
+    .survey-score-btn:first-child {
+      border-radius: 6px 0 0 6px;
+      margin-left: 0;
+    }
+    .survey-score-btn:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+    .survey-score-btn:hover {
+      background: #ECF2FE;
+      border-color: #0052D9;
+      z-index: 1;
+    }
+    .survey-score-btn.selected {
+      background: #0052D9;
+      color: #fff;
+      border-color: #0052D9;
+      z-index: 2;
+    }
+
+    /* 下拉选择框 */
+    .survey-select-wrapper {
+      position: relative;
+      margin-top: 6px;
+    }
+    .survey-select {
+      width: 100%;
+      height: 38px;
+      padding: 0 36px 0 12px;
+      border: 1px solid #E5E6EB;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #1D2129;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2386909C' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color 0.15s;
+    }
+    .survey-select:hover {
+      border-color: #C9CDD4;
+    }
+    .survey-select:focus {
+      border-color: #0052D9;
+      box-shadow: 0 0 0 2px rgba(0,82,217,0.1);
+    }
+    .survey-select option[value=""] {
+      color: #C0C4CC;
+    }
+
+    /* 单选题 */
+    .survey-radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .survey-radio-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #F2F3F5;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 14px;
+      color: #1D2129;
+    }
+    .survey-radio-item:last-child {
+      border-bottom: none;
+    }
+    .survey-radio-item:hover {
+      background: #F7F8FA;
+    }
+    .survey-radio-circle {
+      width: 18px; height: 18px;
+      min-width: 18px;
+      border-radius: 50%;
+      border: 2px solid #C9CDD4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .survey-radio-item.selected .survey-radio-circle {
+      border-color: #0052D9;
+      background: #0052D9;
+    }
+    .survey-radio-item.selected .survey-radio-circle::after {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    /* 多选题 */
+    .survey-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .survey-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #F2F3F5;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 14px;
+      color: #1D2129;
+    }
+    .survey-checkbox-item:last-child {
+      border-bottom: none;
+    }
+    .survey-checkbox-item:hover {
+      background: #F7F8FA;
+    }
+    .survey-checkbox-box {
+      width: 18px; height: 18px;
+      min-width: 18px;
+      border-radius: 4px;
+      border: 2px solid #C9CDD4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .survey-checkbox-item.selected .survey-checkbox-box {
+      border-color: #0052D9;
+      background: #0052D9;
+    }
+    .survey-checkbox-item.selected .survey-checkbox-box::after {
+      content: '';
+      width: 10px; height: 10px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M10 3L4.5 8.5 2 6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: contain;
+    }
+    .survey-checkbox-hint {
+      font-size: 12px;
+      color: #0052D9;
+      background: #ECF2FE;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    /* 开放性文本 */
+    .survey-textarea {
+      width: 100%;
+      height: 64px;
+      border: 1px solid #E5E6EB;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #1D2129;
+      resize: none;
+      outline: none;
+      font-family: inherit;
+      line-height: 1.6;
+      transition: border-color 0.15s;
+    }
+    .survey-textarea:focus {
+      border-color: #0052D9;
+    }
+    .survey-textarea::placeholder {
+      color: #C0C4CC;
+    }
+
+    /* 提交按钮区域 */
+    .survey-submit-row {
+      display: flex;
+      justify-content: center;
+      padding-top: 16px;
+      border-top: 1px solid #F2F3F5;
+    }
+    .survey-submit-btn {
+      padding: 10px 32px;
+      border: none;
+      background: #0052D9;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .survey-submit-btn:hover {
+      background: #0034B5;
+    }
+    .survey-submit-btn:disabled {
+      background: #C0C4CC;
+      cursor: not-allowed;
+    }
+
+    /* 流式打字光标闪烁 */
+    .streaming-cursor {
+      display: inline-block;
+      color: #0052D9;
+      font-weight: 400;
+      animation: cursorBlink 0.6s infinite;
+      margin-left: 1px;
+    }
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ========== 方案2：H5对话页面样式 ========== */
+    .h5-app {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      background: var(--td-bg-color-page);
+    }
+
+    /* 左侧边栏 */
+    .h5-sidebar {
+      width: 280px;
+      background: var(--td-bg-color-container);
+      border-right: 1px solid var(--td-border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .h5-sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--td-border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .h5-user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--td-brand-color), var(--td-brand-color-hover));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .h5-user-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+      margin-bottom: 2px;
+    }
+
+    .h5-user-info p {
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+    }
+
+    /* 新对话按钮 */
+    .h5-new-chat-btn {
+      margin: 16px 20px;
+      padding: 12px 16px;
+      background: var(--td-brand-color);
+      color: white;
+      border: none;
+      border-radius: var(--td-border-radius);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .h5-new-chat-btn:hover {
+      background: var(--td-brand-color-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--td-shadow-2);
+    }
+
+    /* 功能模块区 */
+    .h5-func-area {
+      padding: 0 20px 20px;
+    }
+
+    .h5-func-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--td-text-color-secondary);
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+
+    .h5-func-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .h5-func-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+      background: var(--td-bg-color-container);
+      border: 1px solid var(--td-border-color);
+      border-radius: var(--td-border-radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .h5-func-card:hover {
+      border-color: var(--td-brand-color);
+      box-shadow: var(--td-shadow-1);
+      transform: translateY(-2px);
+    }
+
+    .h5-func-card.active {
+      border-color: var(--td-brand-color);
+      background: var(--td-brand-color-light);
+    }
+
+    .h5-func-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .h5-func-card.disabled:hover {
+      border-color: var(--td-border-color);
+      box-shadow: none;
+      transform: none;
+    }
+
+    .h5-func-icon {
+      font-size: 24px;
+      display: block;
+    }
+
+    .h5-func-name {
+      font-size: 13px;
+      color: var(--td-text-color-primary);
+      font-weight: 500;
+    }
+
+    /* 历史对话区 */
+    .h5-history-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px;
+    }
+
+    .h5-history-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--td-text-color-secondary);
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+
+    .h5-history-item {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: var(--td-border-radius);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--td-text-color-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .h5-history-item:hover {
+      background: var(--td-bg-color-container);
+    }
+
+    .h5-history-item.active {
+      background: var(--td-brand-color-light);
+      border: 1px solid var(--td-brand-color);
+    }
+
+    /* 右侧主内容区 */
+    .h5-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--td-bg-color-page);
+    }
+
+    /* 聊天头部 */
+    .h5-chat-header {
+      padding: 16px 24px;
+      background: var(--td-bg-color-container);
+      border-bottom: 1px solid var(--td-border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .h5-chat-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--td-text-color-primary);
+    }
+
+    .h5-chat-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .h5-action-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--td-border-color);
+      background: var(--td-bg-color-container);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+      transition: all 0.2s;
+    }
+
+    .h5-action-btn:hover {
+      border-color: var(--td-brand-color);
+      color: var(--td-brand-color);
+    }
+
+    /* 消息区域 */
+    .h5-chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      min-height: 0;
+    }
+
+    .h5-message {
+      display: flex;
+      margin-bottom: 24px;
+      gap: 12px;
+    }
+
+    .h5-message.user {
+      flex-direction: row-reverse;
+    }
+
+    .h5-message-body {
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+    }
+
+    .h5-message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .h5-message.assistant .h5-message-avatar {
+      background: linear-gradient(135deg, #0052D9, #4787F0);
+      color: white;
+    }
+
+    .h5-message.user .h5-message-avatar {
+      background: var(--td-brand-color-light);
+      color: var(--td-brand-color);
+    }
+
+    .h5-message-content {
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .h5-message.assistant .h5-message-content {
+      background: var(--td-bg-color-container);
+      color: var(--td-text-color-primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .h5-message.user .h5-message-content {
+      background: var(--td-brand-color);
+      color: white;
+    }
+
+    /* 消息操作按钮 */
+    .h5-message-actions {
+      display: flex;
+      gap: 2px;
+      margin-top: 6px;
+      padding-left: 2px;
+    }
+
+    .h5-msg-action-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #ccc;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .h5-msg-action-btn:hover {
+      background: #f0f0f0;
+      color: #0052D9;
+    }
+
+    /* 输入区域 */
+    .h5-chat-input {
+      padding: 16px 24px;
+      background: var(--td-bg-color-container);
+      border-top: 1px solid var(--td-border-color);
+      flex-shrink: 0;
+    }
+
+    .h5-quick-actions {
+      display: flex;
+      gap: 10px;
+      padding: 0 0 8px;
+      align-items: center;
+    }
+
+    .h5-quick-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid var(--td-brand-color);
+      background: var(--td-brand-color-light);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--td-brand-color);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .h5-quick-btn:hover {
+      background: var(--td-brand-color);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 82, 217, 0.25);
+    }
+
+    .h5-input-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .h5-input-box {
+      flex: 1;
+      min-height: 44px;
+      max-height: 120px;
+      padding: 12px 16px;
+      border: 1px solid var(--td-border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    .h5-input-box:focus {
+      border-color: var(--td-brand-color);
+    }
+
+    .h5-send-btn {
+      width: 42px;
+      height: 42px;
+      background: var(--td-brand-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .h5-send-btn:hover {
+      background: var(--td-brand-color-hover);
+      transform: scale(1.05);
+    }
+
+    /* 身份切换 */
+    .h5-role-switch {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .h5-role-btn {
+      padding: 3px 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 11px;
+      color: #bbb;
+      transition: all 0.2s;
+    }
+
+    .h5-role-btn:hover {
+      color: #999;
+      background: #f5f5f5;
+    }
+
+    .h5-role-btn.active {
+      color: #888;
+      background: #f0f0f0;
+    }
+
+    /* ========== 方案3 腾讯问卷样式 ========== */
+    .tq-page {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #F5F7FA;
+    }
+
+    /* 腾讯问卷顶部导航 */
+    .tq-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+      background: #fff;
+      border-bottom: 1px solid #E5E6EB;
+      flex-shrink: 0;
+    }
+    .tq-navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tq-navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1D2129;
+    }
+    .tq-navbar-logo-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #0052D9, #4787F0);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .tq-navbar-sep {
+      width: 1px;
+      height: 20px;
+      background: #E5E6EB;
+    }
+    .tq-navbar-title {
+      font-size: 13px;
+      color: #86909C;
+    }
+    .tq-navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .tq-navbar-link {
+      font-size: 13px;
+      color: #4E5969;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .tq-navbar-link:hover {
+      color: #0052D9;
+    }
+
+    /* 问卷主体 */
+    .tq-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px 60px;
+    }
+    .tq-container {
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    /* 问卷头部 */
+    .tq-header {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .tq-header-banner {
+      height: 120px;
+      background: linear-gradient(135deg, #0052D9 0%, #2B6DE5 50%, #4787F0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .tq-header-banner::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .tq-header-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      left: -20px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .tq-header-banner-text {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .tq-header-info {
+      padding: 24px 28px;
+    }
+    .tq-header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1D2129;
+      margin-bottom: 12px;
+    }
+    .tq-header-desc {
+      font-size: 14px;
+      color: #86909C;
+      line-height: 1.7;
+    }
+    .tq-header-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #F2F3F5;
+      font-size: 12px;
+      color: #C9CDD4;
+    }
+    .tq-header-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 问卷题目区域 */
+    .tq-question-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .tq-q-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .tq-q-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      background: #0052D9;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .tq-q-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1D2129;
+      line-height: 1.6;
+    }
+    .tq-q-required {
+      color: #F53F3F;
+      margin-left: 2px;
+    }
+    .tq-q-subtitle {
+      font-size: 12px;
+      color: #C9CDD4;
+      margin-top: 2px;
+    }
+
+    /* 评分题 - 腾讯问卷风格 */
+    .tq-score-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #86909C;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+    .tq-score-row {
+      display: flex;
+      gap: 0;
+    }
+    .tq-score-btn {
+      flex: 1;
+      height: 42px;
+      border: 1px solid #E5E6EB;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4E5969;
+      transition: all 0.15s;
+      margin-left: -1px;
+      position: relative;
+    }
+    .tq-score-btn:first-child {
+      border-radius: 8px 0 0 8px;
+      margin-left: 0;
+    }
+    .tq-score-btn:last-child {
+      border-radius: 0 8px 8px 0;
+    }
+    .tq-score-btn:hover {
+      background: #ECF2FE;
+      border-color: #0052D9;
+      z-index: 1;
+      color: #0052D9;
+    }
+    .tq-score-btn.selected {
+      background: #0052D9;
+      color: #fff;
+      border-color: #0052D9;
+      z-index: 2;
+    }
+
+    /* 单选题 */
+    .tq-radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .tq-radio-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid #F7F8FA;
+      cursor: pointer;
+      font-size: 14px;
+      color: #1D2129;
+      transition: all 0.15s;
+      border-radius: 8px;
+    }
+    .tq-radio-item:last-child {
+      border-bottom: none;
+    }
+    .tq-radio-item:hover {
+      background: #F7F8FA;
+    }
+    .tq-radio-circle {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      border: 2px solid #C9CDD4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .tq-radio-item.selected .tq-radio-circle {
+      border-color: #0052D9;
+      background: #0052D9;
+    }
+    .tq-radio-item.selected .tq-radio-circle::after {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .tq-radio-item.selected {
+      background: #ECF2FE;
+    }
+
+    /* 多选题 */
+    .tq-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .tq-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid #F7F8FA;
+      cursor: pointer;
+      font-size: 14px;
+      color: #1D2129;
+      transition: all 0.15s;
+      border-radius: 8px;
+    }
+    .tq-checkbox-item:last-child {
+      border-bottom: none;
+    }
+    .tq-checkbox-item:hover {
+      background: #F7F8FA;
+    }
+    .tq-checkbox-box {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      border: 2px solid #C9CDD4;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .tq-checkbox-item.selected .tq-checkbox-box {
+      border-color: #0052D9;
+      background: #0052D9;
+    }
+    .tq-checkbox-item.selected .tq-checkbox-box::after {
+      content: '✓';
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .tq-checkbox-item.selected {
+      background: #ECF2FE;
+    }
+
+    /* 文本框 */
+    .tq-textarea {
+      width: 100%;
+      height: 100px;
+      border: 1px solid #E5E6EB;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
+      color: #1D2129;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      background: #FAFBFC;
+    }
+    .tq-textarea:focus {
+      border-color: #0052D9;
+      background: #fff;
+    }
+    .tq-textarea::placeholder {
+      color: #C9CDD4;
+    }
+
+    /* 提交按钮区域 */
+    .tq-submit-area {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      display: flex;
+      justify-content: center;
+    }
+    .tq-submit-btn {
+      padding: 14px 72px;
+      background: #0052D9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+    }
+    .tq-submit-btn:hover {
+      background: #0034B5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 82, 217, 0.3);
+    }
+    .tq-submit-btn:active {
+      transform: translateY(0);
+    }
+
+    /* 底部信息 */
+    .tq-footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #C9CDD4;
+    }
+    .tq-footer a {
+      color: #0052D9;
+      text-decoration: none;
+    }
+
+    /* 提交成功遮罩 */
+    .tq-success-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(160deg, #EBF1FF 0%, #F6F9FF 40%, #FFFFFF 100%);
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .tq-success-overlay.show {
+      display: flex;
+      animation: successFadeIn 0.4s ease-out;
+    }
+    @keyframes successFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .tq-success-icon {
+      width: 88px;
+      height: 88px;
+      background: linear-gradient(135deg, #0052D9, #4787F0);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      box-shadow: 0 8px 32px rgba(0, 82, 217, 0.25);
+      animation: iconPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes iconPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(0, 82, 217, 0.25); transform: scale(1); }
+      50% { box-shadow: 0 12px 40px rgba(0, 82, 217, 0.35); transform: scale(1.05); }
+    }
+    .tq-success-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1D2129;
+      margin-top: 4px;
+    }
+    .tq-success-desc {
+      font-size: 15px;
+      color: #646A73;
+      text-align: center;
+      line-height: 1.8;
+    }
+    .tq-success-redirect {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      padding: 14px 36px;
+      background: linear-gradient(135deg, #0052D9, #2B6DE5);
+      color: #fff;
+      border-radius: 24px;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 16px rgba(0, 82, 217, 0.3);
+      animation: redirectBtnGlow 1.5s ease-in-out infinite;
+    }
+    @keyframes redirectBtnGlow {
+      0%, 100% { box-shadow: 0 4px 16px rgba(0, 82, 217, 0.3); }
+      50% { box-shadow: 0 6px 24px rgba(0, 82, 217, 0.5); }
+    }
+    .tq-success-redirect .redirect-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .tq-success-progress {
+      width: 220px;
+      height: 4px;
+      background: #E3E8EE;
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .tq-success-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0052D9, #4787F0);
+      border-radius: 2px;
+      animation: progressFill 2s ease-in-out forwards;
+    }
+    @keyframes progressFill {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+
+    /* ========== 方案2 H5问卷卡片样式 ========== */
+    .h5-survey-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #E5E6EB;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+    .h5-survey-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 18px 24px 0;
+    }
+    .h5-survey-header-icon {
+      font-size: 20px;
+    }
+    .h5-survey-header-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0052D9;
+    }
+    .h5-survey-desc {
+      font-size: 13px;
+      color: #86909C;
+      line-height: 1.7;
+      padding: 8px 24px 16px;
+    }
+    .h5-survey-body {
+      padding: 16px 24px 18px;
+    }
+    .h5-survey-question {
+      margin-top: 14px;
+    }
+    .h5-survey-q-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1D2129;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    .h5-survey-q-num {
+      width: 22px; height: 22px;
+      min-width: 22px;
+      border-radius: 50%;
+      background: #0052D9;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .h5-survey-required {
+      color: #E34D59;
+      margin-left: 2px;
+    }
+    /* 评分按钮行 */
+    .h5-survey-score-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #86909C;
+      margin-bottom: 6px;
+    }
+    .h5-survey-score-row {
+      display: flex;
+      gap: 0;
+    }
+    .h5-survey-score-btn {
+      flex: 1;
+      height: 36px;
+      border: 1px solid #E5E6EB;
+      background: #fff;
+      color: #4E5969;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-left: -1px;
+      position: relative;
+    }
+    .h5-survey-score-btn:first-child {
+      border-radius: 6px 0 0 6px;
+      margin-left: 0;
+    }
+    .h5-survey-score-btn:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+    .h5-survey-score-btn:hover {
+      background: #ECF2FE;
+      border-color: #0052D9;
+      z-index: 1;
+    }
+    .h5-survey-score-btn.selected {
+      background: #0052D9;
+      color: #fff;
+      border-color: #0052D9;
+      z-index: 2;
+    }
+    /* 单选题 */
+    .h5-survey-radio-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+    .h5-survey-radio-item {
+      display: flex;
+      align-items: center;
+      border-right: 1px solid #F2F3F5;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #F2F3F5;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 14px;
+      color: #1D2129;
+    }
+    .h5-survey-radio-item:last-child {
+      border-bottom: none;
+    }
+    .h5-survey-radio-item:hover {
+      background: #F7F8FA;
+    }
+    .h5-survey-radio-circle {
+      width: 18px; height: 18px;
+      min-width: 18px;
+      border-radius: 50%;
+      border: 2px solid #C9CDD4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .h5-survey-radio-item.selected .h5-survey-radio-circle {
+      border-color: #0052D9;
+      background: #0052D9;
+    }
+    .h5-survey-radio-item.selected .h5-survey-radio-circle::after {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    /* 多选题 */
+    .h5-survey-checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+    .h5-survey-checkbox-item {
+      display: flex;
+      align-items: center;
+      border-right: 1px solid #F2F3F5;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #F2F3F5;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 14px;
+      color: #1D2129;
+    }
+    .h5-survey-checkbox-item:last-child {
+      border-bottom: none;
+    }
+    .h5-survey-checkbox-item:hover {
+      background: #F7F8FA;
+    }
+    .h5-survey-checkbox-box {
+      width: 18px; height: 18px;
+      min-width: 18px;
+      border-radius: 4px;
+      border: 2px solid #C9CDD4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .h5-survey-checkbox-item.selected .h5-survey-checkbox-box {
+      border-color: #0052D9;
+      background: #0052D9;
+    }
+    .h5-survey-checkbox-item.selected .h5-survey-checkbox-box::after {
+      content: '';
+      width: 10px; height: 10px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M10 3L4.5 8.5 2 6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: contain;
+    }
+    /* 开放性文本 */
+    .h5-survey-textarea {
+      width: 100%;
+      height: 64px;
+      border: 1px solid #E5E6EB;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #1D2129;
+      resize: none;
+      outline: none;
+      font-family: inherit;
+      line-height: 1.6;
+      transition: border-color 0.15s;
+    }
+    .h5-survey-textarea:focus {
+      border-color: #0052D9;
+    }
+    .h5-survey-textarea::placeholder {
+      color: #C0C4CC;
+    }
+    /* 底部按钮区域 */
+    .h5-survey-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid #F2F3F5;
+      margin-top: 20px;
+    }
+    .h5-survey-skip-btn {
+      padding: 10px 28px;
+      border: 1px solid #E5E6EB;
+      background: #fff;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #86909C;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .h5-survey-skip-btn:hover {
+      background: #F7F8FA;
+      border-color: #C9CDD4;
+    }
+    .h5-survey-submit-btn {
+      padding: 10px 28px;
+      border: none;
+      background: #0052D9;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .h5-survey-submit-btn:hover {
+      background: #0034B5;
+    }
+
+    /* ========== 响应式 ========== */
+    @media (max-width: 900px) {
+      .scheme-cards {
+        flex-direction: column;
+        max-width: 480px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 首页 ===== -->
+  <div class="home-page" id="homePage">
+    <div class="home-header">
+      <div class="home-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M12 8v4l3 3" stroke-linecap="round"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="home-title">测温 + 离职访谈联动效果演示</div>
+      <div class="home-subtitle">员工情绪测温与离职访谈的全流程联动方案对比，选择一种方案查看演示效果</div>
+    </div>
+
+    <div class="scheme-cards">
+      <!-- 方案1 -->
+      <div class="scheme-card" onclick="openScheme(1)">
+        <div class="scheme-badge">方案 1</div>
+        <div class="scheme-card-icon">💬</div>
+        <div class="scheme-card-title">企微原生对话<br>完成整体流程</div>
+        <div class="scheme-card-desc">在企业微信Bot对话框中，完成测温问卷 + AI离职访谈的全部流程，无需跳转。</div>
+        <button class="scheme-card-btn">
+          离职表单已提交
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+      </div>
+
+      <!-- 方案2 -->
+      <div class="scheme-card" onclick="openScheme(2)">
+        <div class="scheme-badge">方案 2</div>
+        <div class="scheme-card-icon">🌐</div>
+        <div class="scheme-card-title">H5页面对话<br>完成整体流程</div>
+        <div class="scheme-card-desc">在独立H5页面中，完成测温问卷 + AI离职访谈的全部流程，体验更沉浸。</div>
+        <button class="scheme-card-btn">
+          离职表单已提交
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+      </div>
+
+      <!-- 方案3 -->
+      <div class="scheme-card" onclick="openScheme(3)">
+        <div class="scheme-badge">方案 3</div>
+        <div class="scheme-card-icon">📋</div>
+        <div class="scheme-card-title">腾讯问卷测温<br>+ 企微/H5访谈</div>
+        <div class="scheme-card-desc">先通过腾讯问卷完成测温，再回到企微Bot或H5中由AI完成离职访谈。</div>
+        <button class="scheme-card-btn">
+          离职表单已提交
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 方案1详情页：企微对话 ===== -->
+  <div class="wecom-page" id="scheme1Page">
+    <!-- 最左侧导航栏 -->
+    <div class="wecom-nav">
+      <div class="wecom-nav-avatar">HR</div>
+      <div class="wecom-nav-item active" title="消息">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div class="nav-badge"></div>
+      </div>
+      <div class="wecom-nav-item" title="通讯录">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="wecom-nav-item" title="工作台">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </div>
+      <div class="wecom-nav-item" title="日程">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="wecom-nav-bottom">
+        <div class="wecom-nav-item" title="文件">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="wecom-nav-item" title="设置">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 会话列表 -->
+    <div class="wecom-sidebar">
+      <div class="wecom-sidebar-header">
+        <input class="wecom-search" placeholder="搜索" readonly />
+      </div>
+      <div class="wecom-contact-list">
+        <div class="wecom-contact-item active">
+          <div class="wecom-contact-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
+          <div class="wecom-contact-info">
+            <div class="wecom-contact-name">离职小助理</div>
+            <div class="wecom-contact-msg" id="s1ContactMsg">Hi同学，听说你即将离开腾讯...</div>
+          </div>
+          <div class="wecom-contact-meta">
+            <span class="wecom-contact-time" id="s1ContactTime">10:20</span>
+          </div>
+        </div>
+        <div class="wecom-contact-item">
+          <div class="wecom-contact-avatar" style="background:#7BA1D9;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="#fff" stroke-width="1.8"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div class="wecom-contact-info">
+            <div class="wecom-contact-name">HR部门通知群</div>
+            <div class="wecom-contact-msg">[张梦琪]: 本月离职面谈安排已更新</div>
+          </div>
+          <div class="wecom-contact-meta">
+            <span class="wecom-contact-time">10:15</span>
+            <div class="wecom-badge">3</div>
+          </div>
+        </div>
+        <div class="wecom-contact-item">
+          <div class="wecom-contact-avatar" style="background:#A8C4E6;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="#fff" stroke-width="1.8"/></svg></div>
+          <div class="wecom-contact-info">
+            <div class="wecom-contact-name">王磊 · 技术部</div>
+            <div class="wecom-contact-msg">好的，明天下午可以安排面谈</div>
+          </div>
+          <div class="wecom-contact-meta">
+            <span class="wecom-contact-time">昨天</span>
+          </div>
+        </div>
+        <div class="wecom-contact-item">
+          <div class="wecom-contact-avatar" style="background:#8EAFD4;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="#fff" stroke-width="1.8"/></svg></div>
+          <div class="wecom-contact-info">
+            <div class="wecom-contact-name">李婷 · HRBP</div>
+            <div class="wecom-contact-msg">技术部Q2离职数据已整理好</div>
+          </div>
+          <div class="wecom-contact-meta">
+            <span class="wecom-contact-time">昨天</span>
+          </div>
+        </div>
+        <div class="wecom-contact-item">
+          <div class="wecom-contact-avatar" style="background:#6B96C8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="9" y="3" width="6" height="4" rx="1" stroke="#fff" stroke-width="1.8"/><path d="M9 14l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="wecom-contact-info">
+            <div class="wecom-contact-name">OA审批助手</div>
+            <div class="wecom-contact-msg">您有1条离职审批待处理</div>
+          </div>
+          <div class="wecom-contact-meta">
+            <span class="wecom-contact-time">周一</span>
+            <div class="wecom-badge">1</div>
+          </div>
+        </div>
+        <div class="wecom-contact-item">
+          <div class="wecom-contact-avatar" style="background:#9AB8DB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="#fff" stroke-width="1.8"/></svg></div>
+          <div class="wecom-contact-info">
+            <div class="wecom-contact-name">陈思雨 · 产品部</div>
+            <div class="wecom-contact-msg">收到，我会尽快提交交接清单</div>
+          </div>
+          <div class="wecom-contact-meta">
+            <span class="wecom-contact-time">周一</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧聊天区 -->
+    <div class="wecom-chat">
+      <div class="wecom-chat-header">
+        <div class="wecom-chat-header-left">
+          <span class="wecom-chat-name">离职小助理</span>
+          <span class="wecom-chat-tag">Bot</span>
+        </div>
+        <div class="wecom-chat-actions">
+          <button class="wecom-back-btn" onclick="goHome()" title="返回首页">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            返回首页
+          </button>
+        </div>
+      </div>
+      <div class="wecom-chat-body" id="s1ChatBody">
+        <div class="wecom-msg-time">今天 10:20</div>
+
+        <!-- 合并后的问卷卡片消息 -->
+        <div class="wecom-msg">
+          <div class="wecom-msg-avatar" style="background:linear-gradient(135deg,#3370FF,#5B93FF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg></div>
+          <div class="wecom-msg-content">
+            <div class="wecom-msg-sender">离职小助理</div>
+            <div class="survey-card" id="s1SurveyCard">
+              <!-- 欢迎语 -->
+              <div class="survey-card-welcome">
+                <div class="survey-card-welcome-text">👋 Hi同学，听说你即将离开腾讯～你的小助理很想知道你的实习体验如何，花一点点时间来选择你的体会吧 😊✨</div>
+              </div>
+              <div class="survey-card-body">
+                <div style="border-top: 1px solid #E7E7E7; margin-bottom: 20px;"></div>
+                <!-- 题目1：满意度评分 下拉列表 1-10 -->
+                <div class="survey-question">
+                  <div class="survey-q-title">
+                    <span class="survey-q-num">1</span>
+                    <span>您对在公司工作期间的整体满意度如何？<span class="survey-q-required">*</span></span>
+                  </div>
+                  <div class="survey-select-wrapper">
+                    <select class="survey-select" id="surveyQ1" onchange="surveyData.q1=this.value">
+                      <option value="">请选择评分（1-10分）</option>
+                      <option value="1">1分 - 非常不满意</option>
+                      <option value="2">2分</option>
+                      <option value="3">3分</option>
+                      <option value="4">4分</option>
+                      <option value="5">5分</option>
+                      <option value="6">6分</option>
+                      <option value="7">7分</option>
+                      <option value="8">8分</option>
+                      <option value="9">9分</option>
+                      <option value="10">10分 - 非常满意</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 题目2：离职原因 单选 -->
+                <div class="survey-question">
+                  <div class="survey-q-title">
+                    <span class="survey-q-num">2</span>
+                    <span>您离职的最主要原因是？<span class="survey-q-required">*</span></span>
+                  </div>
+                  <div class="survey-radio-group" data-group="q2">
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>职业发展受限</span>
+                    </div>
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>薪酬/福利不具竞争力</span>
+                    </div>
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>工作与生活失衡</span>
+                    </div>
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>管理风格/团队氛围</span>
+                    </div>
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>组织架构/业务方向调整</span>
+                    </div>
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>获得更好的外部机会</span>
+                    </div>
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>家庭/个人原因</span>
+                    </div>
+                    <div class="survey-radio-item" onclick="selectRadio(this, 'q2')">
+                      <div class="survey-radio-circle"></div>
+                      <span>其他</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 题目3：改进方面 多选 -->
+                <div class="survey-question">
+                  <div class="survey-q-title">
+                    <span class="survey-q-num">3</span>
+                    <span>您认为公司最需要改进的方面有哪些？<span class="survey-checkbox-hint">可多选</span></span>
+                  </div>
+                  <div class="survey-checkbox-group" data-group="q3">
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>薪酬福利体系</span>
+                    </div>
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>晋升与发展通道</span>
+                    </div>
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>管理者领导力</span>
+                    </div>
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>团队沟通与协作</span>
+                    </div>
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>工作生活平衡</span>
+                    </div>
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>企业文化与价值观</span>
+                    </div>
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>培训与学习机会</span>
+                    </div>
+                    <div class="survey-checkbox-item" onclick="toggleCheckbox(this)">
+                      <div class="survey-checkbox-box"></div>
+                      <span>办公环境与设施</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 题目4：NPS 下拉列表 0-10 -->
+                <div class="survey-question">
+                  <div class="survey-q-title">
+                    <span class="survey-q-num">4</span>
+                    <span>您是否会推荐朋友或同事来公司工作？（NPS）<span class="survey-q-required">*</span></span>
+                  </div>
+                  <div class="survey-select-wrapper">
+                    <select class="survey-select" id="surveyQ4" onchange="surveyData.q4=this.value">
+                      <option value="">请选择评分（0-10分）</option>
+                      <option value="0">0分 - 完全不会</option>
+                      <option value="1">1分</option>
+                      <option value="2">2分</option>
+                      <option value="3">3分</option>
+                      <option value="4">4分</option>
+                      <option value="5">5分</option>
+                      <option value="6">6分</option>
+                      <option value="7">7分</option>
+                      <option value="8">8分</option>
+                      <option value="9">9分</option>
+                      <option value="10">10分 - 非常愿意</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 题目5：管理能力评价 下拉列表 1-10 -->
+                <div class="survey-question">
+                  <div class="survey-q-title">
+                    <span class="survey-q-num">5</span>
+                    <span>您对直属上级的管理能力评价如何？</span>
+                  </div>
+                  <div class="survey-select-wrapper">
+                    <select class="survey-select" id="surveyQ5" onchange="surveyData.q5=this.value">
+                      <option value="">请选择评分（1-10分）</option>
+                      <option value="1">1分 - 非常差</option>
+                      <option value="2">2分</option>
+                      <option value="3">3分</option>
+                      <option value="4">4分</option>
+                      <option value="5">5分</option>
+                      <option value="6">6分</option>
+                      <option value="7">7分</option>
+                      <option value="8">8分</option>
+                      <option value="9">9分</option>
+                      <option value="10">10分 - 非常好</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 提交按钮 -->
+                <div class="survey-submit-row">
+                  <button class="survey-submit-btn" onclick="submitSurvey()">提交问卷</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wecom-chat-footer">
+        <div class="wecom-toolbar">
+          <span title="表情">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </span>
+          <span title="文件">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </span>
+          <span title="截图">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="9" y1="2" x2="9" y2="5"/><line x1="15" y1="2" x2="15" y2="5"/><line x1="9" y1="19" x2="9" y2="22"/><line x1="15" y1="19" x2="15" y2="22"/><line x1="2" y1="9" x2="5" y2="9"/><line x1="2" y1="15" x2="5" y2="15"/><line x1="19" y1="9" x2="22" y2="9"/><line x1="19" y1="15" x2="22" y2="15"/></svg>
+          </span>
+          <span title="应用">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span>
+          <span title="视频通话">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </span>
+          <span title="语音通话">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+        </div>
+        <textarea class="wecom-input-area" id="s1Input" placeholder="输入消息..." onkeydown="handleS1KeyDown(event)"></textarea>
+        <div class="wecom-send-row">
+          <span class="wecom-send-hint">Enter 发送 / Shift+Enter 换行</span>
+          <button class="wecom-send-btn" onclick="sendS1Message()">发送(S)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 方案2详情页 ===== -->
+  <div class="demo-page" id="scheme2Page" style="height:100vh;">
+    <div class="demo-content" style="padding:0;align-items:stretch;justify-content:stretch;overflow:hidden;flex:1;">
+      <div class="h5-app">
+        <!-- 左侧边栏 -->
+        <div class="h5-sidebar">
+          <div class="h5-sidebar-header">
+            <div class="h5-user-avatar">HR</div>
+            <div class="h5-user-info">
+              <h3>离职小助理</h3>
+              <p>你的离职AI助手</p>
+            </div>
+          </div>
+
+          <!-- 新对话按钮 -->
+          <button class="h5-new-chat-btn" onclick="s2NewChat()">
+            <span style="font-size: 22px; font-weight: 300;">+</span>
+            <span>新对话</span>
+          </button>
+
+          <!-- 功能模块 -->
+          <div class="h5-func-area">
+            <div class="h5-func-title">场景</div>
+            <div class="h5-func-grid">
+              <div class="h5-func-card active">
+                <span class="h5-func-icon">🗣️</span>
+                <span class="h5-func-name">离职沟通</span>
+              </div>
+              <div class="h5-func-card">
+                <span class="h5-func-icon">📊</span>
+                <span class="h5-func-name">离职数据</span>
+              </div>
+              <div class="h5-func-card">
+                <span class="h5-func-icon">📋</span>
+                <span class="h5-func-name">离职知识</span>
+              </div>
+              <div class="h5-func-card disabled">
+                <span class="h5-func-icon">📞</span>
+                <span class="h5-func-name">离职回访</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 历史对话 -->
+          <div class="h5-history-area">
+            <div class="h5-history-title">历史会话</div>
+            <div class="h5-history-item active">🗣️ 张三的离职沟通</div>
+            <div class="h5-history-item">📊 Q4离职率分析</div>
+            <div class="h5-history-item">📋 离职流程咨询</div>
+          </div>
+        </div>
+
+        <!-- 右侧主内容区 -->
+        <div class="h5-main">
+          <!-- 聊天头部 -->
+          <div class="h5-chat-header">
+            <div class="h5-chat-title">离职沟通 · 张三</div>
+          </div>
+
+          <!-- 消息区域 -->
+          <div class="h5-chat-messages" id="s2ChatMessages">
+            <!-- AI 欢迎消息 -->
+            <div class="h5-message assistant">
+              <div class="h5-message-avatar">🤖</div>
+              <div class="h5-message-body">
+                <div class="h5-message-content">
+                  👋 Hi同学，听说你即将离开腾讯～你的小助理很想知道你的实习体验如何，花一点点时间来选择你的体会吧 😊✨
+                </div>
+              </div>
+            </div>
+
+            <!-- 问卷消息卡片 -->
+            <div class="h5-message assistant">
+              <div class="h5-message-avatar">🤖</div>
+              <div class="h5-message-body" style="max-width:95%;">
+                <div class="h5-survey-card">
+                  <div class="h5-survey-body">
+                    <!-- 题目1：满意度评分 1-10 -->
+                    <div class="h5-survey-question">
+                      <div class="h5-survey-q-title">
+                        <span class="h5-survey-q-num">1</span>
+                        <span>您对在公司工作期间的整体满意度如何？<span class="h5-survey-required">*</span></span>
+                      </div>
+                      <div class="h5-survey-score-labels">
+                        <span>非常不满意</span>
+                        <span>非常满意</span>
+                      </div>
+                      <div class="h5-survey-score-row" data-group="s2q1">
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">1</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">2</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">3</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">4</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">5</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">6</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">7</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">8</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">9</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q1')">10</button>
+                      </div>
+                    </div>
+
+                    <!-- 题目2：离职原因 单选 -->
+                    <div class="h5-survey-question">
+                      <div class="h5-survey-q-title">
+                        <span class="h5-survey-q-num">2</span>
+                        <span>您离职的最主要原因是？<span class="h5-survey-required">*</span></span>
+                      </div>
+                      <div class="h5-survey-radio-group" data-group="s2q2">
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>职业发展受限</span>
+                        </div>
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>薪酬/福利不具竞争力</span>
+                        </div>
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>工作与生活失衡</span>
+                        </div>
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>管理风格/团队氛围</span>
+                        </div>
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>组织架构/业务方向调整</span>
+                        </div>
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>获得更好的外部机会</span>
+                        </div>
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>家庭/个人原因</span>
+                        </div>
+                        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,'s2q2')">
+                          <div class="h5-survey-radio-circle"></div>
+                          <span>其他</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 题目3：改进方面 多选 -->
+                    <div class="h5-survey-question">
+                      <div class="h5-survey-q-title">
+                        <span class="h5-survey-q-num">3</span>
+                        <span>您认为公司最需要改进的方面有哪些？（可多选）</span>
+                      </div>
+                      <div class="h5-survey-checkbox-group" data-group="s2q3">
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>薪酬福利体系</span>
+                        </div>
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>晋升与发展通道</span>
+                        </div>
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>管理者领导力</span>
+                        </div>
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>团队沟通与协作</span>
+                        </div>
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>工作生活平衡</span>
+                        </div>
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>企业文化与价值观</span>
+                        </div>
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>培训与学习机会</span>
+                        </div>
+                        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)">
+                          <div class="h5-survey-checkbox-box"></div>
+                          <span>办公环境与设施</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 题目4：NPS 0-10 -->
+                    <div class="h5-survey-question">
+                      <div class="h5-survey-q-title">
+                        <span class="h5-survey-q-num">4</span>
+                        <span>您是否会推荐朋友或同事来公司工作？（NPS）<span class="h5-survey-required">*</span></span>
+                      </div>
+                      <div class="h5-survey-score-labels">
+                        <span>完全不会</span>
+                        <span>非常愿意</span>
+                      </div>
+                      <div class="h5-survey-score-row" data-group="s2q4">
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">0</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">1</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">2</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">3</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">4</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">5</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">6</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">7</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">8</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">9</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q4')">10</button>
+                      </div>
+                    </div>
+
+                    <!-- 题目5：管理能力评价 1-10 -->
+                    <div class="h5-survey-question">
+                      <div class="h5-survey-q-title">
+                        <span class="h5-survey-q-num">5</span>
+                        <span>您对直属上级的管理能力评价如何？</span>
+                      </div>
+                      <div class="h5-survey-score-labels">
+                        <span>非常差</span>
+                        <span>非常好</span>
+                      </div>
+                      <div class="h5-survey-score-row" data-group="s2q5">
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">1</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">2</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">3</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">4</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">5</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">6</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">7</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">8</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">9</button>
+                        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,'s2q5')">10</button>
+                      </div>
+                    </div>
+
+                    <!-- 题目6：开放性文本 -->
+                    <div class="h5-survey-question">
+                      <div class="h5-survey-q-title">
+                        <span class="h5-survey-q-num">6</span>
+                        <span>您还有什么想对公司说的吗？（任何建议或反馈）</span>
+                      </div>
+                      <textarea class="h5-survey-textarea" placeholder="请输入您的想法..." id="s2SurveyQ6"></textarea>
+                    </div>
+
+                    <!-- 底部按钮 -->
+                    <div class="h5-survey-actions">
+                      <button class="h5-survey-skip-btn" onclick="s2SkipSurvey()">跳过问卷</button>
+                      <button class="h5-survey-submit-btn" onclick="s2SubmitSurvey()">🎤 提交并开始面谈</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 输入区域 -->
+          <div class="h5-chat-input">
+            <div class="h5-input-wrapper">
+              <textarea class="h5-input-box" id="s2Input" placeholder="请输入您的问题..." rows="1" onkeydown="handleS2KeyDown(event)"></textarea>
+              <button class="h5-send-btn" onclick="sendS2Message()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 方案3详情页：腾讯问卷 ===== -->
+  <div class="demo-page" id="scheme3Page" style="position:relative;">
+    <!-- 腾讯问卷页面 -->
+    <div class="tq-page">
+      <!-- 腾讯问卷导航栏 -->
+      <div class="tq-navbar">
+        <div class="tq-navbar-left">
+          <div class="tq-navbar-logo">
+            <div class="tq-navbar-logo-icon">问</div>
+            <span>腾讯问卷</span>
+          </div>
+          <div class="tq-navbar-sep"></div>
+          <div class="tq-navbar-title">正在填写问卷</div>
+        </div>
+        <div class="tq-navbar-right">
+          <a class="tq-navbar-link" href="javascript:void(0)">帮助中心</a>
+          <a class="tq-navbar-link" href="javascript:void(0)">投诉</a>
+        </div>
+      </div>
+
+      <!-- 问卷主体内容 -->
+      <div class="tq-body">
+        <div class="tq-container">
+
+          <!-- 问卷头部 -->
+          <div class="tq-header">
+            <div class="tq-header-banner">
+              <div class="tq-header-banner-text">📋 离职体验调研</div>
+            </div>
+            <div class="tq-header-info">
+              <div class="tq-header-title">离职体验调研问卷</div>
+              <div class="tq-header-desc">Hi同学，感谢你在离开之前抽出宝贵时间参与此次调研。你的真实反馈将帮助我们持续改进，为每一位同事创造更好的工作体验。本问卷匿名填写，预计用时 3 分钟。</div>
+              <div class="tq-header-meta">
+                <div class="tq-header-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9CDD4" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                  腾讯科技（深圳）有限公司
+                </div>
+                <div class="tq-header-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9CDD4" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  有效期至 2026-12-31
+                </div>
+                <div class="tq-header-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9CDD4" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  已有 1,287 人填写
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 题目1：整体满意度 1-10 -->
+          <div class="tq-question-card">
+            <div class="tq-q-header">
+              <span class="tq-q-num">1</span>
+              <div>
+                <div class="tq-q-title">您对在公司工作期间的整体满意度如何？<span class="tq-q-required">*</span></div>
+                <div class="tq-q-subtitle">1分为非常不满意，10分为非常满意</div>
+              </div>
+            </div>
+            <div class="tq-score-labels"><span>非常不满意</span><span>非常满意</span></div>
+            <div class="tq-score-row" data-group="s3q1">
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">1</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">2</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">3</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">4</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">5</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">6</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">7</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">8</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">9</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q1')">10</button>
+            </div>
+          </div>
+
+          <!-- 题目2：离职原因 单选 -->
+          <div class="tq-question-card">
+            <div class="tq-q-header">
+              <span class="tq-q-num">2</span>
+              <div>
+                <div class="tq-q-title">您离职的最主要原因是？<span class="tq-q-required">*</span></div>
+                <div class="tq-q-subtitle">单选</div>
+              </div>
+            </div>
+            <div class="tq-radio-group" data-group="s3q2">
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>职业发展受限</span>
+              </div>
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>薪酬/福利不具竞争力</span>
+              </div>
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>工作与生活失衡</span>
+              </div>
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>管理风格/团队氛围</span>
+              </div>
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>组织架构/业务方向调整</span>
+              </div>
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>获得更好的外部机会</span>
+              </div>
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>家庭/个人原因</span>
+              </div>
+              <div class="tq-radio-item" onclick="s3SelectRadio(this,'s3q2')">
+                <div class="tq-radio-circle"></div>
+                <span>其他</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 题目3：改进方面 多选 -->
+          <div class="tq-question-card">
+            <div class="tq-q-header">
+              <span class="tq-q-num">3</span>
+              <div>
+                <div class="tq-q-title">您认为公司最需要改进的方面有哪些？</div>
+                <div class="tq-q-subtitle">多选，可选择多项</div>
+              </div>
+            </div>
+            <div class="tq-checkbox-group" data-group="s3q3">
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>薪酬福利体系</span>
+              </div>
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>晋升与发展通道</span>
+              </div>
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>管理者领导力</span>
+              </div>
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>团队沟通与协作</span>
+              </div>
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>工作生活平衡</span>
+              </div>
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>企业文化与价值观</span>
+              </div>
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>培训与学习机会</span>
+              </div>
+              <div class="tq-checkbox-item" onclick="s3ToggleCheckbox(this)">
+                <div class="tq-checkbox-box"></div>
+                <span>办公环境与设施</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 题目4：NPS 0-10 -->
+          <div class="tq-question-card">
+            <div class="tq-q-header">
+              <span class="tq-q-num">4</span>
+              <div>
+                <div class="tq-q-title">您是否会推荐朋友或同事来公司工作？（NPS）<span class="tq-q-required">*</span></div>
+                <div class="tq-q-subtitle">0分为完全不会，10分为非常愿意</div>
+              </div>
+            </div>
+            <div class="tq-score-labels"><span>完全不会</span><span>非常愿意</span></div>
+            <div class="tq-score-row" data-group="s3q4">
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">0</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">1</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">2</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">3</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">4</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">5</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">6</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">7</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">8</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">9</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q4')">10</button>
+            </div>
+          </div>
+
+          <!-- 题目5：管理能力评价 1-10 -->
+          <div class="tq-question-card">
+            <div class="tq-q-header">
+              <span class="tq-q-num">5</span>
+              <div>
+                <div class="tq-q-title">您对直属上级的管理能力评价如何？</div>
+                <div class="tq-q-subtitle">1分为非常差，10分为非常好</div>
+              </div>
+            </div>
+            <div class="tq-score-labels"><span>非常差</span><span>非常好</span></div>
+            <div class="tq-score-row" data-group="s3q5">
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">1</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">2</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">3</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">4</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">5</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">6</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">7</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">8</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">9</button>
+              <button class="tq-score-btn" onclick="s3SelectScore(this,'s3q5')">10</button>
+            </div>
+          </div>
+
+          <!-- 题目6：开放性文本 -->
+          <div class="tq-question-card">
+            <div class="tq-q-header">
+              <span class="tq-q-num">6</span>
+              <div>
+                <div class="tq-q-title">您还有什么想对公司说的吗？（任何建议或反馈）</div>
+                <div class="tq-q-subtitle">选填，请畅所欲言</div>
+              </div>
+            </div>
+            <textarea class="tq-textarea" id="s3Q6Text" placeholder="请输入您的想法和建议..."></textarea>
+          </div>
+
+          <!-- 提交按钮 -->
+          <div class="tq-submit-area">
+            <button class="tq-submit-btn" onclick="s3SubmitSurvey()">提交问卷</button>
+          </div>
+
+          <!-- 底部信息 -->
+          <div class="tq-footer">
+            问卷由 <a href="javascript:void(0)">腾讯问卷</a> 提供技术支持 ｜ <a href="javascript:void(0)">隐私政策</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 提交成功遮罩 -->
+    <div class="tq-success-overlay" id="s3SuccessOverlay">
+      <div class="tq-success-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="tq-success-title">问卷提交成功！</div>
+      <div class="tq-success-desc">感谢你的参与，你的反馈对我们非常重要 🙏<br>AI助理将基于你的反馈进行深度访谈</div>
+      <div class="tq-success-redirect">
+        <div class="redirect-spinner"></div>
+        正在跳转到 AI 离职访谈助理...
+      </div>
+      <div class="tq-success-progress">
+        <div class="tq-success-progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openScheme(num) {
+      document.getElementById('homePage').style.display = 'none';
+      var page = document.getElementById('scheme' + num + 'Page');
+      page.classList.add('active');
+    }
+
+    function goHome() {
+      // 关闭所有方案页（包括 demo-page 和 wecom-page）
+      document.querySelectorAll('.demo-page, .wecom-page').forEach(function(p) {
+        p.classList.remove('active');
+      });
+      document.getElementById('homePage').style.display = '';
+    }
+
+    // ========== 方案1：企微对话 ==========
+
+    // 问卷数据存储
+    var surveyData = { q1: null, q2: null, q3: [], q4: null, q5: null };
+    var surveySubmitted = false; // 问卷是否已提交
+    var surveyReplied = false;   // 用户是否已回复过一轮
+
+    // 评分题选择（保留兼容）
+    function selectScore(btn, group) {
+      var row = btn.parentElement;
+      row.querySelectorAll('.survey-score-btn').forEach(function(b) {
+        b.classList.remove('selected');
+      });
+      btn.classList.add('selected');
+      surveyData[group] = btn.textContent;
+    }
+
+    // 单选题选择
+    function selectRadio(item, group) {
+      var parent = item.parentElement;
+      parent.querySelectorAll('.survey-radio-item').forEach(function(i) {
+        i.classList.remove('selected');
+      });
+      item.classList.add('selected');
+      surveyData[group] = item.querySelector('span').textContent;
+    }
+
+    // 多选题切换
+    function toggleCheckbox(item) {
+      item.classList.toggle('selected');
+      var group = item.parentElement;
+      surveyData.q3 = [];
+      group.querySelectorAll('.survey-checkbox-item.selected').forEach(function(i) {
+        surveyData.q3.push(i.querySelector('span').textContent);
+      });
+    }
+
+    // 提交问卷
+    function submitSurvey() {
+      // 禁用问卷卡片
+      var card = document.getElementById('s1SurveyCard');
+      card.style.pointerEvents = 'none';
+
+      // 用户只发出简单的"已提交问卷"
+      s1AppendMsg('self', '已提交问卷');
+      surveySubmitted = true;
+
+      // AI回复通过流式打字效果输出 - 针对问卷中直接上级评分只有1分进行追问
+      setTimeout(function() {
+        var reply = '感谢你的反馈！我已收到你的问卷回答 📋\n\n你在问卷中提到对直接上级的分数只有1分，能展开说说为什么吗？';
+        s1AppendMsgStreaming('bot', reply);
+      }, 800);
+    }
+
+    // 流式打字效果追加消息
+    function s1AppendMsgStreaming(type, fullText) {
+      var body = document.getElementById('s1ChatBody');
+      var div = document.createElement('div');
+      div.className = 'wecom-msg' + (type === 'self' ? ' self' : '');
+
+      var avatarBg = type === 'self' ? '#3370FF' : 'linear-gradient(135deg,#3370FF,#5B93FF)';
+      var avatarText = type === 'self' ? '<span style="font-size:13px;font-weight:600;">我</span>' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg>';
+      var senderName = type === 'self' ? '我' : '离职小助理';
+
+      div.innerHTML = '<div class="wecom-msg-avatar" style="background:' + avatarBg + ';">' + avatarText + '</div>'
+        + '<div class="wecom-msg-content">'
+        + '<div class="wecom-msg-sender">' + senderName + '</div>'
+        + '<div class="wecom-msg-bubble"><span class="streaming-text"></span><span class="streaming-cursor">|</span></div>'
+        + '</div>';
+
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+
+      var textSpan = div.querySelector('.streaming-text');
+      var cursorSpan = div.querySelector('.streaming-cursor');
+      var charIndex = 0;
+      var speed = 40; // 每个字的间隔(ms)
+
+      var timer = setInterval(function() {
+        if (charIndex < fullText.length) {
+          textSpan.textContent += fullText[charIndex];
+          charIndex++;
+          body.scrollTop = body.scrollHeight;
+        } else {
+          clearInterval(timer);
+          cursorSpan.remove(); // 打字完成后移除光标
+          // 更新左侧会话列表
+          var contactMsg = document.getElementById('s1ContactMsg');
+          if (contactMsg) {
+            contactMsg.textContent = fullText.substring(0, 30);
+          }
+          var contactTime = document.getElementById('s1ContactTime');
+          if (contactTime) {
+            var now = new Date();
+            contactTime.textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+          }
+        }
+      }, speed);
+    }
+
+    // 消息追加
+    function s1AppendMsg(type, content) {
+      var body = document.getElementById('s1ChatBody');
+      var div = document.createElement('div');
+      div.className = 'wecom-msg' + (type === 'self' ? ' self' : '');
+
+      var avatarBg = type === 'self' ? '#3370FF' : 'linear-gradient(135deg,#3370FF,#5B93FF)';
+      var avatarText = type === 'self' ? '<span style="font-size:13px;font-weight:600;">我</span>' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 6V3m8 3V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.5" fill="#fff"/></svg>';
+      var senderName = type === 'self' ? '我' : '离职小助理';
+
+      div.innerHTML = '<div class="wecom-msg-avatar" style="background:' + avatarBg + ';">' + avatarText + '</div>'
+        + '<div class="wecom-msg-content">'
+        + '<div class="wecom-msg-sender">' + senderName + '</div>'
+        + '<div class="wecom-msg-bubble">' + content + '</div>'
+        + '</div>';
+
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+
+      // 更新左侧会话列表
+      var contactMsg = document.getElementById('s1ContactMsg');
+      if (contactMsg) {
+        var plain = content.replace(/<[^>]+>/g, '').substring(0, 30);
+        contactMsg.textContent = plain;
+      }
+      var contactTime = document.getElementById('s1ContactTime');
+      if (contactTime) {
+        var now = new Date();
+        contactTime.textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+      }
+    }
+
+    // 键盘和发送
+    function handleS1KeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendS1Message();
+      }
+    }
+
+    function sendS1Message() {
+      var input = document.getElementById('s1Input');
+      var msg = input.value.trim();
+      if (!msg) return;
+      s1AppendMsg('self', msg);
+      input.value = '';
+
+      // 如果问卷已提交且用户回复了一轮，直接给结束语
+      if (surveySubmitted && !surveyReplied) {
+        surveyReplied = true;
+        setTimeout(function() {
+          var endMsg = '非常感谢你的坦诚分享！你的每一条反馈对我们来说都弥足珍贵 🙏\n\n小助理由衷地祝愿你：\n🌟 前程似锦，未来可期\n🚀 愿你在新的旅程中大展宏图\n💫 期待有缘再见，江湖不远\n\n祝一切顺利，保重！后会有期～ 🎉';
+          s1AppendMsgStreaming('bot', endMsg);
+        }, 600);
+        return;
+      }
+
+      setTimeout(function() {
+        var reply = s1GenerateReply(msg);
+        s1AppendMsg('bot', reply);
+      }, 600);
+    }
+
+    // ========== 方案2：H5问卷交互 ==========
+    function s2SelectScore(btn, group) {
+      var row = btn.parentElement;
+      row.querySelectorAll('.h5-survey-score-btn').forEach(function(b) {
+        b.classList.remove('selected');
+      });
+      btn.classList.add('selected');
+    }
+
+    function s2SelectRadio(item, group) {
+      var parent = item.parentElement;
+      parent.querySelectorAll('.h5-survey-radio-item').forEach(function(i) {
+        i.classList.remove('selected');
+      });
+      item.classList.add('selected');
+    }
+
+    function s2ToggleCheckbox(item) {
+      item.classList.toggle('selected');
+    }
+
+    var s2SurveySubmitted = false; // 方案2问卷是否已提交
+    var s2SurveySkipped = false;  // 方案2问卷是否被跳过
+    var s2UserReplied = false;    // 方案2用户是否已回复过一轮
+
+    function s2SubmitSurvey() {
+      // 禁用问卷
+      var card = document.querySelector('.h5-survey-card');
+      card.style.pointerEvents = 'none';
+      card.style.opacity = '0.7';
+      s2SurveySubmitted = true;
+
+      // 追加AI回复 - 针对问卷中直接上级评分只有1分进行追问
+      var messages = document.getElementById('s2ChatMessages');
+      var msgDiv = document.createElement('div');
+      msgDiv.className = 'h5-message assistant';
+      msgDiv.innerHTML = '<div class="h5-message-avatar">🤖</div>'
+        + '<div class="h5-message-body">'
+        + '<div class="h5-message-content">感谢你的反馈！我已收到你的问卷回答 📋<br><br>你在问卷中提到对直接上级的分数只有1分，能展开说说为什么吗？</div>'
+        + '</div>';
+      messages.appendChild(msgDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function s2SkipSurvey() {
+      // 禁用问卷
+      var card = document.querySelector('.h5-survey-card');
+      card.style.pointerEvents = 'none';
+      card.style.opacity = '0.7';
+      s2SurveySkipped = true;
+
+      // 追加AI回复 - 基于离职提交表单中的信息进行追问
+      var messages = document.getElementById('s2ChatMessages');
+      var msgDiv = document.createElement('div');
+      msgDiv.className = 'h5-message assistant';
+      msgDiv.innerHTML = '<div class="h5-message-avatar">🤖</div>'
+        + '<div class="h5-message-body">'
+        + '<div class="h5-message-content">没关系，问卷可以稍后再填 😊<br><br>看到你在离职提交时，提到团队氛围非常和谐，相信你度过了一段愉快的实习，能展开说说你的收获吗？</div>'
+        + '</div>';
+      messages.appendChild(msgDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // ========== 方案2：H5发送消息交互 ==========
+    var s2MsgCount = 0; // 记录用户发送的消息轮数
+
+    // 开启新会话
+    function s2NewChat() {
+      // 重置消息计数和问卷状态
+      s2MsgCount = 0;
+      s2SurveySubmitted = false;
+      s2SurveySkipped = false;
+      s2UserReplied = false;
+
+      // 清空聊天区域
+      var messages = document.getElementById('s2ChatMessages');
+      messages.innerHTML = '';
+
+      // 重新添加AI欢迎消息（离职问卷开场欢迎语）
+      var welcomeDiv = document.createElement('div');
+      welcomeDiv.className = 'h5-message assistant';
+      welcomeDiv.innerHTML = '<div class="h5-message-avatar">🤖</div>'
+        + '<div class="h5-message-body">'
+        + '<div class="h5-message-content">👋 Hi同学，听说你即将离开腾讯～你的小助理很想知道你的实习体验如何，花一点点时间来选择你的体会吧 😊✨</div>'
+        + '</div>';
+      messages.appendChild(welcomeDiv);
+
+      // 重新添加问卷卡片
+      var surveyDiv = document.createElement('div');
+      surveyDiv.className = 'h5-message assistant';
+      surveyDiv.innerHTML = '<div class="h5-message-avatar">🤖</div>'
+        + '<div class="h5-message-body" style="max-width:95%;">'
+        + '<div class="h5-survey-card">'
+        + '  <div class="h5-survey-body">'
+        + '    <div class="h5-survey-question">'
+        + '      <div class="h5-survey-q-title"><span class="h5-survey-q-num">1</span><span>您对在公司工作期间的整体满意度如何？<span class="h5-survey-required">*</span></span></div>'
+        + '      <div class="h5-survey-score-labels"><span>非常不满意</span><span>非常满意</span></div>'
+        + '      <div class="h5-survey-score-row" data-group="s2q1">'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">1</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">2</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">3</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">4</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">5</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">6</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">7</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">8</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">9</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q1\')">10</button>'
+        + '      </div>'
+        + '    </div>'
+        + '    <div class="h5-survey-question">'
+        + '      <div class="h5-survey-q-title"><span class="h5-survey-q-num">2</span><span>您离职的最主要原因是？<span class="h5-survey-required">*</span></span></div>'
+        + '      <div class="h5-survey-radio-group" data-group="s2q2">'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>职业发展受限</span></div>'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>薪酬/福利不具竞争力</span></div>'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>工作与生活失衡</span></div>'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>管理风格/团队氛围</span></div>'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>组织架构/业务方向调整</span></div>'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>获得更好的外部机会</span></div>'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>家庭/个人原因</span></div>'
+        + '        <div class="h5-survey-radio-item" onclick="s2SelectRadio(this,\'s2q2\')"><div class="h5-survey-radio-circle"></div><span>其他</span></div>'
+        + '      </div>'
+        + '    </div>'
+        + '    <div class="h5-survey-question">'
+        + '      <div class="h5-survey-q-title"><span class="h5-survey-q-num">3</span><span>您认为公司最需要改进的方面有哪些？（可多选）</span></div>'
+        + '      <div class="h5-survey-checkbox-group" data-group="s2q3">'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>薪酬福利体系</span></div>'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>晋升与发展通道</span></div>'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>管理者领导力</span></div>'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>团队沟通与协作</span></div>'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>工作生活平衡</span></div>'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>企业文化与价值观</span></div>'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>培训与学习机会</span></div>'
+        + '        <div class="h5-survey-checkbox-item" onclick="s2ToggleCheckbox(this)"><div class="h5-survey-checkbox-box"></div><span>办公环境与设施</span></div>'
+        + '      </div>'
+        + '    </div>'
+        + '    <div class="h5-survey-question">'
+        + '      <div class="h5-survey-q-title"><span class="h5-survey-q-num">4</span><span>您是否会推荐朋友或同事来公司工作？（NPS）<span class="h5-survey-required">*</span></span></div>'
+        + '      <div class="h5-survey-score-labels"><span>完全不会</span><span>非常愿意</span></div>'
+        + '      <div class="h5-survey-score-row" data-group="s2q4">'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">0</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">1</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">2</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">3</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">4</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">5</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">6</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">7</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">8</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">9</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q4\')">10</button>'
+        + '      </div>'
+        + '    </div>'
+        + '    <div class="h5-survey-question">'
+        + '      <div class="h5-survey-q-title"><span class="h5-survey-q-num">5</span><span>您对直属上级的管理能力评价如何？</span></div>'
+        + '      <div class="h5-survey-score-labels"><span>非常差</span><span>非常好</span></div>'
+        + '      <div class="h5-survey-score-row" data-group="s2q5">'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">1</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">2</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">3</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">4</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">5</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">6</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">7</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">8</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">9</button>'
+        + '        <button class="h5-survey-score-btn" onclick="s2SelectScore(this,\'s2q5\')">10</button>'
+        + '      </div>'
+        + '    </div>'
+        + '    <div class="h5-survey-question">'
+        + '      <div class="h5-survey-q-title"><span class="h5-survey-q-num">6</span><span>您还有什么想对公司说的吗？（任何建议或反馈）</span></div>'
+        + '      <textarea class="h5-survey-textarea" placeholder="请输入您的想法..."></textarea>'
+        + '    </div>'
+        + '    <div class="h5-survey-actions">'
+        + '      <button class="h5-survey-skip-btn" onclick="s2SkipSurvey()">跳过问卷</button>'
+        + '      <button class="h5-survey-submit-btn" onclick="s2SubmitSurvey()">🎤 提交并开始面谈</button>'
+        + '    </div>'
+        + '  </div>'
+        + '</div>'
+        + '</div>';
+      messages.appendChild(surveyDiv);
+      messages.scrollTop = messages.scrollHeight;
+
+      // 更新聊天标题
+      var chatTitle = document.querySelector('.h5-chat-title');
+      if (chatTitle) {
+        chatTitle.textContent = '离职沟通 · 新会话';
+      }
+
+      // 添加新会话到历史列表
+      var historyArea = document.querySelector('.h5-history-area');
+      if (historyArea) {
+        // 移除当前所有active状态
+        historyArea.querySelectorAll('.h5-history-item').forEach(function(item) {
+          item.classList.remove('active');
+        });
+        // 在顶部插入新历史记录
+        var historyTitle = historyArea.querySelector('.h5-history-title');
+        var newItem = document.createElement('div');
+        newItem.className = 'h5-history-item active';
+        newItem.textContent = '🗣️ 离职沟通 · 新会话';
+        historyTitle.insertAdjacentElement('afterend', newItem);
+      }
+
+      // 清空输入框
+      var input = document.getElementById('s2Input');
+      if (input) input.value = '';
+    }
+
+    function handleS2KeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendS2Message();
+      }
+    }
+
+    function sendS2Message() {
+      var input = document.getElementById('s2Input');
+      var msg = input.value.trim();
+      if (!msg) return;
+
+      // 追加用户消息
+      s2AppendMsg('user', msg);
+      input.value = '';
+      s2MsgCount++;
+
+      // 如果问卷已提交或跳过，且用户回复了一轮，直接给结束语
+      if ((s2SurveySubmitted || s2SurveySkipped) && !s2UserReplied) {
+        s2UserReplied = true;
+        setTimeout(function() {
+          var endMsg = '非常感谢你的坦诚分享！你的每一条反馈对我们来说都弥足珍贵 🙏<br><br>'
+            + '小助理由衷地祝愿你：<br>'
+            + '🌟 前程似锦，未来可期<br>'
+            + '🚀 愿你在新的旅程中大展宏图<br>'
+            + '💫 期待有缘再见，江湖不远<br><br>'
+            + '祝一切顺利，保重！后会有期～ 🎉';
+          s2AppendMsgStreaming(endMsg);
+        }, 800);
+        return;
+      }
+
+      // 模拟AI回复（带打字效果）
+      setTimeout(function() {
+        var reply = s2GenerateReply(msg);
+        s2AppendMsgStreaming(reply);
+      }, 800);
+    }
+
+    // 追加消息到方案2聊天区
+    function s2AppendMsg(type, content) {
+      var messages = document.getElementById('s2ChatMessages');
+      var msgDiv = document.createElement('div');
+      msgDiv.className = 'h5-message ' + type;
+
+      if (type === 'user') {
+        msgDiv.innerHTML = '<div class="h5-message-avatar">👤</div>'
+          + '<div class="h5-message-body">'
+          + '<div class="h5-message-content">' + content.replace(/\n/g, '<br>') + '</div>'
+          + '</div>';
+      } else {
+        msgDiv.innerHTML = '<div class="h5-message-avatar">🤖</div>'
+          + '<div class="h5-message-body">'
+          + '<div class="h5-message-content">' + content + '</div>'
+          + '</div>';
+      }
+
+      messages.appendChild(msgDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // 流式打字效果追加AI消息到方案2
+    function s2AppendMsgStreaming(fullText) {
+      var messages = document.getElementById('s2ChatMessages');
+      var msgDiv = document.createElement('div');
+      msgDiv.className = 'h5-message assistant';
+      msgDiv.innerHTML = '<div class="h5-message-avatar">🤖</div>'
+        + '<div class="h5-message-body">'
+        + '<div class="h5-message-content"><span class="s2-streaming-text"></span><span class="streaming-cursor">|</span></div>'
+        + '</div>';
+
+      messages.appendChild(msgDiv);
+      messages.scrollTop = messages.scrollHeight;
+
+      var textSpan = msgDiv.querySelector('.s2-streaming-text');
+      var cursorSpan = msgDiv.querySelector('.streaming-cursor');
+      var charIndex = 0;
+      var speed = 35;
+
+      // 将HTML标签作为整体插入
+      var segments = [];
+      var i = 0;
+      while (i < fullText.length) {
+        if (fullText[i] === '<') {
+          var end = fullText.indexOf('>', i);
+          if (end !== -1) {
+            segments.push(fullText.substring(i, end + 1));
+            i = end + 1;
+          } else {
+            segments.push(fullText[i]);
+            i++;
+          }
+        } else {
+          segments.push(fullText[i]);
+          i++;
+        }
+      }
+
+      var segIndex = 0;
+      var displayedHTML = '';
+
+      var timer = setInterval(function() {
+        if (segIndex < segments.length) {
+          displayedHTML += segments[segIndex];
+          textSpan.innerHTML = displayedHTML;
+          segIndex++;
+          messages.scrollTop = messages.scrollHeight;
+        } else {
+          clearInterval(timer);
+          cursorSpan.remove();
+        }
+      }, speed);
+    }
+
+    // 方案2 AI回复生成
+    function s2GenerateReply(message) {
+      var msg = message.toLowerCase();
+      if (msg.indexOf('成就') !== -1 || msg.indexOf('项目') !== -1 || msg.indexOf('做了') !== -1 || msg.indexOf('完成') !== -1 || msg.indexOf('经验') !== -1) {
+        return '听起来你确实收获了很多宝贵的经验！👍<br><br>下一个问题：<b>有没有什么让你觉得不太满意或者希望改进的地方？</b>可以是工作内容、团队协作、管理方式等任何方面。';
+      }
+      if (msg.indexOf('不满') !== -1 || msg.indexOf('改进') !== -1 || msg.indexOf('希望') !== -1 || msg.indexOf('建议') !== -1 || msg.indexOf('问题') !== -1) {
+        return '非常感谢你的坦诚反馈，这对我们改进非常有价值 🙏<br><br>最后一个问题：<b>如果有机会，你愿意未来再回到腾讯工作吗？为什么？</b>';
+      }
+      if (msg.indexOf('愿意') !== -1 || msg.indexOf('不会') !== -1 || msg.indexOf('回来') !== -1 || msg.indexOf('考虑') !== -1) {
+        return '非常感谢你的分享和坦诚交流！🌟<br><br>你的每一条反馈对我们来说都非常珍贵。小助理祝你前程似锦，未来一切顺利！后会有期～ 🎉';
+      }
+      // 根据轮次给出不同的默认回复
+      if (s2MsgCount <= 1) {
+        return '谢谢你的分享！能再多说一些具体的情况吗？😊<br><br>比如<b>在实习/工作期间，有没有特别让你印象深刻的经历？</b>';
+      }
+      if (s2MsgCount === 2) {
+        return '了解了，感谢你的反馈 👍<br><br>接下来想问一下：<b>你觉得在公司期间，哪些方面还有提升空间？</b>';
+      }
+      if (s2MsgCount === 3) {
+        return '非常有价值的建议！🙏<br><br>最后一个问题：<b>你愿意向朋友推荐来公司工作吗？为什么？</b>';
+      }
+      return '小助理祝你前程似锦，后会有期~ 🌟<br><br>感谢你参与本次面谈，你的反馈我们已记录。祝一切顺利！🎉';
+    }
+
+    // 简单回复生成
+    function s1GenerateReply(message) {
+      var msg = message.toLowerCase();
+      if (msg.indexOf('可以') !== -1 || msg.indexOf('好的') !== -1 || msg.indexOf('没问题') !== -1 || msg.indexOf('聊') !== -1) {
+        return '太好了！那我们开始吧 😊<br><br>第一个问题：<b>在你的实习/工作期间，你觉得最有成就感的一件事是什么？</b>';
+      }
+      if (msg.indexOf('成就') !== -1 || msg.indexOf('项目') !== -1 || msg.indexOf('做了') !== -1) {
+        return '听起来你确实收获了很多宝贵的经验！👍<br><br>下一个问题：<b>有没有什么让你觉得不太满意或者希望改进的地方？</b>可以是工作内容、团队协作、管理方式等任何方面。';
+      }
+      if (msg.indexOf('不满') !== -1 || msg.indexOf('改进') !== -1 || msg.indexOf('希望') !== -1 || msg.indexOf('建议') !== -1) {
+        return '非常感谢你的坦诚反馈，这对我们改进非常有价值 🙏<br><br>最后一个问题：<b>如果有机会，你愿意未来再回到腾讯工作吗？为什么？</b>';
+      }
+      if (msg.indexOf('愿意') !== -1 || msg.indexOf('不会') !== -1 || msg.indexOf('回来') !== -1 || msg.indexOf('考虑') !== -1) {
+        return '小助理祝你前程似锦，后会有期~ 🌟';
+      }
+      return '谢谢你的分享！能再多说一些具体的情况吗？比如具体的例子或者感受。';
+    }
+
+    // ========== 方案3：腾讯问卷交互 ==========
+    function s3SelectScore(btn, group) {
+      var row = btn.parentElement;
+      row.querySelectorAll('.tq-score-btn').forEach(function(b) {
+        b.classList.remove('selected');
+      });
+      btn.classList.add('selected');
+    }
+
+    function s3SelectRadio(item, group) {
+      var parent = item.parentElement;
+      parent.querySelectorAll('.tq-radio-item').forEach(function(i) {
+        i.classList.remove('selected');
+      });
+      item.classList.add('selected');
+    }
+
+    function s3ToggleCheckbox(item) {
+      item.classList.toggle('selected');
+    }
+
+    function s3SubmitSurvey() {
+      // 直接跳转到方案1企微bot页面
+      document.getElementById('scheme3Page').classList.remove('active');
+      var s1Page = document.getElementById('scheme1Page');
+      s1Page.classList.add('active');
+      document.getElementById('homePage').style.display = 'none';
+
+      // 标记问卷已提交，用户回复一轮后自动结束对话
+      surveySubmitted = true;
+      surveyReplied = false;
+
+      // 清空方案1聊天区域的旧内容（问卷卡片等）
+      var body = document.getElementById('s1ChatBody');
+      body.innerHTML = '';
+
+      // 延迟后直接显示AI追问消息
+      setTimeout(function() {
+        var timeDiv = document.createElement('div');
+        timeDiv.className = 'wecom-msg-time';
+        var now = new Date();
+        timeDiv.textContent = '今天 ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+        body.appendChild(timeDiv);
+
+        var aiMsg = '看到你刚刚在离职体验调研中，对腾讯的推荐值只打了1分，是什么原因这么低呢？🤔\n\n和之前你在离职反馈中提到的"离家太远"有关吗？能再展开说一说吗？';
+        s1AppendMsgStreaming('bot', aiMsg);
+      }, 600);
+    }
+  </script>
+
+</body>
+</html>
