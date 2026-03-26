@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Creator 竞品分析 — 谁在做、怎么做、我们学什么</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --pri:#6366f1;--pri-l:#eef2ff;--pri-d:#4338ca;
+      --sec:#0ea5e9;--sec-l:#e0f2fe;
+      --ok:#10b981;--ok-l:#d1fae5;
+      --warn:#f59e0b;--warn-l:#fef3c7;
+      --err:#ef4444;--err-l:#fee2e2;
+      --t1:#0f172a;--t2:#475569;--t3:#94a3b8;
+      --bd:#e2e8f0;--bg:#f8fafc;--wh:#fff;
+      --r:12px;--sh:0 4px 16px rgba(0,0,0,.06)
+    }
+    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+    
+    /* 顶栏 */
+    .top{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:0 32px;height:54px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:8px}
+    .logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--pri),#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+    .brand b{font-size:14px}.brand .v{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--warn-l);color:#92400e;font-weight:700}
+    .nav{display:flex;gap:2px;margin-left:32px}
+    .nav a{padding:6px 13px;font-size:11px;color:var(--t2);border-radius:6px;cursor:pointer;transition:.2s;text-decoration:none;font-weight:500}
+    .nav a:hover,.nav a.on{background:var(--pri-l);color:var(--pri);font-weight:600}
+
+    /* 内容区 */
+    .wrap{max-width:1120px;margin:0 auto;padding:28px 24px 60px}
+
+    /* Hero */
+    .hero{background:linear-gradient(135deg,#1e1b4b,#312e81 40%,#1e40af 70%,#0c4a6e);border-radius:20px;padding:48px;color:#fff;position:relative;overflow:hidden;margin-bottom:32px}
+    .hero::before{content:'';position:absolute;top:-40%;right:-5%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,.06),transparent);border-radius:50%}
+    .hero .tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:600;padding:3px 12px;background:rgba(255,255,255,.12);border-radius:20px;margin-bottom:14px;backdrop-filter:blur(4px)}
+    .hero h1{font-size:32px;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
+    .hero p{font-size:14px;opacity:.8;max-width:640px;position:relative;z-index:1}
+
+    /* 通用卡片 */
+    .card{background:var(--wh);border-radius:var(--r);border:1px solid var(--bd);padding:24px;transition:.25s}
+    .card:hover{box-shadow:var(--sh)}
+
+    /* 章节 */
+    .sec{margin-bottom:40px;scroll-margin-top:70px}
+    .sec-t{font-size:22px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+    .sec-s{font-size:13px;color:var(--t2);margin-bottom:20px}
+
+    /* 网格 */
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+
+    /* 竞品卡 */
+    .comp-card{background:var(--wh);border:1px solid var(--bd);border-radius:16px;overflow:hidden;transition:.3s}
+    .comp-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1);transform:translateY(-3px)}
+    .comp-header{padding:20px 22px 14px;display:flex;align-items:flex-start;gap:14px}
+    .comp-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+    .comp-info h3{font-size:16px;font-weight:700;margin-bottom:2px}
+    .comp-info .subtitle{font-size:11px;color:var(--t2)}
+    .comp-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+    .ctag{font-size:9px;padding:2px 8px;border-radius:12px;font-weight:600}
+    .ctag-p{background:var(--pri-l);color:var(--pri)}
+    .ctag-s{background:var(--ok-l);color:var(--ok)}
+    .ctag-w{background:var(--warn-l);color:#92400e}
+    .ctag-b{background:var(--sec-l);color:#0369a1}
+    .ctag-d{background:var(--err-l);color:var(--err)}
+    .comp-body{padding:0 22px 18px}
+    .comp-desc{font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:12px}
+    .comp-features{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .comp-features li{font-size:11px;display:flex;align-items:flex-start;gap:6px;line-height:1.6}
+    .comp-features .ico{flex-shrink:0;margin-top:2px}
+    .comp-highlight{margin:0 22px 18px;padding:10px 14px;border-radius:8px;font-size:11px;line-height:1.6}
+    .comp-stars{padding:10px 22px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3)}
+    .comp-stars b{color:var(--t1);font-size:12px}
+
+    /* 对比表 */
+    .tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd)}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{background:var(--bg);padding:12px 14px;text-align:left;font-weight:600;color:var(--t2);font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bd);white-space:nowrap}
+    td{padding:12px 14px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:var(--pri-l)}
+    .cell-good{color:var(--ok);font-weight:600}
+    .cell-mid{color:var(--warn);font-weight:600}
+    .cell-bad{color:var(--err);font-weight:600}
+
+    /* 洞察卡片 */
+    .insight-card{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r);padding:20px;transition:.3s}
+    .insight-card:hover{box-shadow:var(--sh);transform:translateY(-2px)}
+    .insight-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+    .insight-card h4{font-size:14px;font-weight:700;margin-bottom:6px}
+    .insight-card p{font-size:11px;color:var(--t2);line-height:1.7}
+    .insight-card .from{margin-top:8px;font-size:10px;color:var(--t3);font-style:italic}
+
+    /* 流程对比 */
+    .flow-compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .flow-col{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+    .flow-col-header{padding:12px 16px;font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+    .flow-col-body{padding:16px}
+    .flow-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;position:relative}
+    .flow-step:not(:last-child)::before{content:'';position:absolute;left:14px;top:28px;bottom:-8px;width:1.5px;background:var(--bd)}
+    .flow-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;z-index:1}
+    .flow-text{flex:1}
+    .flow-text h5{font-size:12px;font-weight:600;margin-bottom:2px}
+    .flow-text p{font-size:10px;color:var(--t2);line-height:1.5}
+
+    /* 引用块 */
+    .quote{border-left:4px solid var(--pri);padding:14px 18px;background:var(--pri-l);border-radius:0 8px 8px 0;margin:16px 0;font-size:12px;line-height:1.7}
+    .quote-author{font-size:10px;color:var(--t3);margin-top:4px;font-style:italic}
+
+    /* 总结区 */
+    .summary{background:linear-gradient(135deg,#1e1b4b,#312e81 40%,#1e40af);border-radius:20px;padding:40px;color:#fff;text-align:center;margin-top:40px}
+    .summary h2{font-size:24px;font-weight:800;margin-bottom:20px}
+    .sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:700px;margin:0 auto}
+    .sum-item{font-size:11px}
+    .sum-item .ic{font-size:28px;margin-bottom:4px}
+    .sum-item b{display:block;font-size:13px;margin-bottom:2px}
+    .sum-item span{opacity:.75;font-size:10px;line-height:1.5}
+
+    /* 标注 */
+    .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:600}
+    .badge-pri{background:var(--pri-l);color:var(--pri)}
+    .badge-ok{background:var(--ok-l);color:var(--ok)}
+    .badge-warn{background:var(--warn-l);color:#92400e}
+    .badge-err{background:var(--err-l);color:var(--err)}
+
+    @media(max-width:900px){.g2,.g3,.flow-compare,.sum-grid{grid-template-columns:1fr}}
+    @media print{.top{display:none}.wrap{padding:20px}}
+  </style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="brand"><div class="logo">🔍</div><b>Skill Creator 竞品分析</b><span class="v">2026.03</span></div>
+  <div class="nav">
+    <a class="on" onclick="go('overview')">全景图</a>
+    <a onclick="go('players')">主要玩家</a>
+    <a onclick="go('compare')">多维对比</a>
+    <a onclick="go('insights')">设计洞察</a>
+    <a onclick="go('learn')">我们学什么</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- Hero -->
+<div class="hero" id="overview">
+  <div class="tag">📊 COMPETITIVE ANALYSIS</div>
+  <h1>谁在做 Skill Creator？<br>怎么做的？我们能学什么？</h1>
+  <p>调研市面上 8 个主流 Skill / Agent / Prompt 创作产品，从设计理念、创作流程、质量保障三个维度提炼可参考的最佳实践。</p>
+</div>
+
+<!-- ========== 竞品全景 ========== -->
+<div class="sec" id="landscape">
+  <div class="sec-t">🗺️ 竞品全景图</div>
+  <div class="sec-s">按「产品形态」和「目标用户」两个维度分布</div>
+  <div class="card" style="padding:32px;position:relative;overflow:hidden;min-height:420px">
+    <!-- 坐标轴 -->
+    <div style="position:absolute;left:32px;top:32px;bottom:52px;width:1.5px;background:var(--bd)"></div>
+    <div style="position:absolute;left:32px;bottom:52px;right:32px;height:1.5px;background:var(--bd)"></div>
+    <div style="position:absolute;left:10px;top:28px;font-size:9px;color:var(--t3);font-weight:600;writing-mode:vertical-lr;letter-spacing:1px">专业·工程化</div>
+    <div style="position:absolute;left:10px;bottom:58px;font-size:9px;color:var(--t3);font-weight:600;writing-mode:vertical-lr;letter-spacing:1px">简单·可视化</div>
+    <div style="position:absolute;left:36px;bottom:34px;font-size:9px;color:var(--t3);font-weight:600">开发者</div>
+    <div style="position:absolute;right:32px;bottom:34px;font-size:9px;color:var(--t3);font-weight:600">业务用户</div>
+
+    <!-- 产品气泡 -->
+    <div style="position:absolute;left:80px;top:55px;background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,.3)">
+      🅰 Claude Skill-Creator<br><span style="font-size:9px;opacity:.8">Anthropic 官方 · 元技能</span>
+    </div>
+    <div style="position:absolute;left:300px;top:65px;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(249,115,22,.3)">
+      🅱 Superpowers<br><span style="font-size:9px;opacity:.8">27K⭐ · 任务拆解引擎</span>
+    </div>
+    <div style="position:absolute;right:120px;top:130px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(59,130,246,.3)">
+      🅲 Coze 扣子<br><span style="font-size:9px;opacity:.8">字节 · Bot 创建平台</span>
+    </div>
+    <div style="position:absolute;right:60px;top:210px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(16,185,129,.3)">
+      🅳 GPT Builder<br><span style="font-size:9px;opacity:.8">OpenAI · 自定义 GPTs</span>
+    </div>
+    <div style="position:absolute;left:100px;top:190px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(139,92,246,.3)">
+      🅴 Dify<br><span style="font-size:9px;opacity:.8">开源 · Workflow 编排</span>
+    </div>
+    <div style="position:absolute;left:240px;top:280px;background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(6,182,212,.3)">
+      🅵 SkillPort<br><span style="font-size:9px;opacity:.8">跨平台 Skill 管理中枢</span>
+    </div>
+    <div style="position:absolute;right:200px;top:310px;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(236,72,153,.3)">
+      🅶 FlowGPT<br><span style="font-size:9px;opacity:.8">Prompt 社区市场</span>
+    </div>
+    <div style="position:absolute;left:400px;top:140px;background:linear-gradient(135deg,#64748b,#475569);color:#fff;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(100,116,139,.3)">
+      🅷 Context Eng.<br><span style="font-size:9px;opacity:.8">6K⭐ · 上下文工程</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 主要玩家详解 ========== -->
+<div class="sec" id="players">
+  <div class="sec-t">🏆 主要玩家详解</div>
+  <div class="sec-s">每个产品的核心设计、亮点功能和可借鉴之处</div>
+
+  <div class="g2" style="margin-bottom:20px">
+    <!-- Claude Skill-Creator -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);color:var(--pri)">🧩</div>
+        <div class="comp-info">
+          <h3>Claude Skill-Creator</h3>
+          <div class="subtitle">Anthropic 官方 · 元技能（用 Skill 创建 Skill）</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-p">Meta-Skill</span>
+            <span class="ctag ctag-s">官方标准</span>
+            <span class="ctag ctag-w">CLI 模式</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">Anthropic 官方推出的"用 AI 创建 AI 技能"的元技能框架。不仅是一个模板生成器，而是包含<b>创建→评测→优化</b>完整闭环的工程化系统。</div>
+        <ul class="comp-features">
+          <li><span class="ico">🔥</span><b>对话式创建</b> — 自然语言描述需求，自动生成 SKILL.md</li>
+          <li><span class="ico">🧪</span><b>多智能体评测</b> — Grader（评分）+ Comparator（盲测）+ Analyzer（分析）</li>
+          <li><span class="ico">🔄</span><b>描述优化循环</b> — Train/Test Split + 盲历史防过拟合</li>
+          <li><span class="ico">👁️</span><b>Eval Viewer</b> — 交互式人工审核界面</li>
+          <li><span class="ico">📐</span><b>渐进式加载</b> — 元数据→正文→资源 三层按需加载</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:var(--pri-l);border-left:3px solid var(--pri)">
+        <b>💡 最大亮点：</b>将 Skill 开发建模为<b>机器学习问题</b>——有训练集/测试集、有评分器、有盲测对比、有迭代优化。不是一次性生成，而是<b>持续进化</b>。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐⭐⭐</b> 工程化程度最高 · 企业级首选</div>
+    </div>
+
+    <!-- Superpowers -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#fff7ed,#fed7aa);color:#ea580c">⚡</div>
+        <div class="comp-info">
+          <h3>Superpowers</h3>
+          <div class="subtitle">obra · 复杂任务规划与拆解引擎（27K+ ⭐）</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-w">任务拆解</span>
+            <span class="ctag ctag-p">需求澄清</span>
+            <span class="ctag ctag-b">结构化输出</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">专注解决"从模糊想法到可执行计划"的难题。通过<b>发散→收敛→拆解</b>三阶段，将复杂需求转化为原子化操作序列。</div>
+        <ul class="comp-features">
+          <li><span class="ico">🧠</span><b>三阶段处理</b> — 发散（头脑风暴）→ 收敛（PRD）→ 拆解（原子操作）</li>
+          <li><span class="ico">⏱️</span><b>原子化拆解</b> — 每个任务单元 2-5 分钟可完成</li>
+          <li><span class="ico">📋</span><b>风险检查清单</b> — 自动识别潜在风险和前置依赖</li>
+          <li><span class="ico">🎯</span><b>防幻觉设计</b> — 强制分步确认，防止 Agent 半途而废</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:var(--warn-l);border-left:3px solid var(--warn)">
+        <b>💡 最大亮点：</b>将需求拆解本身做成了一套完整方法论。<b>"发散-收敛-拆解"三阶段模型</b>可以直接借鉴到 Skill 创作的需求澄清环节。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐⭐⭐</b> 27K Stars · 需求处理最强</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:20px">
+    <!-- Coze 扣子 -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#2563eb">🤖</div>
+        <div class="comp-info">
+          <h3>Coze 扣子</h3>
+          <div class="subtitle">字节跳动 · 新一代 AI 应用开发平台</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-b">零代码</span>
+            <span class="ctag ctag-s">工作流</span>
+            <span class="ctag ctag-p">多渠道发布</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">面向非技术用户的 Bot 创建平台。提供<b>对话式创建 + 手动创建</b>两种模式，支持工作流可视化编排和知识库接入。</div>
+        <ul class="comp-features">
+          <li><span class="ico">💬</span><b>双模式创建</b> — 对话式（AI 引导）或 手动填表创建</li>
+          <li><span class="ico">🔧</span><b>可视化工作流</b> — 拖拽式节点编排，开始→处理→结束</li>
+          <li><span class="ico">📚</span><b>知识库接入</b> — 上传 PDF/Doc/Excel，自动建立检索</li>
+          <li><span class="ico">📱</span><b>多渠道发布</b> — 飞书、微信、网页、API 一键发布</li>
+          <li><span class="ico">🔌</span><b>插件生态</b> — 600+ 内置插件，搜索/绘图/代码运行等</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:var(--sec-l);border-left:3px solid var(--sec)">
+        <b>💡 最大亮点：</b>极低的使用门槛 + 强大的工作流编排。<b>「提示词 + 工作流 + 知识库 + 插件」</b>四要素组合的设计思路值得参考。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐⭐</b> 用户量最大 · 小白友好度最高</div>
+    </div>
+
+    <!-- GPT Builder -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:var(--ok)">✨</div>
+        <div class="comp-info">
+          <h3>GPT Builder (Custom GPTs)</h3>
+          <div class="subtitle">OpenAI · 自定义 GPT 创建工具</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-s">对话创建</span>
+            <span class="ctag ctag-w">GPT Store</span>
+            <span class="ctag ctag-b">知识上传</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">业界首个"用对话创建 AI Agent"的产品。通过自然语言描述就能创建自定义 GPT，开创了对话式创建范式。</div>
+        <ul class="comp-features">
+          <li><span class="ico">🗣️</span><b>纯对话式</b> — "You are an expert..." 即可创建</li>
+          <li><span class="ico">📎</span><b>知识上传</b> — 上传文件作为 GPT 的知识源</li>
+          <li><span class="ico">🔧</span><b>Actions</b> — 接入外部 API（OpenAPI spec）</li>
+          <li><span class="ico">🏪</span><b>GPT Store</b> — 分享和发现社区创建的 GPTs</li>
+          <li><span class="ico">⚙️</span><b>配置面板</b> — 对话创建 + 手动配置双视图</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:var(--ok-l);border-left:3px solid var(--ok)">
+        <b>💡 最大亮点：</b>开创了<b>「对话即创建」</b>的交互范式。「Create + Configure」双面板设计成为后续产品的标准参考。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐⭐</b> 首创者 · 品牌影响力最大</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:20px">
+    <!-- Dify -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);color:#7c3aed">🔮</div>
+        <div class="comp-info">
+          <h3>Dify</h3>
+          <div class="subtitle">开源 · LLM 应用开发平台</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-p">开源</span>
+            <span class="ctag ctag-b">Workflow</span>
+            <span class="ctag ctag-s">RAG</span>
+            <span class="ctag ctag-w">Agent</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">功能最全面的开源 LLM 应用开发平台。提供可视化 Workflow、RAG 引擎、Agent 编排和 Prompt IDE 等完整工具链。</div>
+        <ul class="comp-features">
+          <li><span class="ico">🎨</span><b>Prompt IDE</b> — 可视化编辑 + 变量 + 模板 + 实时调试</li>
+          <li><span class="ico">🔀</span><b>Workflow 编排</b> — DAG 有向图，支持条件分支和循环</li>
+          <li><span class="ico">🗃️</span><b>知识管理</b> — 向量检索 + 多种分块策略</li>
+          <li><span class="ico">📊</span><b>可观测性</b> — 日志、Token 消耗、执行链路追踪</li>
+          <li><span class="ico">🧪</span><b>批量测试</b> — Dataset + 批量运行 + 结果对比</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:#f5f3ff;border-left:3px solid #7c3aed">
+        <b>💡 最大亮点：</b><b>Prompt IDE + 批量测试</b>的组合。可以在编辑器内直接调试 Prompt 效果，用数据集批量验证质量——这是我们的「质量引擎」可以直接借鉴的。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐⭐⭐</b> 开源领域功能最全</div>
+    </div>
+
+    <!-- SkillPort -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#e0f2fe,#bae6fd);color:#0891b2">🚢</div>
+        <div class="comp-info">
+          <h3>SkillPort</h3>
+          <div class="subtitle">gotalab · 跨平台 Skills 管理中枢</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-b">跨平台</span>
+            <span class="ctag ctag-s">版本管理</span>
+            <span class="ctag ctag-p">格式转换</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">解决 Skills 分散管理的痛点。统一管理 Claude Code、Codex、Copilot 等不同 Agent 平台的技能，支持批量导入和格式转换。</div>
+        <ul class="comp-features">
+          <li><span class="ico">📦</span><b>统一管理</b> — GitHub 仓库 + 本地文件批量导入</li>
+          <li><span class="ico">🔄</span><b>自动转换</b> — 不同 Agent 格式互转</li>
+          <li><span class="ico">📌</span><b>版本追踪</b> — Git 集成 + 自动更新检测</li>
+          <li><span class="ico">🔌</span><b>多平台适配</b> — Claude/Codex/Copilot/VS Code</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:var(--sec-l);border-left:3px solid #06b6d4">
+        <b>💡 最大亮点：</b>把 Skills 当作<b>"包管理"</b>来做。<b>版本控制 + 跨平台兼容 + 集中管理</b>的思路可以作为 Phase 3 的参考方向。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐</b> 管理层面最完善</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <!-- FlowGPT -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777">🌊</div>
+        <div class="comp-info">
+          <h3>FlowGPT</h3>
+          <div class="subtitle">社区驱动 · Prompt 分享与发现平台</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-d">社区</span>
+            <span class="ctag ctag-w">Prompt市场</span>
+            <span class="ctag ctag-b">排行榜</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">最大的 Prompt 社区平台。用户可以分享、发现和 Fork 他人的 Prompt，通过社区投票和使用数据形成排行榜。</div>
+        <ul class="comp-features">
+          <li><span class="ico">🏪</span><b>Prompt 市场</b> — 按场景/类型分类浏览</li>
+          <li><span class="ico">🔀</span><b>Fork 机制</b> — 一键复制并修改他人 Prompt</li>
+          <li><span class="ico">📈</span><b>排行榜</b> — 按使用量/评分/热度排序</li>
+          <li><span class="ico">💬</span><b>在线测试</b> — 直接在平台上运行 Prompt</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:#fce7f3;border-left:3px solid #ec4899">
+        <b>💡 最大亮点：</b><b>社区生态 + Fork 机制</b>。「不从零开始，而是站在他人肩膀上」的理念可以应用到 Skill 模板库的设计中。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐</b> 社区最活跃</div>
+    </div>
+
+    <!-- Context Engineering -->
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-icon" style="background:linear-gradient(135deg,#f1f5f9,#e2e8f0);color:#475569">🧬</div>
+        <div class="comp-info">
+          <h3>Agent-Skills Context Engineering</h3>
+          <div class="subtitle">muratcankoylan · 上下文工程方案（6K+ ⭐）</div>
+          <div class="comp-tags">
+            <span class="ctag ctag-p">上下文优化</span>
+            <span class="ctag ctag-b">多智能体</span>
+            <span class="ctag ctag-s">记忆系统</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-desc">专注解决长上下文场景下的 Token 浪费和"中间丢失"问题。提供多智能体分布式处理和跨会话记忆系统。</div>
+        <ul class="comp-features">
+          <li><span class="ico">🧠</span><b>记忆系统</b> — 跨会话持久化存储与检索</li>
+          <li><span class="ico">🔀</span><b>多 Agent 协作</b> — 分布式任务降低单 Agent 负载</li>
+          <li><span class="ico">📊</span><b>性能评估</b> — 可量化的 Agent 性能基准测试</li>
+          <li><span class="ico">⚡</span><b>Token 优化</b> — 智能裁剪和上下文压缩</li>
+        </ul>
+      </div>
+      <div class="comp-highlight" style="background:var(--bg);border-left:3px solid #64748b">
+        <b>💡 最大亮点：</b><b>渐进式披露 + Token 经济学</b>。把"SKILL.md 主文件 ≤500行" + 按需加载 REFERENCE.md 的架构设计做得很深入。
+      </div>
+      <div class="comp-stars"><b>⭐⭐⭐⭐</b> 上下文管理最深入</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 多维对比 ========== -->
+<div class="sec" id="compare">
+  <div class="sec-t">⚖️ 多维度对比</div>
+  <div class="sec-s">从创建方式、质量保障、生态完整度等 8 个维度横向对比</div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>Claude Skill-Creator</th>
+            <th>Superpowers</th>
+            <th>Coze 扣子</th>
+            <th>GPT Builder</th>
+            <th>Dify</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>创建方式</b></td>
+            <td>对话式 + CLI</td>
+            <td>对话式 + 结构化</td>
+            <td>对话式 + 拖拽 + 表单</td>
+            <td>对话式 + 配置面板</td>
+            <td>表单 + 可视化编排</td>
+          </tr>
+          <tr>
+            <td><b>目标产物</b></td>
+            <td>SKILL.md + scripts</td>
+            <td>执行计划 + PRD</td>
+            <td>Bot（含工作流）</td>
+            <td>Custom GPT</td>
+            <td>App（含 Workflow）</td>
+          </tr>
+          <tr>
+            <td><b>需求引导</b></td>
+            <td class="cell-good">✅ 意图捕获+面试调研</td>
+            <td class="cell-good">✅ 发散-收敛-拆解</td>
+            <td class="cell-mid">⚡ 对话创建基础引导</td>
+            <td class="cell-mid">⚡ 简单对话问答</td>
+            <td class="cell-bad">❌ 手动填写</td>
+          </tr>
+          <tr>
+            <td><b>质量评测</b></td>
+            <td class="cell-good">✅ 三Agent评测+盲测</td>
+            <td class="cell-mid">⚡ 风险检查清单</td>
+            <td class="cell-mid">⚡ 基础测试对话</td>
+            <td class="cell-bad">❌ 仅手动测试</td>
+            <td class="cell-good">✅ 批量测试+日志</td>
+          </tr>
+          <tr>
+            <td><b>迭代优化</b></td>
+            <td class="cell-good">✅ 自动优化循环</td>
+            <td class="cell-mid">⚡ 手动迭代</td>
+            <td class="cell-mid">⚡ 手动调整</td>
+            <td class="cell-bad">❌ 手动调整</td>
+            <td class="cell-mid">⚡ A/B 测试</td>
+          </tr>
+          <tr>
+            <td><b>社区/模板</b></td>
+            <td class="cell-mid">⚡ GitHub 范例库</td>
+            <td class="cell-bad">❌ 无</td>
+            <td class="cell-good">✅ Bot Store + 模板</td>
+            <td class="cell-good">✅ GPT Store</td>
+            <td class="cell-good">✅ 模板市场</td>
+          </tr>
+          <tr>
+            <td><b>小白友好</b></td>
+            <td class="cell-bad">❌ 需 CLI 基础</td>
+            <td class="cell-mid">⚡ 中等</td>
+            <td class="cell-good">✅ 极其友好</td>
+            <td class="cell-good">✅ 非常友好</td>
+            <td class="cell-mid">⚡ 有学习曲线</td>
+          </tr>
+          <tr>
+            <td><b>工程化程度</b></td>
+            <td class="cell-good">✅ 最高（ML思维）</td>
+            <td class="cell-good">✅ 高</td>
+            <td class="cell-mid">⚡ 中等</td>
+            <td class="cell-bad">❌ 低</td>
+            <td class="cell-good">✅ 高</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 核心流程对比 ========== -->
+<div class="sec">
+  <div class="sec-t">🔄 创作流程对比</div>
+  <div class="sec-s">Claude Skill-Creator vs Coze 扣子 — 两种典型范式</div>
+  <div class="flow-compare">
+    <div class="flow-col">
+      <div class="flow-col-header" style="background:linear-gradient(135deg,var(--pri),#8b5cf6)">🧩 Claude Skill-Creator（工程范式）</div>
+      <div class="flow-col-body">
+        <div class="flow-step">
+          <div class="flow-num" style="background:var(--pri)">1</div>
+          <div class="flow-text"><h5>意图捕获 + 面试调研</h5><p>AI 提问：解决什么问题？谁用？什么场景？</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:var(--pri)">2</div>
+          <div class="flow-text"><h5>SKILL.md 生成</h5><p>自动创建目录结构、元数据、步骤骨架</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:var(--pri)">3</div>
+          <div class="flow-text"><h5>A/B 双组测试</h5><p>with-skill vs without-skill 并行运行</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:var(--pri)">4</div>
+          <div class="flow-text"><h5>三 Agent 评测</h5><p>Grader 评分 → Comparator 盲测 → Analyzer 分析</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:var(--pri)">5</div>
+          <div class="flow-text"><h5>描述优化循环</h5><p>Train/Test Split + 迭代改进 + 人工审核</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:var(--ok)">6</div>
+          <div class="flow-text"><h5>打包发布</h5><p>验证通过后生成 .skill 文件</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-col">
+      <div class="flow-col-header" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">🤖 Coze 扣子（可视化范式）</div>
+      <div class="flow-col-body">
+        <div class="flow-step">
+          <div class="flow-num" style="background:#3b82f6">1</div>
+          <div class="flow-text"><h5>创建 Bot</h5><p>填写名称、描述、选头像 或 对话式创建</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:#3b82f6">2</div>
+          <div class="flow-text"><h5>编写提示词</h5><p>定义人设、角色、回复逻辑和约束条件</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:#3b82f6">3</div>
+          <div class="flow-text"><h5>配置工作流</h5><p>拖拽节点编排：开始→处理→条件→结束</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:#3b82f6">4</div>
+          <div class="flow-text"><h5>接入知识库</h5><p>上传文档，配置检索策略（自动/手动）</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:#3b82f6">5</div>
+          <div class="flow-text"><h5>调试测试</h5><p>内置聊天窗口直接对话测试</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num" style="background:var(--ok)">6</div>
+          <div class="flow-text"><h5>多渠道发布</h5><p>飞书 / 微信 / 网页 / API 一键发布</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="quote" style="margin-top:16px">
+    <b>观察：</b>Claude Skill-Creator 走<b>「深度工程化」</b>路线，强调测试和迭代；Coze 走<b>「低门槛可视化」</b>路线，强调快速上线。两者各有所长——最佳产品应该<b>兼具两者优点</b>：对新手像 Coze 一样友好，对高级用户像 Skill-Creator 一样提供工程化能力。
+  </div>
+</div>
+
+<!-- ========== 设计洞察 ========== -->
+<div class="sec" id="insights">
+  <div class="sec-t">🔬 关键设计洞察</div>
+  <div class="sec-s">从竞品中提炼的 8 条核心设计原则</div>
+
+  <div class="g3" style="margin-bottom:18px">
+    <div class="insight-card">
+      <div class="insight-icon" style="background:var(--pri-l)">🎯</div>
+      <h4>渐进式加载架构</h4>
+      <p>Skill 内容分三层：<b>元数据→正文→资源</b>，按需加载。主文件 ≤500 行，详情放 REFERENCE.md。解决 Token 瓶颈。</p>
+      <div class="from">— 来自 Claude Skill-Creator & Context Engineering</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:var(--warn-l)">⚖️</div>
+      <h4>自由度分级控制</h4>
+      <p>根据任务风险分三级：<b>低自由度</b>（数据库操作→精确脚本）、<b>中自由度</b>（常规→伪代码）、<b>高自由度</b>（创意→方向指引）。</p>
+      <div class="from">— 来自 Claude Skills 7大工程原则</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:var(--ok-l)">🧪</div>
+      <h4>ML 化质量评测</h4>
+      <p>把 Skill 质量建模为 ML 问题：有<b>训练集/测试集</b>，有<b>盲测对比</b>（Comparator Agent），有<b>防过拟合</b>（Blinded History）。</p>
+      <div class="from">— 来自 Claude Skill-Creator 评测模块</div>
+    </div>
+  </div>
+  <div class="g3" style="margin-bottom:18px">
+    <div class="insight-card">
+      <div class="insight-icon" style="background:var(--sec-l)">💬</div>
+      <h4>对话 + 配置双面板</h4>
+      <p>GPT Builder 开创的「<b>Create</b>（对话创建）+ <b>Configure</b>（手动配置）」双视图已成行业标准。满足新手和高级用户。</p>
+      <div class="from">— 来自 GPT Builder & Coze</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:#fce7f3">🔀</div>
+      <h4>Fork + 社区生态</h4>
+      <p>不从零开始创建，而是<b>Fork 高质量模板→微调→发布</b>。社区排行榜、使用数据驱动的推荐。</p>
+      <div class="from">— 来自 FlowGPT & GPT Store & Coze Bot Store</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:#f5f3ff">🧠</div>
+      <h4>发散-收敛-拆解模型</h4>
+      <p>处理模糊需求的三阶段：<b>发散</b>（头脑风暴所有可能）→<b>收敛</b>（聚焦为 PRD）→<b>拆解</b>（原子化为 2-5 分钟任务）。</p>
+      <div class="from">— 来自 Superpowers（27K ⭐）</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="insight-card">
+      <div class="insight-icon" style="background:var(--err-l)">📐</div>
+      <h4>解释 Why，不强制 Must</h4>
+      <p>向模型解释<b>任务本质和逻辑</b>，而非死记硬背步骤。少用 MUST/NEVER，多解释原因。让 AI 理解而非记忆。</p>
+      <div class="from">— 来自 Claude Skills 设计哲学</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:var(--bg)">🔄</div>
+      <h4>Claude A/B 迭代开发</h4>
+      <p><b>Claude A</b>（架构师）写 Skill → <b>Claude B</b>（测试员）执行 → 观察失败 → 反馈修正 → 再测试。形成自动化闭环。</p>
+      <div class="from">— 来自 Claude Skills 实战指南</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 我们学什么 ========== -->
+<div class="sec" id="learn">
+  <div class="sec-t">🎓 我们的产品应该学什么？</div>
+  <div class="sec-s">结合竞品亮点，为 SkillForge 产品设计提供的改进建议</div>
+
+  <div class="card" style="margin-bottom:20px;background:linear-gradient(180deg,#fafbff,#f0f4ff);border-color:#c7d2fe">
+    <div style="font-size:15px;font-weight:700;color:var(--pri);margin-bottom:4px">🎯 核心定位调整</div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:12px">做<b>「Coze 的易用性 × Claude Skill-Creator 的工程深度」</b>的融合产品</div>
+    <div class="g2">
+      <div style="padding:12px;background:var(--wh);border-radius:8px;border:1px solid var(--bd)">
+        <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:6px">✅ 已经做得好的</div>
+        <ul style="font-size:11px;color:var(--t2);line-height:2;list-style:none">
+          <li>☑️ 五阶段创作流程（对标 Skill-Creator）</li>
+          <li>☑️ 对话式引导交互（对标 GPT Builder）</li>
+          <li>☑️ 实时预览（基本具备）</li>
+          <li>☑️ 质量评分系统（基础版）</li>
+        </ul>
+      </div>
+      <div style="padding:12px;background:var(--wh);border-radius:8px;border:1px solid var(--bd)">
+        <div style="font-size:12px;font-weight:700;color:var(--pri);margin-bottom:6px">🚀 应该补强的</div>
+        <ul style="font-size:11px;color:var(--t2);line-height:2;list-style:none">
+          <li>🔷 学 Superpowers 的「发散-收敛-拆解」需求处理</li>
+          <li>🔷 学 Skill-Creator 的「ML 化质量评测」闭环</li>
+          <li>🔷 学 Coze 的「可视化工作流编排」直观性</li>
+          <li>🔷 学 FlowGPT 的「Fork + 社区」模板生态</li>
+          <li>🔷 学 Dify 的「Prompt IDE + 批量测试」</li>
+          <li>🔷 学 SkillPort 的「跨平台 + 版本管理」</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 具体改进方案 -->
+  <div class="sec-t" style="font-size:16px;margin-top:24px">📋 具体改进方案</div>
+  <div class="tw" style="margin-top:12px">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30px">#</th>
+          <th>改进点</th>
+          <th>参考来源</th>
+          <th>实现建议</th>
+          <th>优先级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-pri">1</span></td>
+          <td><b>需求处理升级为「发散-收敛-拆解」</b></td>
+          <td>Superpowers</td>
+          <td>阶段1增加发散式头脑风暴，AI先列出所有可能的功能点，再引导用户聚焦</td>
+          <td><span class="badge badge-err">P0</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pri">2</span></td>
+          <td><b>增加 A/B 对比测试</b></td>
+          <td>Claude Skill-Creator</td>
+          <td>质量验证阶段，展示「有Skill vs 无Skill」的效果对比</td>
+          <td><span class="badge badge-err">P0</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pri">3</span></td>
+          <td><b>增加「Create + Configure」双面板</b></td>
+          <td>GPT Builder</td>
+          <td>左侧对话创建 + 右侧可直接编辑配置项，两者实时同步</td>
+          <td><span class="badge badge-err">P0</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pri">4</span></td>
+          <td><b>自由度分级 UI</b></td>
+          <td>Claude Skills 原则</td>
+          <td>每个 Step 允许用户设置「约束等级」：严格/标准/灵活</td>
+          <td><span class="badge badge-warn">P1</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pri">5</span></td>
+          <td><b>模板 Fork 机制</b></td>
+          <td>FlowGPT + GPT Store</td>
+          <td>模板库支持 Fork → 自定义 → 发布，形成社区沉淀</td>
+          <td><span class="badge badge-warn">P1</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pri">6</span></td>
+          <td><b>批量测试数据集</b></td>
+          <td>Dify</td>
+          <td>上传测试用例 CSV，批量运行 Skill 并对比结果</td>
+          <td><span class="badge badge-warn">P1</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pri">7</span></td>
+          <td><b>可视化工作流预览</b></td>
+          <td>Coze + Dify</td>
+          <td>在逻辑流程图 tab 中增加可拖拽节点编排能力</td>
+          <td><span class="badge badge-ok">P2</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pri">8</span></td>
+          <td><b>跨平台 Skill 导出</b></td>
+          <td>SkillPort</td>
+          <td>支持导出为 Claude Skill / Cursor Rules / Copilot Instructions</td>
+          <td><span class="badge badge-ok">P2</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 关键引用 -->
+  <div class="quote" style="margin-top:20px">
+    <b>Anthropic 的核心洞察：</b>"Skills 是 Agent 的<b>「大脑回路」</b>（经验与流程），MCP 是 Agent 的<b>「手脚」</b>（工具与连接）。两者互补，不是替代。" 
+    <br><br>
+    这意味着我们的产品不应只关注 Skill 文档本身，还应考虑<b>与 MCP 工具的协同</b>——在 Skill 创作过程中自动推荐相关的 MCP 工具接入。
+    <div class="quote-author">— Claude Agent Skills 实战指南</div>
+  </div>
+
+  <div class="quote">
+    <b>Superpowers 的方法论：</b>"将非确定性的模糊需求转化为确定性的执行路径。每个任务单元 2-5 分钟可完成。"
+    <br><br>
+    这提示我们：阶段1的需求澄清不应该是简单的问答，而应该是<b>结构化的需求工程</b>——先发散所有可能性，再收敛到可执行范围。
+    <div class="quote-author">— Superpowers README (27K ⭐)</div>
+  </div>
+</div>
+
+<!-- ========== 总结 ========== -->
+<div class="summary">
+  <div style="font-size:10px;font-weight:600;opacity:.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">TAKEAWAYS</div>
+  <h2>竞品分析核心结论</h2>
+  <div class="sum-grid">
+    <div class="sum-item">
+      <div class="ic">🧩</div>
+      <b>学 Anthropic</b>
+      <span>ML 化质量评测<br>渐进式加载架构</span>
+    </div>
+    <div class="sum-item">
+      <div class="ic">⚡</div>
+      <b>学 Superpowers</b>
+      <span>发散-收敛-拆解<br>原子化任务处理</span>
+    </div>
+    <div class="sum-item">
+      <div class="ic">🤖</div>
+      <b>学 Coze / GPTs</b>
+      <span>极致易用性<br>Create + Configure</span>
+    </div>
+    <div class="sum-item">
+      <div class="ic">🌊</div>
+      <b>学 FlowGPT</b>
+      <span>Fork 社区生态<br>站在巨人肩膀上</span>
+    </div>
+  </div>
+  <div style="margin-top:24px;font-size:13px;opacity:.85;max-width:600px;margin-left:auto;margin-right:auto">
+    <b>一句话总结：</b>最好的 Skill Creator = <b>Coze 的门槛</b> + <b>Claude 的深度</b> + <b>FlowGPT 的生态</b> + <b>Superpowers 的方法论</b>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+function go(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'});document.querySelectorAll('.nav a').forEach(a=>{a.classList.remove('on');if(a.getAttribute('onclick')?.includes(id))a.classList.add('on')})}
+</script>
+</body>
+</html>
