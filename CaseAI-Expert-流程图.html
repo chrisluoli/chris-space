@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CaseAI Expert — 主要逻辑流程图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0f1923;
+    color: #e0e6ed;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    background: linear-gradient(180deg, #1a2a3a 0%, #0f1923 100%);
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .header .subtitle {
+    font-size: 14px;
+    color: #7b8fa3;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #8a9bb0;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* 主流程容器 */
+  .flow-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+  }
+
+  /* 中央主轴线 */
+  .main-axis {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, #2563eb 0%, #7c3aed 50%, #059669 100%);
+    transform: translateX(-50%);
+    opacity: 0.3;
+  }
+
+  /* 步骤行 */
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  /* 连接箭头 */
+  .connector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    position: relative;
+  }
+
+  .connector .arrow {
+    width: 3px;
+    height: 40px;
+    position: relative;
+  }
+
+  .connector .arrow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(59,130,246,0.6), rgba(59,130,246,0.3));
+  }
+
+  .connector .arrow::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid rgba(59,130,246,0.5);
+  }
+
+  .connector.decision .arrow::before {
+    background: linear-gradient(180deg, rgba(245,158,11,0.6), rgba(245,158,11,0.3));
+  }
+  .connector.decision .arrow::after {
+    border-top-color: rgba(245,158,11,0.5);
+  }
+
+  .connector-label {
+    position: absolute;
+    font-size: 11px;
+    color: #f59e0b;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .connector-label.left { right: calc(50% + 16px); }
+  .connector-label.right { left: calc(50% + 16px); }
+
+  /* 节点卡片 */
+  .node {
+    border-radius: 12px;
+    padding: 16px 20px;
+    position: relative;
+    min-width: 280px;
+    max-width: 520px;
+    width: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .node:hover {
+    transform: translateY(-2px);
+  }
+
+  /* 启动节点 */
+  .node.start {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1a2e4a 100%);
+    border: 1.5px solid #2563eb;
+    box-shadow: 0 0 20px rgba(37,99,235,0.15);
+    text-align: center;
+    min-width: 200px;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  /* 处理节点 */
+  .node.process {
+    background: linear-gradient(135deg, #1a2a3d 0%, #162233 100%);
+    border: 1.5px solid #334155;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+
+  .node.process.highlight {
+    border-color: #2563eb;
+    box-shadow: 0 0 20px rgba(37,99,235,0.15), 0 4px 16px rgba(0,0,0,0.2);
+  }
+
+  /* 判断节点 */
+  .node.decision {
+    background: linear-gradient(135deg, #2a2215 0%, #231e12 100%);
+    border: 1.5px solid #b45309;
+    box-shadow: 0 0 16px rgba(245,158,11,0.1);
+    text-align: center;
+    min-width: 200px;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .node.decision::before {
+    content: '◆';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #f59e0b;
+    font-size: 16px;
+  }
+
+  /* 数据源节点 */
+  .node.datasource {
+    background: linear-gradient(135deg, #1a2e2a 0%, #152524 100%);
+    border: 1.5px solid #065f46;
+    box-shadow: 0 0 16px rgba(5,150,105,0.1);
+  }
+
+  /* 输出节点 */
+  .node.output {
+    background: linear-gradient(135deg, #2a1a3d 0%, #221633 100%);
+    border: 1.5px solid #7c3aed;
+    box-shadow: 0 0 16px rgba(124,58,237,0.15);
+  }
+
+  /* 终止节点 */
+  .node.end {
+    background: linear-gradient(135deg, #1e3a2e 0%, #162a22 100%);
+    border: 1.5px solid #059669;
+    box-shadow: 0 0 20px rgba(5,150,105,0.15);
+    text-align: center;
+    min-width: 200px;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  /* 节点内部元素 */
+  .node-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-blue { background: rgba(37,99,235,0.2); color: #60a5fa; }
+  .badge-amber { background: rgba(245,158,11,0.2); color: #fbbf24; }
+  .badge-green { background: rgba(5,150,105,0.2); color: #34d399; }
+  .badge-purple { background: rgba(124,58,237,0.2); color: #a78bfa; }
+  .badge-red { background: rgba(239,68,68,0.2); color: #f87171; }
+  .badge-gray { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+  .node-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .node-desc {
+    font-size: 12px;
+    color: #8a9bb0;
+    line-height: 1.6;
+  }
+
+  .node-desc strong {
+    color: #c0cdd9;
+  }
+
+  .node-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .tool-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  }
+
+  .tool-tag.fetch { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .tool-tag.read { background: rgba(5,150,105,0.15); color: #34d399; border: 1px solid rgba(5,150,105,0.3); }
+  .tool-tag.search { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+  .tool-tag.mcp { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .tool-tag.write { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+  /* 分支布局 */
+  .branch-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .branch-row .node {
+    flex: 1;
+    min-width: 240px;
+    max-width: 350px;
+  }
+
+  /* 分支标签 */
+  .branch-label {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .branch-label span {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 12px;
+    border-radius: 10px;
+  }
+
+  .branch-label .yes { background: rgba(5,150,105,0.2); color: #34d399; }
+  .branch-label .no { background: rgba(239,68,68,0.2); color: #f87171; }
+
+  /* 回环标注 */
+  .loop-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #f59e0b;
+    margin: 4px 0;
+  }
+
+  .loop-indicator .loop-icon {
+    font-size: 16px;
+  }
+
+  /* 阶段分隔线 */
+  .phase-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 16px;
+    padding: 0 20px;
+  }
+
+  .phase-divider::before,
+  .phase-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(100,116,139,0.3), transparent);
+  }
+
+  .phase-divider .phase-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* 子步骤列表 */
+  .sub-steps {
+    margin-top: 8px;
+    padding-left: 2px;
+  }
+
+  .sub-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: #8a9bb0;
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+
+  .sub-step .bullet {
+    color: #475569;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* 横向三源检索 */
+  .triple-source {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .triple-source .node {
+    flex: 1;
+    min-width: 220px;
+    max-width: 340px;
+  }
+
+  /* 动画 */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .pulse { animation: pulse 2s infinite; }
+
+  /* 合并连接线 */
+  .merge-indicator {
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    padding: 4px 0;
+  }
+
+  .merge-indicator .merge-icon {
+    font-size: 18px;
+    color: #475569;
+  }
+
+  /* 全局注释 */
+  .global-note {
+    max-width: 800px;
+    margin: 0 auto 20px;
+    padding: 12px 16px;
+    background: rgba(37,99,235,0.06);
+    border: 1px dashed rgba(37,99,235,0.2);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #7b8fa3;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* 模式选择分支 */
+  .mode-branch {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .mode-branch::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 1px;
+    background: rgba(245,158,11,0.2);
+  }
+
+  .mode-col {
+    flex: 1;
+    max-width: 480px;
+    min-width: 300px;
+  }
+
+  /* 页脚 */
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: #475569;
+    font-size: 12px;
+  }
+
+  /* 宽屏微调 */
+  @media (max-width: 768px) {
+    .branch-row, .triple-source, .mode-branch {
+      flex-direction: column;
+      align-items: center;
+    }
+    .branch-row .node, .triple-source .node, .mode-col {
+      max-width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧠 CaseAI Expert — 主要逻辑流程图</h1>
+  <p class="subtitle">ER Case 合规咨询处理系统 · 七步分析法 + 多源检索 + 精算引擎</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div>处理步骤</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#b45309"></div>判断/决策</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#065f46"></div>数据源</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>输出</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#059669"></div>开始/结束</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>阻断</div>
+</div>
+
+<div class="flow-container">
+
+  <!-- ==================== 阶段0：触发与初始化 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 0 · 触发与 FAQ 前置判断</span>
+  </div>
+
+  <!-- 开始节点 -->
+  <div class="step-row">
+    <div class="node start">
+      <div class="node-title">🚀 用户输入问题 / Case 描述</div>
+      <div class="node-desc">触发关键词命中：case分析、合规咨询、劳动纠纷、解除合同、违纪处理...</div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <!-- FAQ 前置判断 -->
+  <div class="step-row">
+    <div class="node process highlight" style="max-width: 520px; margin: 0 auto;">
+      <div class="node-badge badge-blue">🔎 FAQ 前置检索</div>
+      <div class="node-title">检索 FAQ 知识库</div>
+      <div class="node-desc">收到用户输入后，<strong>首先</strong>在 FAQ 知识库（<code>references/faq/</code>）中进行关键词和语义匹配，检查是否已有现成的标准化回答。</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet">●</span> 搜索 FAQ 文件目录，按关键词 + 问题分类匹配</div>
+        <div class="sub-step"><span class="bullet">●</span> 判断匹配度：是否属于高频常见问题且有明确标准答案</div>
+      </div>
+      <div class="node-tools">
+        <span class="tool-tag search">search_content → faq/</span>
+        <span class="tool-tag read">read_file</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector decision"><div class="arrow"></div></div>
+
+  <!-- FAQ 判断节点 -->
+  <div class="step-row">
+    <div class="node decision">
+      <div class="node-badge badge-amber">◆ FAQ 前置判断</div>
+      <div class="node-title">FAQ 知识库能否直接回答该问题？</div>
+    </div>
+  </div>
+
+  <div class="connector decision" style="height: 20px;"><div class="arrow" style="height:20px;"></div></div>
+
+  <div class="mode-branch">
+    <div class="mode-col">
+      <div class="branch-label"><span class="no">❌ FAQ 无法覆盖 → 进入七步分析法</span></div>
+      <div class="node-desc" style="text-align:center; font-size:12px; color:#64748b; margin-top:4px;">问题涉及具体 case 事实、需要个性化分析、<br>或 FAQ 无匹配/匹配度不足</div>
+    </div>
+    <div class="mode-col">
+      <div class="branch-label"><span class="yes">✅ FAQ 可直接回答</span></div>
+      <div class="node output" style="max-width:100%;">
+        <div class="node-badge badge-purple">⚡ FAQ 快速回答</div>
+        <div class="node-title">直接输出 FAQ 标准答案</div>
+        <div class="node-desc">
+          <strong>输出内容</strong>：标准答案 + 法律依据 + 注意事项<br>
+          <strong>适用场景</strong>：高频常见问题，如"经济补偿N+1怎么算"、"试用期最长多久"、"三期员工能否解除"等<br><br>
+          <span style="color:#34d399;">✅ 无需走七步分析法，流程结束</span><br>
+          <span style="color:#94a3b8;">如用户对 FAQ 回答不满意或需要深入分析，可追问进入完整流程</span>
+        </div>
+        <div class="node-tools">
+          <span class="tool-tag read">read_file → faq/</span>
+          <span class="tool-tag fetch">web_fetch（可选，验证时效）</span>
+        </div>
+      </div>
+      <div class="connector" style="height:24px;"><div class="arrow" style="height:24px;"></div></div>
+      <div class="step-row">
+        <div class="node end" style="max-width: 240px;">
+          <div class="node-title">✅ 回答完毕</div>
+          <div class="node-desc">用户可追问进入完整流程</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <!-- 前置动作：加载ER原则 -->
+  <div class="step-row">
+    <div class="node process highlight" style="max-width: 520px; margin: 0 auto;">
+      <div class="node-badge badge-red">⚠️ 最高优先级 · 前置动作</div>
+      <div class="node-title">加载集团 ER 处理核心原则</div>
+      <div class="node-desc">FAQ 无法回答，需要完整分析时，在进入七步法之前<strong>必须首先执行</strong>。读取 <code>references/er_principles.md</code>，所有后续方案必须通过 ER 原则合规检查。</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet">●</span> 10条核心原则：避免官司、注重形象、禁止威胁、建议录音、双人在场...</div>
+        <div class="sub-step"><span class="bullet">●</span> 违反原则的方案<strong style="color:#f87171;">不得输出</strong></div>
+      </div>
+      <div class="node-tools">
+        <span class="tool-tag read">read_file → er_principles.md</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 阶段1：信息澄清 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 1 · 信息澄清（Step 1）</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node process highlight" style="max-width: 520px; margin: 0 auto;">
+      <div class="node-badge badge-blue">STEP 1</div>
+      <div class="node-title">🔍 关键信息澄清</div>
+      <div class="node-desc">⚠️ <strong>先澄清再分析</strong> — 执行信息完整性检查矩阵</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet" style="color:#f87171;">🔴</span> <strong>阻断级</strong>：工作城市、入职日期、月工资、合同类型、事件经过、特殊状态</div>
+        <div class="sub-step"><span class="bullet" style="color:#fbbf24;">🟡</span> <strong>重要级</strong>：年龄、已采取行动、证据情况</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector decision"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node decision">
+      <div class="node-badge badge-amber">◆ 信息完整性检查</div>
+      <div class="node-title">🔴 阻断级信息是否完整？</div>
+    </div>
+  </div>
+
+  <div class="connector decision" style="height: 20px;"><div class="arrow" style="height:20px;"></div></div>
+
+  <div class="branch-row">
+    <div>
+      <div class="branch-label"><span class="no">❌ 缺失阻断级信息</span></div>
+      <div class="node process" style="border-color: #dc2626;">
+        <div class="node-badge badge-red">⛔ 暂停分析</div>
+        <div class="node-title">向用户追问缺失信息</div>
+        <div class="node-desc">一次性列出所有缺失的阻断级信息，避免来回追问。可给出初步方向提示（标注"待确认后调整"）</div>
+      </div>
+      <div class="loop-indicator">
+        <span class="loop-icon">↩️</span>
+        <span>等待用户补充 → 回到 Step 1</span>
+      </div>
+    </div>
+    <div>
+      <div class="branch-label"><span class="yes">✅ 信息充分（或仅缺重要级）</span></div>
+      <div class="node process">
+        <div class="node-badge badge-green">继续</div>
+        <div class="node-title">进入 Step 2</div>
+        <div class="node-desc">🟡 重要级缺失时：继续分析，但在报告中<strong>醒目标注假设条件</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 阶段2：信息结构化 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 2 · 信息采集与结构化（Step 2）</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node process" style="max-width: 520px; margin: 0 auto;">
+      <div class="node-badge badge-blue">STEP 2</div>
+      <div class="node-title">📋 Case 信息采集与结构化</div>
+      <div class="node-desc">将用户描述提取为结构化信息矩阵</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet">●</span> 基本信息（姓名/代号、岗位、入职日、合同期限、城市）</div>
+        <div class="sub-step"><span class="bullet">●</span> 薪酬信息（基本工资、绩效、津贴、年终奖）</div>
+        <div class="sub-step"><span class="bullet">●</span> Case 分类 → A~H 分类体系（可多选，标注主/副分类）</div>
+        <div class="sub-step"><span class="bullet">●</span> 核心事实、当前状态、诉求目标、已采取行动、关键证据</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 阶段3：多源检索 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 3 · 多源政策检索与匹配（Step 3） — 核心检索引擎</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="global-note">
+    ⚡ 三个知识源<strong>并行检索</strong>，综合匹配 case 涉及的法律条款、公司制度和历史案例
+  </div>
+
+  <div class="triple-source">
+    <!-- 源1 -->
+    <div class="node datasource">
+      <div class="node-badge badge-green">源1 · 外部法规政策</div>
+      <div class="node-title">🏛️ 双通道法规检索</div>
+      <div class="node-desc">
+        <strong>通道A：北大法宝</strong>（web_fetch 实时搜索）<br>
+        → pkulaw.com + labor.pkulaw.cn<br><br>
+        <strong>通道B：第二政策源 API</strong>（REST API 调用）<br>
+        → 付费法律数据库接口<br><br>
+        <strong>通道C：本地法条缓存</strong>（兜底）<br>
+        → external_policies/ + law_quick_reference.md
+      </div>
+      <div class="node-tools">
+        <span class="tool-tag fetch">web_fetch</span>
+        <span class="tool-tag read">read_file</span>
+      </div>
+    </div>
+
+    <!-- 源2 -->
+    <div class="node datasource">
+      <div class="node-badge badge-green">源2 · 公司内部制度</div>
+      <div class="node-title">🏢 hihr 平台制度检索</div>
+      <div class="node-desc">
+        <strong>方式A：MCP 工具</strong>（推荐，实时获取）<br>
+        → mcp__hihr_search / get_policy<br>
+        ⚠️ 禁止用 web_fetch 访问 hihr<br><br>
+        <strong>方式B：本地文件</strong>（兜底）<br>
+        → internal_policies/ 目录<br><br>
+        <span style="color:#f87171;">MCP 未配置且本地无文件 → 提醒用户导出</span>
+      </div>
+      <div class="node-tools">
+        <span class="tool-tag mcp">mcp__hihr_*</span>
+        <span class="tool-tag search">search_content</span>
+        <span class="tool-tag read">read_file</span>
+      </div>
+    </div>
+
+    <!-- 源3 -->
+    <div class="node datasource">
+      <div class="node-badge badge-green">源3 · 私人案例库</div>
+      <div class="node-title">📁 历史案例检索</div>
+      <div class="node-desc">
+        <strong>按关键词搜索</strong>案例库目录<br>
+        → case_library/*.md<br><br>
+        <strong>匹配维度</strong>：case类型代号（B3等）、<br>
+        城市、标签（#协商解除）、关键情节<br><br>
+        <span style="color:#94a3b8;">无匹配案例 → 告知用户，建议后续入库</span>
+      </div>
+      <div class="node-tools">
+        <span class="tool-tag search">search_content</span>
+        <span class="tool-tag read">read_file</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="merge-indicator">
+    <div class="merge-icon">⬇ 汇聚</div>
+  </div>
+
+  <!-- ==================== 阶段4：风险评估 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 4 · 法律风险评估（Step 4）</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node process" style="max-width: 520px; margin: 0 auto;">
+      <div class="node-badge badge-blue">STEP 4</div>
+      <div class="node-title">⚖️ 法律风险评估矩阵</div>
+      <div class="node-desc">基于检索到的政策，对 case 进行六维风险评估</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet">📊</span> 法律合规性 [高/中/低]</div>
+        <div class="sub-step"><span class="bullet">📊</span> 证据充分性 [高/中/低]</div>
+        <div class="sub-step"><span class="bullet">📊</span> 程序正当性 [高/中/低]</div>
+        <div class="sub-step"><span class="bullet">📊</span> 仲裁败诉风险 [高/中/低]</div>
+        <div class="sub-step"><span class="bullet">📊</span> 经济成本风险 [高/中/低]</div>
+        <div class="sub-step"><span class="bullet">📊</span> 声誉影响风险 [高/中/低]</div>
+      </div>
+      <div class="node-desc" style="margin-top: 8px;">每个风险维度必须给出<strong>具体依据</strong>（引用法条/判例/制度条款）</div>
+    </div>
+  </div>
+
+  <!-- ==================== 阶段5：方案设计 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 5 · 处理方案设计（Step 5） — 含赔偿精算引擎</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node process highlight" style="max-width: 560px; margin: 0 auto;">
+      <div class="node-badge badge-blue">STEP 5</div>
+      <div class="node-title">📝 处理方案设计（至少2个方案）</div>
+      <div class="node-desc">基于风险评估，设计推荐方案 + 备选方案</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet">●</span> 方案概述 + 法律依据（具体法条号+原文）</div>
+        <div class="sub-step"><span class="bullet">●</span> 操作步骤（时间线：谁做、做什么、什么时间）</div>
+        <div class="sub-step"><span class="bullet">●</span> 关键话术（可说/不可说的边界）</div>
+        <div class="sub-step"><span class="bullet">●</span> 证据清单 + 风险提示</div>
+        <div class="sub-step"><span class="bullet">💰</span> <strong style="color:#fbbf24;">成本估算 → 触发赔偿精算引擎</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector decision"><div class="arrow"></div></div>
+
+  <!-- 精算引擎 -->
+  <div class="step-row">
+    <div class="node decision">
+      <div class="node-badge badge-amber">◆ 是否涉及经济赔偿/补偿？</div>
+      <div class="node-title">方案是否需要金额计算？</div>
+    </div>
+  </div>
+
+  <div class="connector decision" style="height: 20px;"><div class="arrow" style="height:20px;"></div></div>
+
+  <div class="branch-row">
+    <div>
+      <div class="branch-label"><span class="yes">✅ 涉及金额 → 启动精算</span></div>
+      <div class="node process" style="border-color: #fbbf24;">
+        <div class="node-badge badge-amber">💰 赔偿精算引擎</div>
+        <div class="node-title">五步精算流程</div>
+        <div class="node-desc">
+          <strong>Step A</strong> 信息收集 — 月工资、入职日期、年龄、城市...<br>
+          <strong>Step B</strong> 基数确认 — 12个月税前均薪 + 社平3倍封顶<br>
+          <strong>Step C</strong> 年限计算 — 入职→解除，分段规则<br>
+          <strong>Step D</strong> 公式计算 — N / N+1 / 2N / N+X<br>
+          <strong>Step E</strong> 输出完整计算过程<br><br>
+          <span style="color:#f87171;">⛔ 禁止在工资未知时编造数字</span>
+        </div>
+        <div class="node-tools">
+          <span class="tool-tag read">compensation_calculator.md</span>
+          <span class="tool-tag fetch">web_fetch（查社平数据）</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="branch-label"><span class="no">不涉及金额</span></div>
+      <div class="node process" style="opacity: 0.7;">
+        <div class="node-badge badge-gray">跳过精算</div>
+        <div class="node-title">直接进入 Step 6</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 阶段6：案例参考 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 6 · 相似案例参考（Step 6）</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node process" style="max-width: 520px; margin: 0 auto;">
+      <div class="node-badge badge-blue">STEP 6</div>
+      <div class="node-title">📋 相似案例参考</div>
+      <div class="node-desc">从私人案例库中检索并呈现最相似的 1-3 个历史案例</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet">●</span> 相似度评级 ★★★★★</div>
+        <div class="sub-step"><span class="bullet">●</span> 案情摘要 → 处理方式 → 最终结果 → 经验教训</div>
+        <div class="sub-step"><span class="bullet">●</span> 无相似案例 → 告知用户，建议结案后入库</div>
+      </div>
+      <div class="node-tools">
+        <span class="tool-tag search">search_content → case_library/</span>
+        <span class="tool-tag read">read_file</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 阶段7：结构化输出 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">阶段 7 · 输出结构化报告（Step 7）</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node output" style="max-width: 560px; margin: 0 auto;">
+      <div class="node-badge badge-purple">STEP 7 · 最终输出</div>
+      <div class="node-title">📄 Case 处理意见书</div>
+      <div class="node-desc">按 <code>output_template.md</code> 格式输出完整意见书</div>
+      <div class="sub-steps">
+        <div class="sub-step"><span class="bullet">📌</span> Case 概览（分类、员工信息、核心事实）</div>
+        <div class="sub-step"><span class="bullet">⚖️</span> 法律风险评估矩阵</div>
+        <div class="sub-step"><span class="bullet">📝</span> 处理方案（推荐 + 备选 + 成本对比）</div>
+        <div class="sub-step"><span class="bullet">💰</span> 经济补偿/赔偿金精算明细</div>
+        <div class="sub-step"><span class="bullet">📋</span> 相似案例参考</div>
+        <div class="sub-step"><span class="bullet" style="color:#34d399;">✅</span> <strong style="color:#34d399;">ER 原则合规检查表</strong>（10项逐一核对）</div>
+        <div class="sub-step"><span class="bullet">📅</span> 政策检索日期 + 后续跟踪清单</div>
+      </div>
+      <div class="node-tools">
+        <span class="tool-tag read">read_file → output_template.md</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 后续阶段 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">后续 · 追问 / 入库 / 闭环</span>
+  </div>
+
+  <div class="connector"><div class="arrow"></div></div>
+
+  <div class="step-row">
+    <div class="node decision">
+      <div class="node-badge badge-amber">◆ 用户后续操作</div>
+      <div class="node-title">用户选择下一步？</div>
+    </div>
+  </div>
+
+  <div class="connector decision" style="height: 20px;"><div class="arrow" style="height:20px;"></div></div>
+
+  <div class="branch-row">
+    <div>
+      <div class="branch-label"><span style="background:rgba(59,130,246,0.2); color:#60a5fa; font-size:12px; font-weight:600; padding:2px 12px; border-radius:10px;">追问/调整</span></div>
+      <div class="node process">
+        <div class="node-badge badge-blue">深入讨论</div>
+        <div class="node-title">🔄 针对特定方案深入</div>
+        <div class="node-desc">用户可以对任一方案追问细节、调整参数、修改假设条件</div>
+      </div>
+      <div class="loop-indicator">
+        <span class="loop-icon">↩️</span>
+        <span>回到 Step 5 调整方案</span>
+      </div>
+    </div>
+    <div>
+      <div class="branch-label"><span style="background:rgba(5,150,105,0.2); color:#34d399; font-size:12px; font-weight:600; padding:2px 12px; border-radius:10px;">说"入库"</span></div>
+      <div class="node process" style="border-color: #059669;">
+        <div class="node-badge badge-green">📥 案例入库</div>
+        <div class="node-title">案例写入私人案例库</div>
+        <div class="node-desc">
+          1. 读取 <code>case_entry_template.md</code> 模板<br>
+          2. 整理案例信息填入模板<br>
+          3. 保存到 <code>case_library/</code><br>
+          4. 命名：YYYY-MM-DD_案例简述.md
+        </div>
+        <div class="node-tools">
+          <span class="tool-tag read">read_file</span>
+          <span class="tool-tag write">write_to_file</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="branch-label"><span style="background:rgba(100,116,139,0.2); color:#94a3b8; font-size:12px; font-weight:600; padding:2px 12px; border-radius:10px;">结束</span></div>
+      <div class="node end">
+        <div class="node-title">✅ Case 处理完毕</div>
+        <div class="node-desc">建议用户后续入库</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 12条分析规则 ==================== -->
+  <div class="phase-divider">
+    <span class="phase-label">贯穿全流程 · 12 条分析规则</span>
+  </div>
+
+  <div class="step-row">
+    <div class="node process" style="max-width: 800px; margin: 0 auto; border-color: #475569;">
+      <div class="node-badge badge-gray">📏 贯穿所有步骤的规则约束</div>
+      <div class="node-title" style="font-size: 14px;">12 条个性化专家准则（每个步骤的输出都必须满足）</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 24px; margin-top: 10px;">
+        <div class="sub-step"><span class="bullet" style="color:#f87171;">①</span> 合规底线优先 — 永不建议违法操作</div>
+        <div class="sub-step"><span class="bullet" style="color:#fbbf24;">②</span> 地域差异化 — 按城市适用当地口径</div>
+        <div class="sub-step"><span class="bullet" style="color:#60a5fa;">③</span> 证据思维贯穿 — 每建议都说明需什么证据</div>
+        <div class="sub-step"><span class="bullet" style="color:#34d399;">④</span> 成本量化精算 — 先收集信息后精算，禁止编造</div>
+        <div class="sub-step"><span class="bullet" style="color:#c084fc;">⑤</span> 程序正义优先 — 完整程序步骤+时间节点</div>
+        <div class="sub-step"><span class="bullet" style="color:#fb923c;">⑥</span> 双方利益平衡 — 非纯甲方视角</div>
+        <div class="sub-step"><span class="bullet" style="color:#f87171;">⑦</span> 时效敏感 — 提醒仲裁1年时效等关键节点</div>
+        <div class="sub-step"><span class="bullet" style="color:#fbbf24;">⑧</span> 文档化留痕 — 每步操作形成书面记录</div>
+        <div class="sub-step"><span class="bullet" style="color:#60a5fa;">⑨</span> 升级预判 — 评估协商→仲裁→诉讼→媒体路径</div>
+        <div class="sub-step"><span class="bullet" style="color:#34d399;">⑩</span> 输出权威性 — 引用具体条款号+版本日期</div>
+        <div class="sub-step"><span class="bullet" style="color:#c084fc;">⑪</span> 保密合规 — 脱敏处理，保护个人信息</div>
+        <div class="sub-step"><span class="bullet" style="color:#fb923c;">⑫</span> 闭环跟踪 — 后续跟踪清单+建议入库</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  CaseAI Expert Skill · 流程图 · 生成于 2026-03-30
+</div>
+
+</body>
+</html>
