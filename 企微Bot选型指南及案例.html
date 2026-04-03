@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企微Bot选型指南及案例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            background: #f3f5f8;
+            color: #1d2129;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ========== 全局容器 ========== */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px 48px;
+        }
+
+        /* ========== Header — 全宽腾讯蓝 ========== */
+        .header {
+            background: linear-gradient(135deg, #003ba3 0%, #0052D9 40%, #1677ff 100%);
+            padding: 56px 40px 52px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 48px;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: 10%;
+            width: 80%;
+            height: 220%;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.08), transparent 70%);
+            pointer-events: none;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00b2ff, #0052D9, #a855f7, #0052D9, #00b2ff);
+        }
+        .header h1 {
+            font-size: 40px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        .header .subtitle {
+            font-size: 15px;
+            color: rgba(255,255,255,0.75);
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== Section Title ========== */
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1d2129;
+            margin: 48px 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title .icon {
+            font-size: 22px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8f0fe, #d5e3fc);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+        .section-title .line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #c7d6ed, transparent);
+            margin-left: 8px;
+        }
+
+        /* ========== 通用卡片 ========== */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,40,100,0.06);
+            transition: box-shadow 0.25s ease;
+        }
+        .card:hover {
+            box-shadow: 0 6px 24px rgba(0,40,100,0.1);
+        }
+
+        /* ========== 一句话特征 — 三张卡片 ========== */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+        .feature-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 26px 24px;
+            box-shadow: 0 2px 12px rgba(0,40,100,0.06);
+            border-top: 4px solid;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 28px rgba(0,40,100,0.12);
+        }
+        .feature-card.fc-blue { border-color: #0052D9; }
+        .feature-card.fc-green { border-color: #00a870; }
+        .feature-card.fc-purple { border-color: #8b5cf6; }
+        .feature-card .fc-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .feature-card .fc-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .fc-blue .fc-icon { background: #e8f0fe; }
+        .fc-green .fc-icon { background: #e8f8f0; }
+        .fc-purple .fc-icon { background: #f3edff; }
+        .feature-card .fc-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1d2129;
+        }
+        .feature-card .fc-desc {
+            font-size: 13.5px;
+            color: #4e5969;
+            line-height: 1.8;
+            margin-bottom: 14px;
+        }
+        .feature-card .fc-highlight {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 8px;
+        }
+        .fc-blue .fc-highlight { background: #e8f0fe; color: #0052D9; }
+        .fc-green .fc-highlight { background: #e8f8f0; color: #008858; }
+        .fc-purple .fc-highlight { background: #f3edff; color: #7c3aed; }
+
+        /* ========== 对比表 ========== */
+        .comparison-wrapper {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,40,100,0.06);
+            overflow: hidden;
+            margin-bottom: 48px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+        .comparison-table thead th {
+            background: #1d2129;
+            color: #fff;
+            font-weight: 600;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 14px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+        .comparison-table thead th:first-child {
+            width: 120px;
+            background: #1d2129;
+        }
+        .comparison-table thead th:nth-child(2) { background: #0052D9; }
+        .comparison-table thead th:nth-child(3) { background: #00a870; }
+        .comparison-table thead th:nth-child(4) { background: #7c3aed; }
+
+        .comparison-table tbody td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f0f1f3;
+            line-height: 1.75;
+            vertical-align: top;
+        }
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .comparison-table tbody tr:hover {
+            background: #f7f9fc;
+        }
+        .comparison-table tbody td:first-child {
+            font-weight: 600;
+            color: #1d2129;
+            background: #f7f8fa;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+        .yes { color: #00a870; }
+        .no { color: #d03050; }
+        .warn { color: #d99000; }
+
+        /* ========== 优劣总结 ========== */
+        .pros-cons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+        .pc-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 26px 24px;
+            box-shadow: 0 2px 12px rgba(0,40,100,0.06);
+            border-top: 4px solid transparent;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .pc-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0,40,100,0.1);
+        }
+        .pc-card.blue-border { border-color: #0052D9; }
+        .pc-card.green-border { border-color: #00a870; }
+        .pc-card.purple-border { border-color: #8b5cf6; }
+
+        .pc-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1d2129;
+        }
+        .pc-card .pc-section {
+            margin-bottom: 14px;
+        }
+        .pc-card .pc-section:last-child {
+            margin-bottom: 0;
+        }
+        .pc-card .pc-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding: 3px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .pc-label.good { color: #008858; background: #e8f8f0; }
+        .pc-label.bad { color: #d03050; background: #fff0f0; }
+        .pc-card .pc-list {
+            list-style: none;
+            padding: 0;
+        }
+        .pc-card .pc-list li {
+            font-size: 13px;
+            color: #4e5969;
+            line-height: 1.8;
+            padding-left: 22px;
+            position: relative;
+        }
+        .pc-card .pc-list li::before {
+            position: absolute;
+            left: 0;
+            font-size: 11px;
+        }
+        .pc-card .pc-list.good-list li::before { content: '✅'; }
+        .pc-card .pc-list.bad-list li::before { content: '❌'; }
+
+        /* ========== S3 逻辑图 ========== */
+        .s3-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 8px 0;
+        }
+        .s3-left-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            flex-shrink: 0;
+            width: 220px;
+        }
+        .s3-left-item {
+            background: linear-gradient(135deg, #fef9c3, #fef3c7);
+            border: 1.5px solid #fbbf24;
+            border-radius: 10px;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #92400e;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .s3-left-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(251,191,36,0.25);
+        }
+        .s3-arrow {
+            flex-shrink: 0;
+            padding: 0 14px;
+            display: flex;
+            align-items: center;
+        }
+        .s3-arrow svg {
+            width: 40px;
+            height: 20px;
+        }
+        .s3-center {
+            background: linear-gradient(135deg, #e8f0fe 0%, #d5e3fc 100%);
+            border: 2.5px solid #0052D9;
+            border-radius: 18px;
+            padding: 28px 24px;
+            text-align: center;
+            flex-shrink: 0;
+            min-width: 180px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,82,217,0.12);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+        }
+        .s3-center:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 32px rgba(0,82,217,0.2);
+        }
+        .s3-right {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            min-width: 260px;
+        }
+        .s3-right-item {
+            border-radius: 14px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .s3-right-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        /* ========== 路线图 — 台阶式上升（轻量版） ========== */
+        .staircase {
+            position: relative;
+            padding: 20px 0 0;
+        }
+        .staircase-steps {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .stair-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        /* 台阶卡片 — 白底 + 彩色装饰 */
+        .stair-card {
+            width: 100%;
+            background: #fff;
+            border-radius: 14px;
+            position: relative;
+            overflow: visible;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: default;
+            border: 1px solid #e8ecf0;
+        }
+        .stair-card:hover {
+            transform: translateY(-5px);
+        }
+        /* 三阶段高度递增 */
+        .stair-item:nth-child(1) .stair-card { min-height: 230px; }
+        .stair-item:nth-child(2) .stair-card { min-height: 290px; }
+        .stair-item:nth-child(3) .stair-card { min-height: 350px; }
+
+        /* 顶部彩色条 */
+        .stair-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 14px 14px 0 0;
+        }
+        .stair-card.phase-1 { border-color: #ccdcf5; }
+        .stair-card.phase-1::before { background: linear-gradient(90deg, #0052D9, #5b8ff9); }
+        .stair-card.phase-1:hover { box-shadow: 0 8px 28px rgba(0,82,217,0.12); }
+
+        .stair-card.phase-2 { border-color: #ddd2f7; }
+        .stair-card.phase-2::before { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+        .stair-card.phase-2:hover { box-shadow: 0 8px 28px rgba(124,58,237,0.12); }
+
+        .stair-card.phase-3 { border-color: #f5e5c0; }
+        .stair-card.phase-3::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .stair-card.phase-3:hover { box-shadow: 0 8px 28px rgba(245,158,11,0.12); }
+
+        /* 台阶内容 */
+        .stair-content {
+            padding: 24px 22px 22px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+        .stair-phase-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            width: fit-content;
+            margin-bottom: 12px;
+        }
+        .phase-1 .stair-phase-tag { background: #e8f0fe; color: #0052D9; }
+        .phase-2 .stair-phase-tag { background: #f3edff; color: #7c3aed; }
+        .phase-3 .stair-phase-tag { background: #fef3c7; color: #b45309; }
+
+        .stair-phase-num {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1;
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            opacity: 0.06;
+        }
+        .phase-1 .stair-phase-num { color: #0052D9; }
+        .phase-2 .stair-phase-num { color: #7c3aed; }
+        .phase-3 .stair-phase-num { color: #f59e0b; }
+
+        .stair-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #1d2129;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .stair-focus {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            width: fit-content;
+        }
+        .phase-1 .stair-focus { background: #e8f0fe; color: #0052D9; }
+        .phase-2 .stair-focus { background: #f3edff; color: #7c3aed; }
+        .phase-3 .stair-focus { background: #fef3c7; color: #b45309; }
+
+        .stair-desc {
+            font-size: 13px;
+            color: #4e5969;
+            line-height: 1.9;
+            flex: 1;
+        }
+        .stair-desc strong {
+            font-weight: 700;
+        }
+        .phase-1 .stair-desc strong { color: #0052D9; }
+        .phase-2 .stair-desc strong { color: #7c3aed; }
+        .phase-3 .stair-desc strong { color: #b45309; }
+
+        .stair-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-top: 14px;
+            width: fit-content;
+        }
+        .stair-badge.done { background: #e8f8f0; color: #008858; }
+        .stair-badge.in-progress { background: #f3edff; color: #7c3aed; }
+        .stair-badge.plan { background: #fef3c7; color: #92400e; }
+
+        /* 阶段之间的上升连接箭头 */
+        .stair-connector {
+            position: absolute;
+            right: -16px;
+            bottom: 50%;
+            z-index: 10;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1.5px solid #e8ecf0;
+        }
+        .stair-connector svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 🚩 当前阶段小旗帜 */
+        .stair-flag {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(124,58,237,0.3);
+            white-space: nowrap;
+        }
+        .stair-flag::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 14px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #6d28d9;
+        }
+        .stair-flag-icon {
+            font-size: 13px;
+            animation: flagWave 1.5s ease-in-out infinite;
+        }
+        @keyframes flagWave {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* 底部进度指示 */
+        .stair-progress-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 24px;
+            padding: 14px 20px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e8ecf0;
+        }
+        .stair-progress-segment {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #f0f1f3;
+            overflow: hidden;
+        }
+        .stair-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+        .stair-progress-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #86909c;
+            white-space: nowrap;
+        }
+
+        /* ========== 合规专家左侧 ========== */
+        .compliance-left {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-width: 240px;
+        }
+        .compliance-item {
+            background: linear-gradient(135deg, #fef9c3, #fef3c7);
+            border: 1.5px solid #fbbf24;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #92400e;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.5;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .compliance-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(251,191,36,0.2);
+        }
+        .compliance-item .ci-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .compliance-item .ci-sub {
+            font-weight: 400;
+            font-size: 11px;
+            color: #a16207;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ========== Footer ========== */
+        .footer {
+            text-align: center;
+            color: #86909c;
+            font-size: 13px;
+            padding: 32px 0 16px;
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 1000px) {
+            .pros-cons { grid-template-columns: repeat(2, 1fr); }
+            .s3-flow { flex-wrap: wrap; justify-content: center; }
+            .staircase-steps { flex-direction: column; align-items: stretch; }
+            .stair-item:nth-child(1) .stair-card,
+            .stair-item:nth-child(2) .stair-card,
+            .stair-item:nth-child(3) .stair-card { min-height: auto; }
+            .stair-connector { display: none; }
+        }
+        @media (max-width: 600px) {
+            .pros-cons { grid-template-columns: 1fr; }
+            .comparison-wrapper { overflow-x: auto; }
+            .container { padding: 0 16px 32px; }
+            .header { padding: 36px 24px 32px; }
+            .header h1 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== Header — 全宽 ==================== -->
+    <div class="header">
+        <h1>企微 Bot 选型指南及案例</h1>
+        <p class="subtitle">三种企微 Bot 形态的能力对比、核心差异与场景选型建议<br>帮助你快速找到最适合业务场景的 Bot 载体</p>
+    </div>
+
+<div class="container">
+
+    <!-- ==================== 1. 一句话特征总结 ==================== -->
+    <div class="section-title">
+        <span class="icon">💡</span> 一句话特征总结
+        <span class="line"></span>
+    </div>
+    <div style="background: #fff; border-radius: 14px; padding: 20px 22px; margin-bottom: 48px; box-shadow: 0 1px 6px rgba(0,40,100,0.05); display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: #4e5969; line-height: 1.7;">
+            <span style="font-size: 18px; flex-shrink: 0;">🤖</span>
+            <span><strong style="color: #0052D9;">智能机器人</strong>：能被拉进群、能读文件、能流式输出打字、不能主动发文件消息，<strong style="color: #0052D9; background: #e8f0fe; padding: 1px 8px; border-radius: 4px;">适合拟人化数字员工场景</strong></span>
+        </div>
+        <div style="display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: #4e5969; line-height: 1.7;">
+            <span style="font-size: 18px; flex-shrink: 0;">📢</span>
+            <span><strong style="color: #00a870;">群机器人</strong>：能被拉进群、能发文件消息、不能读文件消息、不能流式输出，<strong style="color: #008858; background: #e8f8f0; padding: 1px 8px; border-radius: 4px;">适合群管理、群运营场景</strong></span>
+        </div>
+        <div style="display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: #4e5969; line-height: 1.7;">
+            <span style="font-size: 18px; flex-shrink: 0;">🎧</span>
+            <span><strong style="color: #7c3aed;">客服号</strong>：能对接坐席系统、能主动发消息给个人用户、能自定义展示门户、不支持流式输出，<strong style="color: #7c3aed; background: #f3edff; padding: 1px 8px; border-radius: 4px;">适合人工客服运营场景</strong></span>
+        </div>
+    </div>
+
+    <!-- ==================== 2. 核心能力对比表 ==================== -->
+    <div class="section-title">
+        <span class="icon">📊</span> 核心能力对比表
+        <span class="line"></span>
+    </div>
+
+    <div class="comparison-wrapper">
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>对比维度</th>
+                    <th>🤖 智能机器人</th>
+                    <th>📢 群机器人</th>
+                    <th>🎧 客服号</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>参考案例</td>
+                    <td>小Q同学</td>
+                    <td>MIA（智能管理助手）</td>
+                    <td>小T（连线HR）</td>
+                </tr>
+                <tr>
+                    <td>创建门槛</td>
+                    <td>
+                        <span class="warn">⚠ 企业版：需总监审批</span>（通讯录可检索）<br>
+                        <span class="yes">✅ 个人版：可自助创建</span>
+                    </td>
+                    <td><span class="yes">✅ 可自助创建，无需审批</span></td>
+                    <td><span class="warn">⚠ 支持走流程申请，需经审批流程</span></td>
+                </tr>
+                <tr>
+                    <td>配置管理</td>
+                    <td>
+                        <span class="yes">✅ 个人版：可自助管理回调</span><br>
+                        <span class="warn">⚠ 企业版：无法自助修改回调，需由企微bot管理员协助操作</span>
+                    </td>
+                    <td><span class="yes">✅ 可自助管理回调</span></td>
+                    <td><span class="no">❌ 无法自助修改回调</span></td>
+                </tr>
+                <tr>
+                    <td>触发与交互</td>
+                    <td>
+                        <span class="yes">✅</span> 单聊直接对话，群内通过 @触发<br>
+                        <span class="no">❌</span> 不能被客服号 @触发<br>
+                        <span class="warn">⚠</span> 企业版有交互范围限制，需要申请
+                    </td>
+                    <td>
+                        <span class="yes">✅</span> 可以被客服号 @触发<br>
+                        <span class="yes">✅</span> 单聊直接对话，群内通过 @触发<br>
+                        <span class="warn">⚠</span> 个人消息默认触发后只能推3条，需申请主动推送权限解除限制
+                    </td>
+                    <td>
+                        <span class="yes">✅</span> 可以被客服号 @触发<br>
+                        <span class="yes">✅</span> 单聊直接对话，群内通过 @触发<br>
+                        <span class="yes">✅</span> 可以由群内消息触发（监听）
+                    </td>
+                </tr>
+                <tr>
+                    <td>流式响应</td>
+                    <td><span class="yes">✅ 支持流式响应</span>（打字机效果，体验最佳）</td>
+                    <td><span class="no">❌ 不支持流式响应</span></td>
+                    <td><span class="no">❌ 不支持流式响应</span></td>
+                </tr>
+                <tr>
+                    <td>消息能力</td>
+                    <td>
+                        <span class="yes">✅</span> 支持思考折叠（仅一段）<br>
+                        <span class="yes">✅</span> 支持交互文本、图片、图文、文件、语音消息<br>
+                        <span class="yes">✅</span> 支持引用消息<br>
+                        <span class="yes">✅</span> 支持通过企微长链接模式触发主动推送消息<br>
+                        <span class="yes">✅</span> 支持Bot吊起创建/新增企微文档能力
+                    </td>
+                    <td>
+                        <span class="warn">⚠</span> 单条消息限制 4K 字符<br>
+                        <span class="no">❌</span> 不支持引用消息和文件消息<br>
+                        <span class="yes">✅</span> <strong>支持主动发送群消息</strong><br>
+                        <span class="warn">⚠</span> 推送个人消息需要申请主动推送权限（部门范围总监审批、BG或跨部门GM审批）
+                    </td>
+                    <td>
+                        <span class="warn">⚠</span> 单条消息限制 4K 字符<br>
+                        <span class="yes">✅</span> 支持交互文本、图片、图文、文件、语音消息<br>
+                        <span class="yes">✅</span> 支持引用消息<br>
+                        <span class="yes">✅</span> <strong>支持主动发送消息（群/个人均可）</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>入群方式</td>
+                    <td>
+                        <span class="warn">⚠</span> 企业版：权限范围内可通过通讯录检索后拉群<br>
+                        个人版：仅能通过创建入口添加到群聊
+                    </td>
+                    <td>
+                        <span class="yes">✅</span> 可发布到公司后，自由检索加入<br>
+                        未发布的机器人需要创建入口添加<br>
+                        <span class="no">❌</span> 入口很深：在群管理→消息推送
+                    </td>
+                    <td>
+                        <span class="yes">✅</span> 全公司可见，可直接拉入群聊
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================== 3. 核心优劣势总结 ==================== -->
+    <div class="section-title">
+        <span class="icon">⚖️</span> 核心优劣势总结
+        <span class="line"></span>
+    </div>
+
+    <div class="pros-cons">
+        <div class="pc-card blue-border">
+            <h4>🤖 智能机器人</h4>
+            <div class="pc-section">
+                <div class="pc-label good">✦ 优势</div>
+                <ul class="pc-list good-list">
+                    <li>唯一支持流式响应，长回答体验极佳</li>
+                    <li>支持思考折叠，展示推理过程</li>
+                    <li>富媒体消息类型齐全</li>
+                    <li>支持引用消息，上下文清晰</li>
+                </ul>
+            </div>
+            <div class="pc-section">
+                <div class="pc-label bad">✦ 劣势</div>
+                <ul class="pc-list bad-list">
+                    <li>主动推消息有限制</li>
+                    <li>不能管理群聊</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="pc-card green-border">
+            <h4>📢 群机器人</h4>
+            <div class="pc-section">
+                <div class="pc-label good">✦ 优势</div>
+                <ul class="pc-list good-list">
+                    <li>免审批，自助创建，门槛最低</li>
+                    <li>可自助管理回调，开发最灵活</li>
+                    <li>支持主动发送群消息</li>
+                    <li>可以被客服号 @触发联动</li>
+                </ul>
+            </div>
+            <div class="pc-section">
+                <div class="pc-label bad">✦ 劣势</div>
+                <ul class="pc-list bad-list">
+                    <li>不支持流式响应</li>
+                    <li>单条消息限4K字符</li>
+                    <li>不支持引用、文件类消息</li>
+                    <li>个人推送需申请权限</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="pc-card purple-border">
+            <h4>🎧 客服号</h4>
+            <div class="pc-section">
+                <div class="pc-label good">✦ 优势</div>
+                <ul class="pc-list good-list">
+                    <li>功能最全面（群管理+主动推送+监听）</li>
+                    <li>支持主动发消息（群/个人都行）</li>
+                    <li>可用接口管理群聊</li>
+                    <li>全公司可见，触达面最广</li>
+                </ul>
+            </div>
+            <div class="pc-section">
+                <div class="pc-label bad">✦ 劣势</div>
+                <ul class="pc-list bad-list">
+                    <li>不支持流式响应</li>
+                    <li>单条消息限4K字符</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 4. 与S3 AI智能体平台的关系 ==================== -->
+    <div class="section-title">
+        <span class="icon">🔗</span> 企微 Bot 与 S3 AI 智能体平台的关系
+        <span class="line"></span>
+    </div>
+
+    <div class="card" style="padding: 36px 40px; margin-bottom: 48px;">
+        <!-- 文字描述 -->
+        <div style="background: linear-gradient(135deg, #f5f8fd, #e8f0fe); border-radius: 12px; padding: 20px 26px; margin-bottom: 30px; border-left: 4px solid #0052D9;">
+            <p style="font-size: 14px; color: #4e5969; line-height: 2; margin: 0;">
+                S3 AI 智能体平台是一个业务 Bot 使用 S3 AI 能力的<strong style="color: #0052D9;">中枢</strong>，平台已和企微智能机器人打通，因此业务在平台上配置好的 Skills、Agent、MCP 工具及 Bot 配置，既可以通过平台默认自带的 <strong style="color: #0052D9;">H5 Bot 页面</strong>使用，也可以通过<strong style="color: #0052D9;">企微智能机器人</strong>直接使用。
+            </p>
+        </div>
+
+        <!-- 逻辑图 -->
+        <div class="s3-flow">
+            <!-- 左侧：能力输入 -->
+            <div class="s3-left-grid">
+                <div class="s3-left-item">⚡<br>Skills</div>
+                <div class="s3-left-item">🤖<br>Agent</div>
+                <div class="s3-left-item">🔧<br>MCP 工具</div>
+                <div class="s3-left-item">⚙️<br>Bot 配置</div>
+            </div>
+
+            <!-- 箭头 -->
+            <div class="s3-arrow">
+                <svg viewBox="0 0 40 20" fill="none">
+                    <defs>
+                        <linearGradient id="arrowGrad1" x1="0" y1="10" x2="40" y2="10" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#fbbf24"/>
+                            <stop offset="1" stop-color="#0052D9"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0 10 H32 L26 4" stroke="url(#arrowGrad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M32 10 L26 16" stroke="url(#arrowGrad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+
+            <!-- 中间：S3 中枢 -->
+            <div class="s3-center">
+                <div style="font-size: 36px; margin-bottom: 10px;">🧠</div>
+                <div style="font-size: 16px; font-weight: 800; color: #0052D9; letter-spacing: 0.5px;">S3 AI 智能体平台</div>
+                <div style="font-size: 12px; color: #5b8ff9; margin-top: 4px; font-weight: 500;">AI 能力中枢</div>
+                <a href="https://hrap.woa.com" target="_blank" style="display: inline-block; margin-top: 12px; padding: 7px 18px; background: linear-gradient(135deg, #0052D9, #003ba3); color: #fff; font-size: 12px; font-weight: 600; border-radius: 24px; text-decoration: none; letter-spacing: 0.3px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,82,217,0.3);">
+                    🔗 hrap.woa.com
+                </a>
+            </div>
+
+            <!-- 箭头 -->
+            <div class="s3-arrow">
+                <svg viewBox="0 0 40 20" fill="none">
+                    <defs>
+                        <linearGradient id="arrowGrad2" x1="0" y1="10" x2="40" y2="10" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#0052D9"/>
+                            <stop offset="1" stop-color="#5b8ff9"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0 10 H32 L26 4" stroke="url(#arrowGrad2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M32 10 L26 16" stroke="url(#arrowGrad2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+
+            <!-- 右侧：前端出口 -->
+            <div class="s3-right">
+                <div class="s3-right-item" style="background: linear-gradient(135deg, #e8f0fe, #d5e3fc); border: 1.5px solid #a3c4f7;">
+                    <span style="font-size: 26px; flex-shrink: 0;">💬</span>
+                    <div>
+                        <div style="font-size: 15px; font-weight: 700; color: #0052D9;">企微智能机器人</div>
+                        <div style="font-size: 12px; color: #6b7785; margin-top: 3px;">在企微中直接对话，支持流式输出</div>
+                    </div>
+                </div>
+                <div class="s3-right-item" style="background: linear-gradient(135deg, #e8f8f0, #d4f0e0); border: 1.5px solid #8ed8b5;">
+                    <span style="font-size: 26px; flex-shrink: 0;">🌐</span>
+                    <div>
+                        <div style="font-size: 15px; font-weight: 700; color: #008858;">H5 Bot 插件</div>
+                        <div style="font-size: 12px; color: #6b7785; margin-top: 3px;">支持系统级全屏接入，也支持小屏侧边栏</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 5. 以"合规AI专家"为例 ==================== -->
+    <div class="section-title">
+        <span class="icon">📋</span> 以"合规AI专家"为例
+        <span class="line"></span>
+    </div>
+
+    <!-- 5.1 项目规划路线图 — 台阶式上升 -->
+    <div class="card" style="padding: 40px 40px 36px; margin-bottom: 24px;">
+        <h3 style="font-size: 18px; font-weight: 700; color: #1d2129; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 36px; height: 36px; background: linear-gradient(135deg, #e8f0fe, #d5e3fc); border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px;">🚀</span>
+            项目规划路线图
+        </h3>
+        <p style="font-size: 14px; color: #86909c; margin-bottom: 36px; padding-left: 46px;">从知识整合到数字员工，AI 合规专家三步进化之路</p>
+
+        <!-- 台阶式路线图 -->
+        <div class="staircase">
+            <div class="staircase-steps">
+                <!-- 阶段一 — 最矮 -->
+                <div class="stair-item">
+                    <div class="stair-card phase-1">
+                        <div class="stair-content">
+                            <span class="stair-phase-num">01</span>
+                            <div class="stair-phase-tag">Phase 1</div>
+                            <div class="stair-title">从 0 → 1<br>引入 AI 能力</div>
+                            <div class="stair-focus">🎯 核心：知识整合 + 打通企微</div>
+                            <div class="stair-desc">
+                                <strong>整合合规知识内容</strong>，打通企微 Bot 通道，先上线第一版，从 0 到 1 把 <strong>AI 能力引入到合规业务</strong>中。
+                            </div>
+                            <div class="stair-badge done">✅ 3月已完成</div>
+                        </div>
+                    </div>
+                    <div class="stair-connector">
+                        <svg viewBox="0 0 16 16" fill="none"><path d="M8 12V4M8 4L4 8M8 4l4 4" stroke="#0052D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+
+                <!-- 阶段二 — 中等高（当前进行中 🚩） -->
+                <div class="stair-item">
+                    <!-- 小旗帜：标记当前阶段 -->
+                    <div class="stair-flag">
+                        <span class="stair-flag-icon">🚩</span> 当前阶段
+                    </div>
+                    <div class="stair-card phase-2">
+                        <div class="stair-content">
+                            <span class="stair-phase-num">02</span>
+                            <div class="stair-phase-tag">Phase 2 · 进行中</div>
+                            <div class="stair-title">从问询 → 数字员工</div>
+                            <div class="stair-focus">🎯 核心：Case Skill + 智能进化</div>
+                            <div class="stair-desc">
+                                建设合规 Case — <strong>单方解除场景 Skill</strong>，从简单的知识问询进化成<strong>数字员工</strong>，更加智能，但还缺乏<strong>活人感</strong>。
+                            </div>
+                            <div class="stair-badge in-progress">🔧 进行中</div>
+                        </div>
+                    </div>
+                    <div class="stair-connector">
+                        <svg viewBox="0 0 16 16" fill="none"><path d="M8 12V4M8 4L4 8M8 4l4 4" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+
+                <!-- 阶段三 — 最高 -->
+                <div class="stair-item">
+                    <div class="stair-card phase-3">
+                        <div class="stair-content">
+                            <span class="stair-phase-num">03</span>
+                            <div class="stair-phase-tag">Phase 3</div>
+                            <div class="stair-title">从工具人 → 活人感</div>
+                            <div class="stair-focus">🎯 核心：多场景 Skill + 拟人交互</div>
+                            <div class="stair-desc">
+                                丰富合规 Case <strong>其他场景 Skill</strong>，数字员工能力进一步提升覆盖更多场景，同时提升<strong>更拟人化的交互能力</strong>，更具有<strong>活人感</strong>。
+                            </div>
+                            <div class="stair-badge plan">📅 计划 6 月</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部进度条 -->
+            <div class="stair-progress-bar">
+                <div class="stair-progress-label">整体进度</div>
+                <div class="stair-progress-segment">
+                    <div class="stair-progress-fill" style="width: 100%; background: linear-gradient(90deg, #0052D9, #5b8ff9);"></div>
+                </div>
+                <div class="stair-progress-segment">
+                    <div class="stair-progress-fill" style="width: 30%; background: linear-gradient(90deg, #7c3aed, #a78bfa);"></div>
+                </div>
+                <div class="stair-progress-segment">
+                    <div class="stair-progress-fill" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+                </div>
+                <div class="stair-progress-label" style="color: #7c3aed; font-weight: 700;">30%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5.2 与智能体平台的关系 -->
+    <div class="card" style="padding: 36px 40px; margin-bottom: 24px;">
+        <h3 style="font-size: 18px; font-weight: 700; color: #1d2129; margin-bottom: 28px; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 36px; height: 36px; background: linear-gradient(135deg, #e8f0fe, #d5e3fc); border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px;">🔗</span>
+            合规AI专家建设与智能体平台的关系
+        </h3>
+        <div class="s3-flow">
+            <!-- 左侧：能力配置 -->
+            <div class="compliance-left">
+                <div class="compliance-item">
+                    <span class="ci-icon">🌐</span>
+                    <div>外部知识源 MCP 工具<span class="ci-sub">威科先行、北大法宝等</span></div>
+                </div>
+                <div class="compliance-item">
+                    <span class="ci-icon">🤖</span>
+                    <div>内部知识问询 Agent<span class="ci-sub">Hihr、8008、公文系统</span></div>
+                </div>
+                <div class="compliance-item">
+                    <span class="ci-icon">⚡</span>
+                    <div>单方解除 Case 处理 Skill</div>
+                </div>
+                <div class="compliance-item">
+                    <span class="ci-icon">⚙️</span>
+                    <div>合规专家拟人化 Bot 配置</div>
+                </div>
+                <div style="border: 1.5px dashed #d9d9d9; border-radius: 12px; padding: 10px 16px; text-align: center; color: #b0b0b0; font-size: 12px; font-weight: 500; background: #fafafa;">
+                    ＋ 更多能力可叠加 ...
+                </div>
+            </div>
+
+            <!-- 箭头 -->
+            <div class="s3-arrow">
+                <svg viewBox="0 0 40 20" fill="none">
+                    <defs>
+                        <linearGradient id="arrowGrad3" x1="0" y1="10" x2="40" y2="10" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#fbbf24"/>
+                            <stop offset="1" stop-color="#0052D9"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0 10 H32 L26 4" stroke="url(#arrowGrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M32 10 L26 16" stroke="url(#arrowGrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+
+            <!-- 中间：S3 中枢 -->
+            <div class="s3-center">
+                <div style="font-size: 36px; margin-bottom: 10px;">🧠</div>
+                <div style="font-size: 16px; font-weight: 800; color: #0052D9; letter-spacing: 0.5px;">S3 AI 智能体平台</div>
+                <div style="font-size: 12px; color: #5b8ff9; margin-top: 4px; font-weight: 500;">AI 能力中枢</div>
+                <a href="https://hrap.woa.com" target="_blank" style="display: inline-block; margin-top: 12px; padding: 7px 18px; background: linear-gradient(135deg, #0052D9, #003ba3); color: #fff; font-size: 12px; font-weight: 600; border-radius: 24px; text-decoration: none; letter-spacing: 0.3px; box-shadow: 0 4px 12px rgba(0,82,217,0.3);">
+                    🔗 hrap.woa.com
+                </a>
+            </div>
+
+            <!-- 箭头 -->
+            <div class="s3-arrow">
+                <svg viewBox="0 0 40 20" fill="none">
+                    <defs>
+                        <linearGradient id="arrowGrad4" x1="0" y1="10" x2="40" y2="10" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#0052D9"/>
+                            <stop offset="1" stop-color="#5b8ff9"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0 10 H32 L26 4" stroke="url(#arrowGrad4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M32 10 L26 16" stroke="url(#arrowGrad4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+
+            <!-- 右侧：企微Bot -->
+            <div style="display: flex; flex-direction: column; gap: 12px; flex: 1; min-width: 240px; justify-content: center;">
+                <div class="s3-right-item" style="background: linear-gradient(135deg, #e8f0fe, #d5e3fc); border: 1.5px solid #a3c4f7;">
+                    <span style="font-size: 28px; flex-shrink: 0;">💬</span>
+                    <div>
+                        <div style="font-size: 15px; font-weight: 700; color: #0052D9;">合规AI专家数字员工</div>
+                        <div style="font-size: 12px; color: #6b7785; margin-top: 4px;">企微智能机器人，可快速在组织架构获取</div>
+                    </div>
+                </div>
+                <div style="border: 1.5px dashed #d9d9d9; border-radius: 14px; padding: 14px 18px; text-align: center; color: #b0b0b0; font-size: 12px; font-weight: 500; background: #fafafa;">
+                    ＋ 拓展更多用户触点 ...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5.3 合规Skill建设思路 -->
+    <div class="card" style="padding: 36px 40px; margin-bottom: 48px;">
+        <h3 style="font-size: 18px; font-weight: 700; color: #1d2129; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 36px; height: 36px; background: linear-gradient(135deg, #e8f0fe, #d5e3fc); border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px;">⚡</span>
+            合规 Skill 建设思路
+        </h3>
+        <p style="font-size: 14.5px; color: #4e5969; line-height: 1.9; margin-bottom: 32px; padding-left: 46px;">
+            创造一份 Skill，业务最重要的事情是干什么？
+        </p>
+
+        <!-- 四步骤流程图 -->
+        <div style="display: flex; align-items: flex-start; gap: 0; position: relative;">
+
+            <!-- Step 1 -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative;">
+                <!-- 步骤编号圆圈 -->
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #0052D9, #003ba3); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,82,217,0.25); position: relative; z-index: 2;">1</div>
+                <!-- 标题 -->
+                <div style="font-size: 15px; font-weight: 800; color: #0052D9; margin-top: 14px; text-align: center;">明确 Skill 需求</div>
+                <!-- 内容卡片 -->
+                <div style="margin-top: 12px; background: linear-gradient(135deg, #f5f8fd, #e8f0fe); border: 1.5px solid #ccdcf5; border-radius: 14px; padding: 18px 16px; width: 100%; min-height: 200px;">
+                    <p style="font-size: 12.5px; color: #4e5969; line-height: 1.9; margin: 0 0 8px 0;">
+                        合规 Case 种类多，处理思路各异：
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px;">
+                        <span style="font-size: 11px; padding: 3px 10px; border-radius: 6px; background: #e8f0fe; color: #0052D9; font-weight: 600;">孕期解除</span>
+                        <span style="font-size: 11px; padding: 3px 10px; border-radius: 6px; background: #e8f0fe; color: #0052D9; font-weight: 600;">单方解除</span>
+                        <span style="font-size: 11px; padding: 3px 10px; border-radius: 6px; background: #e8f0fe; color: #0052D9; font-weight: 600;">聚众闹事</span>
+                        <span style="font-size: 11px; padding: 3px 10px; border-radius: 6px; background: #e8f0fe; color: #0052D9; font-weight: 600;">...</span>
+                    </div>
+                    <p style="font-size: 12.5px; color: #4e5969; line-height: 1.9; margin: 0;">
+                        <strong style="color: #0052D9;">先定优先级</strong>：当前单方解除最高频，优先复刻。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 连接箭头 1→2 -->
+            <div style="display: flex; align-items: center; padding-top: 16px; flex-shrink: 0;">
+                <svg width="36" height="20" viewBox="0 0 36 20" fill="none" style="display: block;">
+                    <defs><linearGradient id="skillArrow1" x1="0" y1="10" x2="36" y2="10" gradientUnits="userSpaceOnUse"><stop stop-color="#0052D9"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs>
+                    <path d="M0 10H28L22 4" stroke="url(#skillArrow1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M28 10L22 16" stroke="url(#skillArrow1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Step 2 -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(124,58,237,0.25); position: relative; z-index: 2;">2</div>
+                <div style="font-size: 15px; font-weight: 800; color: #7c3aed; margin-top: 14px; text-align: center;">提炼 Case 分析逻辑</div>
+                <!-- 重点标记 -->
+                <div style="margin-top: 4px; font-size: 11px; font-weight: 700; color: #d03050; background: #fff0f0; padding: 2px 10px; border-radius: 10px;">⭐ 重中之重</div>
+                <div style="margin-top: 8px; background: linear-gradient(135deg, #faf5ff, #f3edff); border: 1.5px solid #ddd2f7; border-radius: 14px; padding: 18px 16px; width: 100%; min-height: 200px;">
+                    <p style="font-size: 12.5px; color: #4e5969; line-height: 1.9; margin: 0 0 8px 0;">
+                        还原合规同学<strong style="color: #7c3aed;">真实处理流程</strong>：
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #7c3aed; font-weight: 700; flex-shrink: 0;">❓</span> 查哪些法律条款？
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #7c3aed; font-weight: 700; flex-shrink: 0;">❓</span> 了解员工哪些情况？
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #7c3aed; font-weight: 700; flex-shrink: 0;">❓</span> 是否报备法律部门？
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #7c3aed; font-weight: 700; flex-shrink: 0;">❓</span> 是否需要填写表格？
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; background: linear-gradient(135deg, #f3edff, #ede4ff); border-radius: 10px; padding: 10px 14px;">
+                        <p style="font-size: 12px; color: #7c3aed; line-height: 1.8; margin: 0; font-weight: 600;">
+                            💡 业务输出核心处理流程，是 Skill 的灵魂。
+                        </p>
+                    </div>
+                    <!-- 当前进度高亮 -->
+                    <div style="margin-top: 14px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 10px; padding: 12px 14px;">
+                        <div style="font-size: 11.5px; color: #fff; font-weight: 700; margin-bottom: 8px;">🚩 合规业务同学正在重点打磨此步骤</div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <a href="https://chrisluoli.github.io/chris-space/CaseAI-Expert-%E6%B5%81%E7%A8%8B%E5%9B%BE" target="_blank" style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #e8d5ff; text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#e8d5ff'">
+                                <span style="flex-shrink: 0;">📄</span> 合规AI专家 Skill 逻辑示例 →
+                            </a>
+                            <a href="https://doc.weixin.qq.com/doc/w3_AQgAFga9AOoCNC933DYBVQr0uE3Ll?scode=AJEAIQdfAAo0tvGCyFABkATAbdAFw" target="_blank" style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #e8d5ff; text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#e8d5ff'">
+                                <span style="flex-shrink: 0;">📄</span> 单方解除 Skill 主流程 →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 连接箭头 2→3 -->
+            <div style="display: flex; align-items: center; padding-top: 16px; flex-shrink: 0;">
+                <svg width="36" height="20" viewBox="0 0 36 20" fill="none" style="display: block;">
+                    <defs><linearGradient id="skillArrow2" x1="0" y1="10" x2="36" y2="10" gradientUnits="userSpaceOnUse"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+                    <path d="M0 10H28L22 4" stroke="url(#skillArrow2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M28 10L22 16" stroke="url(#skillArrow2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Step 3 -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(245,158,11,0.25); position: relative; z-index: 2;">3</div>
+                <div style="font-size: 15px; font-weight: 800; color: #b45309; margin-top: 14px; text-align: center;">Skill 工程与开发</div>
+                <div style="margin-top: 12px; background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1.5px solid #f5e5c0; border-radius: 14px; padding: 18px 16px; width: 100%; min-height: 200px;">
+                    <p style="font-size: 12.5px; color: #4e5969; line-height: 1.9; margin: 0 0 10px 0;">
+                        需<strong style="color: #b45309;">产研协同落地</strong>：
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #b45309; font-weight: 700; flex-shrink: 0;">🔧</span> 外部知识接口对接
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #b45309; font-weight: 700; flex-shrink: 0;">🔧</span> 用户语义动态参数解析
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #b45309; font-weight: 700; flex-shrink: 0;">🔧</span> 内外部知识冲突处理
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #4e5969; line-height: 1.7;">
+                            <span style="color: #b45309; font-weight: 700; flex-shrink: 0;">🔧</span> 先解析后执行流程设计
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 连接箭头 3→4 -->
+            <div style="display: flex; align-items: center; padding-top: 16px; flex-shrink: 0;">
+                <svg width="36" height="20" viewBox="0 0 36 20" fill="none" style="display: block;">
+                    <defs><linearGradient id="skillArrow3" x1="0" y1="10" x2="36" y2="10" gradientUnits="userSpaceOnUse"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#00a870"/></linearGradient></defs>
+                    <path d="M0 10H28L22 4" stroke="url(#skillArrow3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M28 10L22 16" stroke="url(#skillArrow3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Step 4 -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #00a870, #008858); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,168,112,0.25); position: relative; z-index: 2;">4</div>
+                <div style="font-size: 15px; font-weight: 800; color: #008858; margin-top: 14px; text-align: center;">上线验证</div>
+                <div style="margin-top: 12px; background: linear-gradient(135deg, #f0fdf6, #e8f8f0); border: 1.5px solid #a7e8c5; border-radius: 14px; padding: 18px 16px; width: 100%; min-height: 200px; display: flex; flex-direction: column; justify-content: center;">
+                    <p style="font-size: 13px; color: #008858; line-height: 1.9; margin: 0; font-weight: 600;">
+                        开放真实用户使用，收集反馈、持续迭代。
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== Footer ==================== -->
+    <div class="footer">
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: #fff; padding: 10px 24px; border-radius: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.04);">
+            <span style="font-size: 14px;">📄</span>
+            <span>企微 Bot 选型指南 · 基于 AgentHub 平台能力整理 · 2026年4月</span>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
