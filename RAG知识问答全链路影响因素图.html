@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 知识问答全链路 · 影响因素分解</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #f5f7fa;
+    color: #1e293b;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== 顶部标题 ===== */
+  .hero {
+    text-align: center;
+    padding: 50px 20px 20px;
+  }
+  .hero h1 {
+    font-size: 34px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2563eb, #7c3aed, #db2777);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .hero .subtitle {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  /* ===== 图例 ===== */
+  .legend {
+    max-width: 1100px;
+    margin: 20px auto 8px;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .legend-group {
+    flex: 1;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .legend-group + .legend-group {
+    border-left: 1px solid #e2e8f0;
+  }
+  .legend-group-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-group-title .provider-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .legend-group-title .provider-tag.platform {
+    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(168,85,247,0.1));
+    color: #6366f1;
+  }
+  .legend-group-title .provider-tag.biz {
+    background: linear-gradient(135deg, rgba(22,163,74,0.1), rgba(234,88,12,0.1));
+    color: #16a34a;
+  }
+  .legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #475569;
+  }
+  .legend-name {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .legend-name.mcp {
+    background: rgba(14,165,233,0.12);
+    border: 1.5px solid #0ea5e9;
+    color: #0284c7;
+  }
+  .legend-name.llm {
+    background: rgba(168,85,247,0.12);
+    border: 1.5px solid #a855f7;
+    color: #9333ea;
+  }
+  .legend-name.skill {
+    background: rgba(22,163,74,0.12);
+    border: 1.5px solid #16a34a;
+    color: #16a34a;
+  }
+  .legend-name.kb {
+    background: rgba(234,88,12,0.12);
+    border: 1.5px solid #ea580c;
+    color: #ea580c;
+  }
+
+  /* ===== 主链路容器 ===== */
+  .pipeline {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 30px 60px;
+    position: relative;
+  }
+
+  .pipeline::before {
+    display: none;
+  }
+
+  /* ===== 流程入口/出口 ===== */
+  .endpoint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 32px;
+    margin: 0 auto 16px;
+    width: fit-content;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
+  }
+  .endpoint.start {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1.5px solid #93c5fd;
+    color: #1d4ed8;
+    box-shadow: 0 2px 8px rgba(59,130,246,0.1);
+  }
+  .endpoint.end {
+    background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+    border: 1.5px solid #f9a8d4;
+    color: #be185d;
+    box-shadow: 0 2px 8px rgba(236,72,153,0.1);
+    margin-top: 16px;
+  }
+  .endpoint .icon { font-size: 22px; }
+
+  /* ===== 箭头 ===== */
+  .arrow-down {
+    text-align: center;
+    margin: 4px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ===== 环节卡片 ===== */
+  .stage-card {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto 10px;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff;
+  }
+  .stage-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  .stage-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 22px;
+    cursor: pointer;
+    user-select: none;
+    flex-wrap: wrap;
+  }
+  .stage-num {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 800;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .stage-title { flex: 1; min-width: 160px; }
+  .stage-title h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 2px;
+  }
+  .stage-title .en {
+    font-size: 11px;
+    font-weight: 400;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* 责任归属标签 */
+  .owner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .owner-badge.mcp {
+    background: rgba(14,165,233,0.08);
+    border: 1px solid rgba(14,165,233,0.3);
+    color: #0284c7;
+  }
+  .owner-badge.skill {
+    background: rgba(22,163,74,0.08);
+    border: 1px solid rgba(22,163,74,0.3);
+    color: #16a34a;
+  }
+  .owner-badge.llm {
+    background: rgba(168,85,247,0.08);
+    border: 1px solid rgba(168,85,247,0.3);
+    color: #9333ea;
+  }
+  .owner-badge.kb {
+    background: rgba(234,88,12,0.08);
+    border: 1px solid rgba(234,88,12,0.3);
+    color: #ea580c;
+  }
+
+  .stage-toggle {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f1f5f9;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  .stage-card.open .stage-toggle {
+    transform: rotate(180deg);
+  }
+
+  /* 卡片内容 */
+  .stage-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+  }
+  .stage-card.open .stage-body {
+    max-height: 1200px;
+  }
+  .stage-content {
+    padding: 0 22px 20px;
+  }
+
+  /* 两列布局 */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  /* 通用面板 */
+  .panel {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .panel h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #334155;
+  }
+  .panel h4 .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* 影响因素 */
+  .factor-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .factor-item:last-child { border-bottom: none; }
+  .factor-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .factor-text .fname {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2px;
+  }
+  .factor-text .fdesc {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  /* 丢分表现 */
+  .loss-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 12px;
+    color: #dc2626;
+    line-height: 1.5;
+  }
+  .loss-row::before { content: '✗'; font-weight: 700; color: #ef4444; flex-shrink: 0; margin-top: 1px; }
+
+  /* Skill/知识库 提升区域 */
+  .skill-boost {
+    background: linear-gradient(135deg, rgba(22,163,74,0.04), rgba(16,185,129,0.04));
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(22,163,74,0.15);
+  }
+  .skill-boost h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #16a34a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .boost-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 12px;
+    color: #15803d;
+    line-height: 1.5;
+  }
+  .boost-item::before { content: '▲'; font-weight: 700; color: #16a34a; flex-shrink: 0; margin-top: 1px; }
+
+  /* 不由此主体控制的提示 */
+  .no-control-note {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px dashed #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .no-control-note .nc-icon { font-size: 24px; opacity: 0.6; flex-shrink: 0; }
+  .no-control-note .nc-text { font-size: 12px; color: #64748b; line-height: 1.6; }
+  .no-control-note .nc-highlight { color: #475569; font-weight: 600; }
+
+  /* ===== 各环节颜色 ===== */
+  .stage-1 { border: 1px solid #bfdbfe; }
+  .stage-1 .stage-num { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+  .stage-1 .factor-icon { background: #eff6ff; color: #2563eb; }
+  .stage-1 .panel h4 .dot { background: #3b82f6; }
+
+  .stage-2 { border: 1px solid #a5f3fc; }
+  .stage-2 .stage-num { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+  .stage-2 .factor-icon { background: #ecfeff; color: #0891b2; }
+  .stage-2 .panel h4 .dot { background: #06b6d4; }
+
+  .stage-3 { border: 1px solid #c4b5fd; }
+  .stage-3 .stage-num { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+  .stage-3 .factor-icon { background: #f5f3ff; color: #7c3aed; }
+  .stage-3 .panel h4 .dot { background: #8b5cf6; }
+
+  .stage-4 { border: 1px solid #d8b4fe; }
+  .stage-4 .stage-num { background: linear-gradient(135deg, #9333ea, #a855f7); }
+  .stage-4 .factor-icon { background: #faf5ff; color: #9333ea; }
+  .stage-4 .panel h4 .dot { background: #a855f7; }
+
+  .stage-5 { border: 1px solid #f9a8d4; }
+  .stage-5 .stage-num { background: linear-gradient(135deg, #db2777, #ec4899); }
+  .stage-5 .factor-icon { background: #fdf2f8; color: #db2777; }
+  .stage-5 .panel h4 .dot { background: #ec4899; }
+
+  .stage-6 { border: 1px solid #fda4af; }
+  .stage-6 .stage-num { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+  .stage-6 .factor-icon { background: #fff1f2; color: #e11d48; }
+  .stage-6 .panel h4 .dot { background: #f43f5e; }
+
+  /* ===== 标签样式 ===== */
+  .tag-mcp {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(14,165,233,0.1);
+    color: #0284c7;
+    border: 1px solid rgba(14,165,233,0.25);
+  }
+  .tag-skill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(22,163,74,0.1);
+    color: #16a34a;
+    border: 1px solid rgba(22,163,74,0.25);
+  }
+  .tag-llm {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(168,85,247,0.1);
+    color: #9333ea;
+    border: 1px solid rgba(168,85,247,0.25);
+  }
+  .tag-kb {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(234,88,12,0.1);
+    color: #ea580c;
+    border: 1px solid rgba(234,88,12,0.25);
+  }
+
+  /* ===== 底部总览 ===== */
+  .summary-section {
+    max-width: 1100px;
+    margin: 36px auto 0;
+    padding: 28px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .summary-section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* 责任分配表 */
+  .resp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: visible;
+    border: 1px solid #e2e8f0;
+  }
+  .resp-table th {
+    padding: 12px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    letter-spacing: 0.5px;
+    background: #f8fafc;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .resp-table td {
+    padding: 12px 14px;
+    font-size: 12.5px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+    line-height: 1.6;
+    color: #334155;
+  }
+  .resp-table tr:last-child td { border-bottom: none; }
+  .resp-table .env { font-weight: 600; white-space: nowrap; }
+
+  /* 业务核心输出高亮列 — 默认隐藏，点击后显示 */
+  .resp-table th:nth-child(5) {
+    position: relative;
+    transition: all 0.35s ease;
+  }
+  .resp-table th:nth-child(6) {
+    transition: all 0.35s ease;
+  }
+
+  /* 激活态 */
+  .resp-table.biz-active th:nth-child(5),
+  .resp-table.biz-active th:nth-child(6) {
+    background: linear-gradient(135deg, rgba(22,163,74,0.06), rgba(234,88,12,0.06));
+  }
+  .resp-table.biz-active th:nth-child(5) {
+    border-left: 2px solid #16a34a;
+    border-top: 2px solid #16a34a;
+  }
+  .resp-table.biz-active th:nth-child(6) {
+    border-right: 2px solid #16a34a;
+    border-top: 2px solid #16a34a;
+  }
+  .resp-table.biz-active td:nth-child(5) {
+    border-left: 2px solid #16a34a;
+    background: rgba(22,163,74,0.02);
+  }
+  .resp-table.biz-active td:nth-child(6) {
+    border-right: 2px solid #16a34a;
+    background: rgba(234,88,12,0.02);
+  }
+  .resp-table.biz-active tr:last-child td:nth-child(5) {
+    border-bottom: 2px solid #16a34a;
+  }
+  .resp-table.biz-active tr:last-child td:nth-child(6) {
+    border-bottom: 2px solid #16a34a;
+  }
+
+  /* 标签默认隐藏 — 放在表格外部上方 */
+  .table-wrap {
+    position: relative;
+  }
+  .biz-label {
+    display: inline-block;
+    background: linear-gradient(135deg, #16a34a, #ea580c);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    position: absolute;
+    top: -14px;
+    right: 0;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    z-index: 3;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: all 0.35s ease;
+    pointer-events: none;
+  }
+  .resp-table.biz-active ~ .biz-label,
+  .table-wrap.biz-active .biz-label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 表格可点击的提示 */
+  .summary-section { cursor: pointer; }
+
+  /* ===== 底部 insight ===== */
+  .insight {
+    max-width: 1100px;
+    margin: 24px auto 50px;
+    padding: 28px 28px 24px;
+    background: linear-gradient(135deg, #eff6ff, #faf5ff, #fdf2f8);
+    border: 1px solid #c7d2fe;
+    border-radius: 14px;
+    text-align: center;
+  }
+  .insight-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #6d28d9;
+    margin-bottom: 6px;
+  }
+  .insight-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 20px;
+  }
+  .role-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .role-card {
+    border-radius: 12px;
+    padding: 18px 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+  }
+  .role-card .role-icon {
+    font-size: 28px;
+    margin-bottom: 2px;
+  }
+  .role-card .role-name {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+  .role-card .role-duty {
+    font-size: 12.5px;
+    color: #475569;
+    line-height: 1.6;
+  }
+  .role-card .role-metaphor {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  .role-card.mcp {
+    border: 1.5px solid rgba(14,165,233,0.3);
+    box-shadow: 0 2px 8px rgba(14,165,233,0.08);
+  }
+  .role-card.mcp .role-name { background: rgba(14,165,233,0.1); color: #0284c7; }
+  .role-card.mcp .role-metaphor { color: #0284c7; }
+  .role-card.llm {
+    border: 1.5px solid rgba(168,85,247,0.3);
+    box-shadow: 0 2px 8px rgba(168,85,247,0.08);
+  }
+  .role-card.llm .role-name { background: rgba(168,85,247,0.1); color: #9333ea; }
+  .role-card.llm .role-metaphor { color: #9333ea; }
+  .role-card.skill {
+    border: 1.5px solid rgba(22,163,74,0.3);
+    box-shadow: 0 2px 8px rgba(22,163,74,0.08);
+  }
+  .role-card.skill .role-name { background: rgba(22,163,74,0.1); color: #16a34a; }
+  .role-card.skill .role-metaphor { color: #16a34a; }
+  .role-card.kb {
+    border: 1.5px solid rgba(234,88,12,0.3);
+    box-shadow: 0 2px 8px rgba(234,88,12,0.08);
+  }
+  .role-card.kb .role-name { background: rgba(234,88,12,0.1); color: #ea580c; }
+  .role-card.kb .role-metaphor { color: #ea580c; }
+  .insight .g { color: #16a34a; font-weight: 600; }
+  .insight .c { color: #0284c7; font-weight: 600; }
+  .insight .p { color: #9333ea; font-weight: 600; }
+  .insight .o { color: #ea580c; font-weight: 600; }
+
+  /* ===== 响应式 ===== */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 22px; }
+    .two-col { grid-template-columns: 1fr; }
+    .owner-badge:not(:first-of-type) { display: none; }
+    .legend { flex-direction: column; gap: 0; }
+    .legend-group + .legend-group { border-left: none; border-top: 1px solid #e2e8f0; }
+    .role-cards { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- 标题 -->
+<div class="hero">
+  <h1>RAG 知识问答全链路 · 准确性影响因素分解</h1>
+  <div class="subtitle">
+    四个角色各管什么？—— <span style="color:#0284c7">MCP 知识分片召回工具</span> · <span style="color:#9333ea">大模型</span> · <span style="color:#16a34a">业务 Skill</span> · <span style="color:#ea580c">知识库</span>
+  </div>
+</div>
+
+<!-- 图例 -->
+<div class="legend">
+  <div class="legend-group">
+    <div class="legend-group-title">
+      <span class="provider-tag platform">🛠 智能体平台提供</span>
+    </div>
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="legend-name mcp">MCP 知识分片召回工具</span>
+        <span>— 知识切片、Embedding、检索召回</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-name llm">大模型</span>
+        <span>— 语义理解、推理、生成回答<span style="color:#94a3b8; font-size:12px; margin-left:4px">（仅可使用 S3 本地部署模型，与 Claude 等顶级模型存在能力差距）</span></span>
+      </div>
+    </div>
+  </div>
+  <div class="legend-group">
+    <div class="legend-group-title">
+      <span class="provider-tag biz">💼 业务提供</span>
+    </div>
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="legend-name skill">业务 Skill</span>
+        <span>— 角色设定、规则、输出规范</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-name kb">知识库</span>
+        <span>— 知识语料内容、覆盖度、结构质量<span style="color:#94a3b8; font-size:12px; margin-left:4px">（平台已支持连接 HIHR、8008 问答对、公文系统三大内容源）</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pipeline">
+
+  <!-- 起点 -->
+  <div class="endpoint start">
+    <span class="icon">👤</span> 用户提问
+  </div>
+
+  <div class="arrow-down">
+    <svg width="24" height="28" viewBox="0 0 24 28"><path d="M12 0 L12 22 M5 16 L12 24 L19 16" stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- ===== 环节 1：问题理解 ===== -->
+  <div class="stage-card stage-1 open" onclick="this.classList.toggle('open')">
+    <div class="stage-header">
+      <div class="stage-num">①</div>
+      <div class="stage-title">
+        <h3>问题理解</h3>
+        <span class="en">Query Understanding</span>
+      </div>
+      <span class="owner-badge llm">🧠 大模型</span>
+      <span class="owner-badge skill">📦 业务 Skill</span>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 5 L7 9 L11 5" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-content">
+        <div class="two-col">
+          <div class="panel">
+            <h4><span class="dot"></span> 影响因素</h4>
+            <div class="factor-item">
+              <div class="factor-icon">💬</div>
+              <div class="factor-text">
+                <div class="fname">用户表述模糊 <span class="tag-llm">大模型</span></div>
+                <div class="fdesc">口语化、缺少上下文，同一问题可能有多种理解方向，依赖大模型的语义理解能力</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🎯</div>
+              <div class="factor-text">
+                <div class="fname">意图识别准确性 <span class="tag-llm">大模型</span> <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">大模型做通用理解，Skill 定义业务触发场景和关键词表帮助精准路由</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🔄</div>
+              <div class="factor-text">
+                <div class="fname">多轮对话上下文 <span class="tag-llm">大模型</span></div>
+                <div class="fdesc">能否结合历史对话理解当前问题的完整语义</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📋</div>
+              <div class="factor-text">
+                <div class="fname">信息采集与追问 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">Skill 定义"先问清楚什么再回答"的采集规则，避免在信息不足时猜测作答</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🏷️</div>
+              <div class="factor-text">
+                <div class="fname">业务术语映射 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">Skill 中定义口语化表述到专业概念的映射，降低理解偏差</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h4><span class="dot" style="background:#ef4444"></span> 常见错误表现</h4>
+            <div class="loss-row">答非所问 — 理解偏了方向，回答不是用户想要的</div>
+            <div class="loss-row">回答了用户没问的问题 — 过度发散</div>
+            <div class="loss-row">每轮对话"失忆" — 无法关联上下文</div>
+            <div class="loss-row">信息不足就猜测作答 — 缺少追问机制导致答错</div>
+          </div>
+        </div>
+        <div class="skill-boost">
+          <h4>⚡ 业务 Skill 能带来的提升</h4>
+          <div class="boost-item">在 Skill 中定义<b>触发场景和关键词表</b>，帮助大模型快速识别业务意图并路由到正确处理流程</div>
+          <div class="boost-item">设计<b>首轮信息采集表</b>（明确"先问清楚什么再回答"），避免在信息不足时猜测作答</div>
+          <div class="boost-item">定义业务专属<b>术语映射</b>，将口语化表述对应到专业概念，降低理解偏差</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">
+    <svg width="24" height="28" viewBox="0 0 24 28"><path d="M12 0 L12 22 M5 16 L12 24 L19 16" stroke="#0891b2" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- ===== 环节 2：检索召回 ===== -->
+  <div class="stage-card stage-2" onclick="this.classList.toggle('open')">
+    <div class="stage-header">
+      <div class="stage-num">②</div>
+      <div class="stage-title">
+        <h3>检索召回</h3>
+        <span class="en">Retrieval</span>
+      </div>
+      <span class="owner-badge mcp">🔧 MCP 召回工具</span>
+      <span class="owner-badge kb">📚 知识库</span>
+      <span class="owner-badge skill">📦 业务 Skill</span>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 5 L7 9 L11 5" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-content">
+        <div class="two-col">
+          <div class="panel">
+            <h4><span class="dot"></span> 影响因素</h4>
+            <div class="factor-item">
+              <div class="factor-icon">✂️</div>
+              <div class="factor-text">
+                <div class="fname">知识切片策略 (Chunking) <span class="tag-mcp">MCP</span></div>
+                <div class="fdesc">文档按什么粒度切割？跨 chunk 的完整知识可能只召回一半</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📏</div>
+              <div class="factor-text">
+                <div class="fname">切片大小 <span class="tag-mcp">MCP</span></div>
+                <div class="fdesc">太大 → 噪声多；太小 → 信息不完整</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🧬</div>
+              <div class="factor-text">
+                <div class="fname">Embedding 模型质量 <span class="tag-mcp">MCP</span></div>
+                <div class="fdesc">向量化效果决定语义匹配精度，通用模型可能不理解业务术语</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🔗</div>
+              <div class="factor-text">
+                <div class="fname">语义 vs 关键词检索策略 <span class="tag-mcp">MCP</span></div>
+                <div class="fdesc">纯语义检索漏精确匹配；纯关键词检索漏语义相关内容</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🔢</div>
+              <div class="factor-text">
+                <div class="fname">Top-K / 相关性阈值 <span class="tag-mcp">MCP</span></div>
+                <div class="fdesc">K 太小漏答案，K 太大引入噪声；阈值设置影响召回质量</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📚</div>
+              <div class="factor-text">
+                <div class="fname">知识库覆盖度 <span class="tag-kb">知识库</span></div>
+                <div class="fdesc">知识库里有没有这个问题的答案？没有 = 再好的检索也找不到</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📐</div>
+              <div class="factor-text">
+                <div class="fname">知识写作质量 <span class="tag-kb">知识库</span></div>
+                <div class="fdesc">知识描述是否清晰、结构化？模糊的知识 → 模糊的召回</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🏷️</div>
+              <div class="factor-text">
+                <div class="fname">知识组织结构 <span class="tag-kb">知识库</span></div>
+                <div class="fdesc">是否按主题/场景分章节？有无 metadata 标注？影响召回精准度</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🗂️</div>
+              <div class="factor-text">
+                <div class="fname">意图-知识映射规则 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">是否定义了"什么问题该查哪段知识"的路由规则？决定召回确定性</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h4><span class="dot" style="background:#ef4444"></span> 常见错误表现</h4>
+            <div class="loss-row">知识库里压根没有答案 → 无米之炊</div>
+            <div class="loss-row">找到了不相关的内容 → 噪声污染</div>
+            <div class="loss-row">找到的知识不完整 → 只答了一半</div>
+            <div class="loss-row">业务术语无法匹配 → 语义理解断层</div>
+          </div>
+        </div>
+        <div class="skill-boost">
+          <h4>⚡ 知识库 + 业务 Skill 能带来的提升</h4>
+          <div class="boost-item"><span class="tag-kb">知识库</span> <b>补全知识覆盖度</b> — 确保业务核心场景都有对应的知识语料，消除"无米之炊"</div>
+          <div class="boost-item"><span class="tag-kb">知识库</span> <b>结构化知识写作</b> — 按主题/场景分章节、加标题标注，让 MCP 工具更容易找到正确内容</div>
+          <div class="boost-item"><span class="tag-skill">Skill</span> <b>定义匹配规则</b> — 通过意图→章节映射表实现确定性路由，不完全依赖向量相似度</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">
+    <svg width="24" height="28" viewBox="0 0 24 28"><path d="M12 0 L12 22 M5 16 L12 24 L19 16" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- ===== 环节 3：知识匹配/重排 ===== -->
+  <div class="stage-card stage-3" onclick="this.classList.toggle('open')">
+    <div class="stage-header">
+      <div class="stage-num">③</div>
+      <div class="stage-title">
+        <h3>知识匹配 / 重排</h3>
+        <span class="en">Reranking & Filtering</span>
+      </div>
+      <span class="owner-badge mcp">🔧 MCP 召回工具</span>
+      <span class="owner-badge kb">📚 知识库</span>
+      <span class="owner-badge skill">📦 业务 Skill</span>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 5 L7 9 L11 5" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-content">
+        <div class="two-col">
+          <div class="panel">
+            <h4><span class="dot"></span> 影响因素</h4>
+            <div class="factor-item">
+              <div class="factor-icon">🏆</div>
+              <div class="factor-text">
+                <div class="fname">Reranker 模型能力 <span class="tag-mcp">MCP</span></div>
+                <div class="fdesc">二次排序精度，排在前面的是否真的是最相关内容</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📊</div>
+              <div class="factor-text">
+                <div class="fname">相关性阈值 <span class="tag-mcp">MCP</span></div>
+                <div class="fdesc">低相关度内容混入会误导大模型</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">⚔️</div>
+              <div class="factor-text">
+                <div class="fname">知识冲突处理 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">多条知识矛盾时该信谁？需要 Skill 定义优先级规则</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🕐</div>
+              <div class="factor-text">
+                <div class="fname">时效性判断 <span class="tag-kb">知识库</span></div>
+                <div class="fdesc">知识有更新时需识别哪条是最新有效版本，依赖知识库的版本管理</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🔬</div>
+              <div class="factor-text">
+                <div class="fname">知识粒度匹配 <span class="tag-kb">知识库</span></div>
+                <div class="fdesc">问具体操作细节，召回的却是宏观概述 → 答不到点上，取决于知识库的写作粒度</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h4><span class="dot" style="background:#ef4444"></span> 常见错误表现</h4>
+            <div class="loss-row">用了过时的知识回答 — 新政策/规则没有被优先采用</div>
+            <div class="loss-row">多条知识堆砌没有优先级 — 大模型不知道该信哪个</div>
+            <div class="loss-row">回答内容自相矛盾 — 引用了互相冲突的知识源</div>
+            <div class="loss-row">回答过于宏观笼统 — 没有匹配到细粒度的操作指南</div>
+          </div>
+        </div>
+        <div class="skill-boost">
+          <h4>⚡ 知识库 + 业务 Skill 能带来的提升</h4>
+          <div class="boost-item"><span class="tag-skill">Skill</span> <b>定义知识优先级</b> — 明确多份知识源冲突时的取舍规则（如"操作指南 > 一般参考"）</div>
+          <div class="boost-item"><span class="tag-kb">知识库</span> <b>标注知识版本和时效</b> — 让重排时能识别哪些是最新有效内容</div>
+          <div class="boost-item"><span class="tag-kb">知识库</span> <b>控制知识粒度</b> — 按操作级别组织知识，避免"问具体流程，只给宏观描述"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">
+    <svg width="24" height="28" viewBox="0 0 24 28"><path d="M12 0 L12 22 M5 16 L12 24 L19 16" stroke="#9333ea" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- ===== 环节 4：上下文组装 ===== -->
+  <div class="stage-card stage-4" onclick="this.classList.toggle('open')">
+    <div class="stage-header">
+      <div class="stage-num">④</div>
+      <div class="stage-title">
+        <h3>上下文组装</h3>
+        <span class="en">Context Assembly / Prompt Engineering</span>
+      </div>
+      <span class="owner-badge skill">📦 业务 Skill 主导</span>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 5 L7 9 L11 5" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-content">
+        <div class="two-col">
+          <div class="panel">
+            <h4><span class="dot"></span> 影响因素</h4>
+            <div class="factor-item">
+              <div class="factor-icon">🎭</div>
+              <div class="factor-text">
+                <div class="fname">角色设定 (System Prompt) <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">定义专家身份 vs 无角色设定，专业度和回答风格差异巨大</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📝</div>
+              <div class="factor-text">
+                <div class="fname">Prompt 模板设计 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">是否明确引导了"先做什么分析，再给什么建议，最后输出什么格式"</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📦</div>
+              <div class="factor-text">
+                <div class="fname">上下文窗口限制 <span class="tag-llm">大模型</span></div>
+                <div class="fdesc">知识太多塞不下需截断，关键信息可能被截掉</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📑</div>
+              <div class="factor-text">
+                <div class="fname">知识注入顺序 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">大模型对开头和结尾关注度更高 (Lost in the Middle)，重要知识应放前面</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📐</div>
+              <div class="factor-text">
+                <div class="fname">输出格式约束 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">是否约定了回答结构（表格/分步/Checklist），影响可读性</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🚫</div>
+              <div class="factor-text">
+                <div class="fname">行为边界 / 禁止事项 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">是否定义了"不能做什么"（如不能编造数据、不能给超范围建议）</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h4><span class="dot" style="background:#ef4444"></span> 常见错误表现</h4>
+            <div class="loss-row">回答没有条理 — 东拉西扯，用户看不出重点</div>
+            <div class="loss-row">回答风格不稳定 — 有时像专家、有时像闲聊</div>
+            <div class="loss-row">关键信息被淹没 — 重要提醒埋在长篇回答中间</div>
+            <div class="loss-row">给了超出业务边界的建议 — 没有约束行为范围</div>
+            <div class="loss-row">不同用户得到格式差异很大的回答 — 缺少统一模板</div>
+          </div>
+        </div>
+        <div class="skill-boost">
+          <h4>⚡ 业务 Skill 能带来的提升（此环节 Skill 主导）</h4>
+          <div class="boost-item"><b>定义专家角色</b> — 告诉大模型"你是什么领域的专家"，整体提升回答的专业度和一致性</div>
+          <div class="boost-item"><b>设计输出模板</b> — 按问题类型定义回答结构（如流程类用步骤表、对比类用表格），保证输出规范</div>
+          <div class="boost-item"><b>设定禁止事项</b> — 明确"不能做什么"，防止大模型给出超范围或错误建议</div>
+          <div class="boost-item"><b>嵌入业务规则</b> — 将关键业务规则写入 Prompt，大模型生成时作为硬约束自动检查</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">
+    <svg width="24" height="28" viewBox="0 0 24 28"><path d="M12 0 L12 22 M5 16 L12 24 L19 16" stroke="#db2777" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- ===== 环节 5：模型生成 ===== -->
+  <div class="stage-card stage-5" onclick="this.classList.toggle('open')">
+    <div class="stage-header">
+      <div class="stage-num">⑤</div>
+      <div class="stage-title">
+        <h3>模型生成</h3>
+        <span class="en">LLM Generation</span>
+      </div>
+      <span class="owner-badge llm">🧠 大模型</span>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 5 L7 9 L11 5" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-content">
+        <div class="two-col">
+          <div class="panel">
+            <h4><span class="dot"></span> 影响因素</h4>
+            <div class="factor-item">
+              <div class="factor-icon">🧠</div>
+              <div class="factor-text">
+                <div class="fname">模型基础能力</div>
+                <div class="fdesc">不同大模型的推理、理解、指令遵循能力不同，复杂场景差异明显</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">👻</div>
+              <div class="factor-text">
+                <div class="fname">幻觉 (Hallucination)</div>
+                <div class="fdesc">编造不存在的数据/事实，听起来很真但实际没有依据</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🎯</div>
+              <div class="factor-text">
+                <div class="fname">忠实度 (Faithfulness)</div>
+                <div class="fdesc">是否忠于检索到的知识生成回答，还是凭"预训练印象"自由发挥</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">⚡</div>
+              <div class="factor-text">
+                <div class="fname">推理能力</div>
+                <div class="fdesc">能否综合多条知识做逻辑推理，而非简单拼接复述</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🌡️</div>
+              <div class="factor-text">
+                <div class="fname">Temperature / 采样参数</div>
+                <div class="fdesc">影响回答的确定性和一致性，专业场景应低温避免"创造性发挥"</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h4><span class="dot" style="background:#ef4444"></span> 常见错误表现</h4>
+            <div class="loss-row">编造数据 / 事实 — 幻觉是大模型最典型的问题</div>
+            <div class="loss-row">忽略检索到的知识 — 用自己的"常识"回答，与知识库矛盾</div>
+            <div class="loss-row">复杂场景推理错误 — 多条件组合时逻辑链断裂</div>
+            <div class="loss-row">同一问题每次回答差异大 — 缺少确定性</div>
+            <div style="height:10px"></div>
+            <div class="no-control-note">
+              <div class="nc-icon">🧠</div>
+              <div class="nc-text">
+                <span class="nc-highlight">此环节由大模型自身能力决定</span><br>
+                业务 Skill 和知识库不直接控制大模型的推理能力和幻觉倾向<br>
+                但好的 Skill（④ 上下文组装）能间接降低此环节的出错率
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">
+    <svg width="24" height="28" viewBox="0 0 24 28"><path d="M12 0 L12 22 M5 16 L12 24 L19 16" stroke="#e11d48" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- ===== 环节 6：输出呈现 ===== -->
+  <div class="stage-card stage-6" onclick="this.classList.toggle('open')">
+    <div class="stage-header">
+      <div class="stage-num">⑥</div>
+      <div class="stage-title">
+        <h3>输出呈现</h3>
+        <span class="en">Output Delivery</span>
+      </div>
+      <span class="owner-badge skill">📦 业务 Skill 主导</span>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 5 L7 9 L11 5" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="stage-content">
+        <div class="two-col">
+          <div class="panel">
+            <h4><span class="dot"></span> 影响因素</h4>
+            <div class="factor-item">
+              <div class="factor-icon">📋</div>
+              <div class="factor-text">
+                <div class="fname">输出结构化 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">分点、标题、表格呈现 vs 一大段文字，用户体验差异巨大</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🔖</div>
+              <div class="factor-text">
+                <div class="fname">知识溯源 (Citation) <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">标注信息来源，让用户可以验证，增强信任度</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">🚀</div>
+              <div class="factor-text">
+                <div class="fname">可操作性 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">给出具体可执行的下一步，而非笼统建议</div>
+              </div>
+            </div>
+            <div class="factor-item">
+              <div class="factor-icon">📎</div>
+              <div class="factor-text">
+                <div class="fname">附件 / 模板输出 <span class="tag-skill">Skill</span></div>
+                <div class="fdesc">能直接输出可用的文件模板（如 Excel），比纯文字描述实用得多</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h4><span class="dot" style="background:#ef4444"></span> 常见错误表现</h4>
+            <div class="loss-row">信息正确但用户看不懂 / 不想看 — 呈现形式差</div>
+            <div class="loss-row">没有给出具体行动建议 — 只有分析没有结论</div>
+            <div class="loss-row">无法追溯来源 — 用户不敢采信</div>
+            <div class="loss-row">需要表格/模板但只给了文字描述 — 不可操作</div>
+          </div>
+        </div>
+        <div class="skill-boost">
+          <h4>⚡ 业务 Skill 能带来的提升（此环节 Skill 主导）</h4>
+          <div class="boost-item"><b>定义输出格式规范</b> — 表格优先、分步骤呈现、关键信息高亮，统一所有回答的呈现质量</div>
+          <div class="boost-item"><b>要求知识溯源</b> — 在 Skill 中写明"回答时必须标注来源"，增强可信度</div>
+          <div class="boost-item"><b>预置操作模板</b> — 在 Skill assets 中放入 Excel/文档模板，用户需要时直接输出可用文件</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">
+    <svg width="24" height="28" viewBox="0 0 24 28"><path d="M12 0 L12 22 M5 16 L12 24 L19 16" stroke="#e11d48" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- 终点 -->
+  <div class="endpoint end">
+    <span class="icon">✅</span> 用户看到答案
+  </div>
+
+  <!-- ===== 责任总览表 ===== -->
+  <div class="summary-section">
+    <h2>📋 各角色在不同环节发挥的具体作用</h2>
+    <div class="table-wrap">
+      <span class="biz-label">💼 业务核心输出</span>
+      <table class="resp-table">
+      <thead>
+        <tr>
+          <th>环节</th>
+          <th>主要责任方</th>
+          <th>MCP 召回工具</th>
+          <th>大模型</th>
+          <th>业务 Skill</th>
+          <th>知识库</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="env" style="color:#2563eb">① 问题理解</td>
+          <td><span class="tag-llm">大模型</span> <span class="tag-skill">Skill</span></td>
+          <td style="color:#94a3b8">—</td>
+          <td>语义理解、多轮对话、<br>Query 改写</td>
+          <td>触发场景定义、<br>信息采集表、术语映射</td>
+          <td style="color:#94a3b8">—</td>
+        </tr>
+        <tr>
+          <td class="env" style="color:#0891b2">② 检索召回</td>
+          <td><span class="tag-mcp">MCP</span> <span class="tag-kb">知识库</span> <span class="tag-skill">Skill</span></td>
+          <td>Embedding、切片策略、<br>检索引擎、Top-K</td>
+          <td style="color:#94a3b8">—</td>
+          <td>意图→知识<br>映射规则</td>
+          <td>知识覆盖度、<br>写作质量、组织结构</td>
+        </tr>
+        <tr>
+          <td class="env" style="color:#7c3aed">③ 知识重排</td>
+          <td><span class="tag-mcp">MCP</span> <span class="tag-kb">知识库</span> <span class="tag-skill">Skill</span></td>
+          <td>Reranker 模型、<br>相关性阈值</td>
+          <td style="color:#94a3b8">—</td>
+          <td>知识优先级规则、<br>冲突处理</td>
+          <td>版本时效标注、<br>粒度控制</td>
+        </tr>
+        <tr>
+          <td class="env" style="color:#9333ea">④ 上下文组装</td>
+          <td><span class="tag-skill">Skill 主导</span></td>
+          <td style="color:#94a3b8">—</td>
+          <td>上下文窗口限制</td>
+          <td>角色设定、输出模板、<br>禁止事项、业务规则</td>
+          <td style="color:#94a3b8">—</td>
+        </tr>
+        <tr>
+          <td class="env" style="color:#db2777">⑤ 模型生成</td>
+          <td><span class="tag-llm">大模型</span></td>
+          <td style="color:#94a3b8">—</td>
+          <td>推理能力、幻觉控制、<br>忠实度、参数调优</td>
+          <td style="color:#94a3b8">不直接控制<br><span style="font-size:11px">(④ Skill 间接影响)</span></td>
+          <td style="color:#94a3b8">—</td>
+        </tr>
+        <tr>
+          <td class="env" style="color:#e11d48">⑥ 输出呈现</td>
+          <td><span class="tag-skill">Skill 主导</span></td>
+          <td style="color:#94a3b8">—</td>
+          <td style="color:#94a3b8">—</td>
+          <td>格式规范、溯源要求、<br>模板文件预置</td>
+          <td style="color:#94a3b8">—</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- ===== 底部洞察 ===== -->
+  <div class="insight">
+    <div class="insight-title">💡 核心结论</div>
+    <div class="insight-subtitle">RAG 链路由四个角色协同</div>
+    <div class="role-cards">
+      <div class="role-card mcp">
+        <div class="role-icon">🔧</div>
+        <span class="role-name">MCP 知识分片召回工具</span>
+        <div class="role-duty">将知识切片、向量化、检索召回</div>
+        <div class="role-metaphor">找知识的引擎</div>
+      </div>
+      <div class="role-card llm">
+        <div class="role-icon">🧠</div>
+        <span class="role-name">大模型</span>
+        <div class="role-duty">语义理解、推理生成</div>
+        <div class="role-metaphor">产出回答的大脑</div>
+        <div style="font-size:11px; color:#94a3b8; margin-top:4px;">纯依赖模型，无法人工优化</div>
+      </div>
+      <div class="role-card skill">
+        <div class="role-icon">📦</div>
+        <span class="role-name">业务 Skill</span>
+        <div class="role-duty">匹配规则、角色设定、输出规范</div>
+        <div class="role-metaphor">业务逻辑的灵魂</div>
+      </div>
+      <div class="role-card kb">
+        <div class="role-icon">📚</div>
+        <span class="role-name">知识库</span>
+        <div class="role-duty">知识语料、覆盖度、写作质量</div>
+        <div class="role-metaphor">回答的原材料</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 点击表格区域切换业务高亮
+  const summarySection = document.querySelector('.summary-section');
+  const respTable = document.querySelector('.resp-table');
+  const tableWrap = document.querySelector('.table-wrap');
+
+  summarySection.addEventListener('click', function (e) {
+    respTable.classList.toggle('biz-active');
+    tableWrap.classList.toggle('biz-active');
+    e.stopPropagation();
+  });
+
+  // 点击页面其他地方关闭高亮
+  document.addEventListener('click', function () {
+    respTable.classList.remove('biz-active');
+    tableWrap.classList.remove('biz-active');
+  });
+</script>
+
+</body>
+</html>
