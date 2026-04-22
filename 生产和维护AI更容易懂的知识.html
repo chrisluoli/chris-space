@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生产和维护AI更容易懂的知识</title>
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-light: #EFF6FF;
+            --primary-dark: #1D4ED8;
+            --accent: #F59E0B;
+            --accent-light: #FFFBEB;
+            --danger: #EF4444;
+            --danger-light: #FEF2F2;
+            --success: #10B981;
+            --success-light: #ECFDF5;
+            --info: #0EA5E9;
+            --info-light: #F0F9FF;
+            --purple: #8B5CF6;
+            --purple-light: #F5F3FF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            color: var(--gray-700);
+            background: #F5F5F7;
+        }
+
+        /* ===== 顶部导航 ===== */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            z-index: 100;
+            padding: 0;
+        }
+
+        .top-nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .top-nav a {
+            color: var(--gray-500);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            padding: 12px 16px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .top-nav a:hover, .top-nav a.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* ===== 主容器 ===== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 64px 24px 60px;
+            overflow: hidden;
+        }
+
+        /* ===== 封面 ===== */
+        .hero {
+            text-align: center;
+            padding: 52px 32px 44px;
+            background: white;
+            border-radius: 16px;
+            color: var(--gray-900);
+            margin-bottom: 28px;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2563EB, #7C3AED, #EC4899);
+        }
+
+        .hero::after {
+            display: none;
+        }
+
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            letter-spacing: 0.5px;
+            color: var(--gray-900);
+        }
+
+        .hero .subtitle {
+            font-size: 14px;
+            color: var(--gray-500);
+            position: relative;
+            margin-bottom: 0;
+            opacity: 1;
+            letter-spacing: 0.3px;
+            font-weight: 400;
+        }
+
+        .hero .meta {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--gray-500);
+            opacity: 1;
+            position: relative;
+        }
+
+        /* ===== 分享内容总览 ===== */
+        .agenda-overview {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 36px;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04);
+        }
+
+        .agenda-overview h2 {
+            font-size: 16px;
+            color: var(--gray-900);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .agenda-steps {
+            display: flex;
+            gap: 10px;
+            overflow: visible;
+            margin-bottom: 0;
+        }
+
+        .agenda-step {
+            flex: 1;
+            padding: 18px 10px 14px;
+            text-align: center;
+            color: var(--gray-700);
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.5;
+            position: relative;
+            background: var(--gray-50);
+            border-radius: 10px;
+            border: none;
+            transition: background 0.15s;
+        }
+
+        .agenda-step:hover {
+            background: var(--gray-100);
+        }
+
+        .agenda-step .step-num {
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+            color: white;
+            background: var(--primary);
+        }
+
+        .agenda-step:nth-child(1) .step-num { background: #2563EB; }
+        .agenda-step:nth-child(2) .step-num { background: #7C3AED; }
+        .agenda-step:nth-child(3) .step-num { background: #EC4899; }
+        .agenda-step:nth-child(4) .step-num { background: #F59E0B; }
+        .agenda-step:nth-child(5) .step-num { background: #10B981; }
+
+        .step-tag {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .agenda-step:nth-child(1) .step-tag {
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+        .agenda-step:nth-child(2) .step-tag {
+            background: #EDE9FE;
+            color: #6D28D9;
+        }
+        .agenda-step:nth-child(3) .step-tag {
+            background: #FCE7F3;
+            color: #BE185D;
+        }
+        .agenda-step:nth-child(4) .step-tag {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+        .agenda-step:nth-child(5) .step-tag {
+            background: #D1FAE5;
+            color: #047857;
+        }
+
+        /* ===== 模块通用 ===== */
+        .module {
+            margin-bottom: 48px;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .module-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .module-title-group {
+            flex: 1;
+        }
+
+        .module-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .module-subtitle {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 2px;
+        }
+
+        /* 模块颜色 */
+        .module-1 .module-header { border-bottom-color: #BFDBFE; }
+        .module-1 .module-num { background: #2563EB; }
+        .module-2 .module-header { border-bottom-color: #DDD6FE; }
+        .module-2 .module-num { background: #7C3AED; }
+        .module-3 .module-header { border-bottom-color: #FBCFE8; }
+        .module-3 .module-num { background: #EC4899; }
+        .module-4 .module-header { border-bottom-color: #FDE68A; }
+        .module-4 .module-num { background: #D97706; }
+        .module-5 .module-header { border-bottom-color: #A7F3D0; }
+        .module-5 .module-num { background: #059669; }
+
+        /* ===== 卡片 ===== */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+
+        .card h3 {
+            font-size: 17px;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ===== 高亮文本 ===== */
+        .hl {
+            background: linear-gradient(transparent 60%, #FDE68A 60%);
+            font-weight: 600;
+        }
+
+        .hl-red {
+            background: linear-gradient(transparent 60%, #FECACA 60%);
+            font-weight: 600;
+        }
+
+        .hl-green {
+            background: linear-gradient(transparent 60%, #A7F3D0 60%);
+            font-weight: 600;
+        }
+
+        .hl-purple {
+            background: linear-gradient(transparent 60%, #DDD6FE 60%);
+            font-weight: 600;
+        }
+
+        /* ===== 比喻卡 ===== */
+        .metaphor-card {
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin: 20px 0;
+        }
+
+        .metaphor-card .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .metaphor-card h4 {
+            font-size: 16px;
+            color: var(--gray-900);
+            margin-bottom: 10px;
+        }
+
+        .metaphor-card blockquote {
+            font-size: 15px;
+            color: var(--gray-700);
+            border-left: 4px solid;
+            padding-left: 16px;
+            margin: 0;
+            line-height: 1.9;
+        }
+
+        .metaphor-blue {
+            background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+            border: 1.5px solid #93C5FD;
+        }
+
+        .metaphor-blue blockquote {
+            border-left-color: #3B82F6;
+        }
+
+        .metaphor-purple {
+            background: linear-gradient(135deg, var(--primary-light), #F5F3FF);
+            border: 1.5px solid #C7D2FE;
+        }
+
+        .metaphor-purple blockquote {
+            border-left-color: var(--primary);
+        }
+
+        .metaphor-green {
+            background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+            border: 1.5px solid #A7F3D0;
+        }
+
+        .metaphor-green blockquote {
+            border-left-color: var(--success);
+        }
+
+        .metaphor-amber {
+            background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+            border: 1.5px solid #FCD34D;
+        }
+
+        .metaphor-amber blockquote {
+            border-left-color: var(--accent);
+        }
+
+        /* ===== 金句框 ===== */
+        .golden-quote {
+            background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+            border: 2px solid #FCD34D;
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .golden-quote p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #92400E;
+            line-height: 1.8;
+        }
+
+        /* ===== 流程图 ===== */
+        .flow-horizontal {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin: 20px 0;
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 24px 16px;
+            overflow-x: auto;
+        }
+
+        .flow-step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 140px;
+            position: relative;
+        }
+
+        .flow-step-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .flow-step:nth-child(odd) .flow-step-icon {
+            background: white;
+            border: 3px solid var(--primary);
+        }
+
+        .flow-step:nth-child(even) .flow-step-icon {
+            background: white;
+            border: 3px solid var(--purple);
+        }
+
+        .flow-step-label {
+            font-size: 11px;
+            color: var(--gray-500);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .flow-step-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .flow-step-desc {
+            font-size: 12px;
+            color: var(--gray-500);
+            line-height: 1.5;
+            max-width: 130px;
+        }
+
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+            padding-bottom: 50px;
+        }
+
+        .flow-arrow svg {
+            flex-shrink: 0;
+        }
+
+        /* ===== 三层图 ===== */
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        .layer-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .layer-item:last-child {
+            border-bottom: none;
+        }
+
+        .layer-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .layer-content {
+            flex: 1;
+        }
+
+        .layer-content .layer-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+        }
+
+        .layer-content .layer-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .layer-tag {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* ===== 要点列表 ===== */
+        .key-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 15px;
+        }
+
+        .key-points li:last-child {
+            border-bottom: none;
+        }
+
+        .key-points .kp-icon {
+            flex-shrink: 0;
+            margin-top: 3px;
+            font-size: 16px;
+        }
+
+        .key-points .kp-num {
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ===== 误区卡片 ===== */
+        .myth-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .myth-grid { grid-template-columns: 1fr; }
+        }
+
+        .myth-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 0;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.02);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .myth-card-top {
+            padding: 20px 20px 16px;
+            position: relative;
+        }
+
+        .myth-card-top::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+
+        .myth-card:nth-child(1) .myth-card-top::before { background: #EF4444; }
+        .myth-card:nth-child(2) .myth-card-top::before { background: #F59E0B; }
+        .myth-card:nth-child(3) .myth-card-top::before { background: #8B5CF6; }
+
+        .myth-num {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .myth-card:nth-child(1) .myth-num { color: #EF4444; }
+        .myth-card:nth-child(2) .myth-num { color: #D97706; }
+        .myth-card:nth-child(3) .myth-num { color: #7C3AED; }
+
+        .myth-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .myth-desc {
+            font-size: 13px;
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+
+        .myth-divider {
+            height: 1px;
+            background: var(--gray-100);
+            margin: 0 20px;
+        }
+
+        .myth-card-bottom {
+            padding: 16px 20px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .myth-reality-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .myth-reality {
+            font-size: 13px;
+            color: var(--gray-700);
+            line-height: 1.7;
+        }
+
+        .myth-reality ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .myth-reality li {
+            position: relative;
+            padding-left: 14px;
+            font-size: 13px;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .myth-reality li::before {
+            content: '·';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 700;
+            color: var(--success);
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        /* ===== 对比栏 ===== */
+        .vs-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        @media (max-width: 768px) {
+            .vs-row { grid-template-columns: 1fr; }
+            .flow-horizontal { flex-direction: column; align-items: center; }
+            .flow-arrow { transform: rotate(90deg); padding: 4px 0; padding-bottom: 0; }
+        }
+
+        .vs-bad {
+            background: var(--danger-light);
+            border: 1.5px solid #FECACA;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .vs-good {
+            background: var(--success-light);
+            border: 1.5px solid #A7F3D0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .vs-bad .vs-label { color: var(--danger); font-weight: 700; font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .vs-good .vs-label { color: var(--success); font-weight: 700; font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
+        .vs-bad p, .vs-good p {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* ===== 表格 ===== */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 16px 0;
+            font-size: 14px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        th {
+            background: var(--gray-800);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background: var(--gray-50);
+        }
+
+        /* ===== 七要七不要 ===== */
+        .principle-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+            border-left: 5px solid var(--primary);
+            border-top: 1px solid var(--gray-200);
+            border-right: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .principle-card .principle-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .principle-card .p-num {
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .principle-card .p-title {
+            font-size: 15px;
+        }
+
+        .principle-card .do-text { color: var(--success); font-weight: 700; }
+        .principle-card .dont-text { color: var(--danger); font-weight: 700; }
+
+        .principle-card .tip-box {
+            background: var(--accent-light);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #92400E;
+            margin-top: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .principle-card pre {
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        /* ===== 自检清单 ===== */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--gray-200);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 15px;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist .ci {
+            color: var(--primary);
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ===== 收尾 ===== */
+        .closing-section {
+            background: linear-gradient(135deg, #1E1B4B, #312E81);
+            border-radius: 20px;
+            padding: 48px 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .closing-section h2 {
+            font-size: 26px;
+            margin-bottom: 32px;
+        }
+
+        .closing-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .closing-point {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .closing-point .cp-num {
+            background: rgba(255,255,255,0.15);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .closing-point p {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .closing-point strong {
+            color: #FCD34D;
+        }
+
+        /* ===== 占位模块提示 ===== */
+        .placeholder-module {
+            background: white;
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 15px;
+        }
+
+        .placeholder-module .pm-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        /* ===== RAG 流程图 ===== */
+        .rag-pipeline {
+            margin: 20px 0;
+        }
+
+        .rag-flow-visual {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0;
+            padding: 28px 24px 12px;
+            background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .rag-flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            min-width: 90px;
+            position: relative;
+        }
+
+        .rag-flow-node:hover {
+            transform: translateY(-2px);
+        }
+
+        .rag-flow-node:hover .rag-node-circle {
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .rag-flow-node.active .rag-node-circle {
+            transform: scale(1.12);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .rag-flow-node:nth-child(1).active .rag-node-circle { background: #3B82F6; border-color: #3B82F6; }
+        .rag-flow-node:nth-child(3).active .rag-node-circle { background: #8B5CF6; border-color: #8B5CF6; }
+        .rag-flow-node:nth-child(5).active .rag-node-circle { background: #EC4899; border-color: #EC4899; }
+        .rag-flow-node:nth-child(7).active .rag-node-circle { background: #F59E0B; border-color: #F59E0B; }
+        .rag-flow-node:nth-child(9).active .rag-node-circle { background: #10B981; border-color: #10B981; }
+
+        .rag-node-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 8px;
+            border: 3px solid;
+            background: white;
+            transition: all 0.25s ease;
+        }
+
+        .rag-flow-node:nth-child(1) .rag-node-circle { border-color: #3B82F6; }
+        .rag-flow-node:nth-child(3) .rag-node-circle { border-color: #8B5CF6; }
+        .rag-flow-node:nth-child(5) .rag-node-circle { border-color: #EC4899; }
+        .rag-flow-node:nth-child(7) .rag-node-circle { border-color: #F59E0B; }
+        .rag-flow-node:nth-child(9) .rag-node-circle { border-color: #10B981; }
+
+        .rag-node-label {
+            font-size: 11px;
+            color: var(--gray-500);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .rag-node-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .rag-flow-arrow {
+            color: var(--gray-300);
+            font-size: 20px;
+            padding: 0 2px;
+            padding-top: 14px;
+        }
+
+        /* 展开面板 */
+        .rag-expand-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid var(--gray-200);
+        }
+
+        .rag-expand-panel.open {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        .rag-expand-inner {
+            padding: 20px 24px;
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+
+        .rag-expand-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .rag-expand-head-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .rag-expand-head-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .rag-expand-close {
+            margin-left: auto;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--gray-400);
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .rag-expand-close:hover {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        .rag-next-step-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 14px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+            flex-shrink: 0;
+        }
+        .rag-next-step-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+            background: linear-gradient(135deg, var(--primary-dark), #1E40AF);
+        }
+
+        .rag-expand-inner p {
+            margin: 0 0 8px;
+        }
+
+        .rag-expand-inner p:last-child {
+            margin-bottom: 0;
+        }
+
+        .rag-expand-inner .rag-highlight {
+            background: #FEF9C3;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #92400E;
+            margin-top: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        /* 左右双栏布局 */
+        .rag-expand-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        @media (max-width: 768px) {
+            .rag-expand-columns { grid-template-columns: 1fr; }
+            .rag-expand-col { border-right: none !important; border-bottom: 1px solid #E5E7EB; }
+            .rag-expand-col:last-child { border-bottom: none; }
+        }
+
+        .rag-expand-col {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.8;
+            padding: 16px 20px;
+        }
+
+        .rag-col-tech {
+            background: #F8FAFF;
+            border-right: 1px solid #E5E7EB;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .rag-col-insight {
+            background: #F6FDF9;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .rag-expand-col-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        .rag-col-tech .rag-expand-col-label {
+            background: #EFF6FF;
+            color: #1D4ED8;
+        }
+
+        .rag-col-insight .rag-expand-col-label {
+            background: #ECFDF5;
+            color: #047857;
+        }
+
+        .rag-expand-col p {
+            margin: 0 0 8px;
+        }
+
+        .rag-expand-col p:last-child {
+            margin-bottom: 0;
+        }
+
+        .rag-col-divider {
+            width: 1px;
+            background: var(--gray-200);
+        }
+
+        /* 节点激活时的指示箭头 */
+        .rag-flow-node.active::after {
+            content: '▼';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--gray-300);
+            animation: bounceDown 1s ease infinite;
+        }
+
+        @keyframes bounceDown {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(3px); }
+        }
+
+        /* ===== 案例对照卡片 ===== */
+        .example-section {
+            margin-top: 28px;
+        }
+        .example-section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .example-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 18px;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.02);
+            overflow: hidden;
+            position: relative;
+            scroll-margin-top: 80px;
+        }
+        .example-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .example-card.ec-purple::before { background: linear-gradient(90deg, #8B5CF6, #A78BFA); }
+        .example-card.ec-blue::before { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+        .example-card.ec-cyan::before { background: linear-gradient(90deg, #0EA5E9, #22D3EE); }
+        .example-card.ec-orange::before { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+        .example-card.ec-green::before { background: linear-gradient(90deg, #10B981, #34D399); }
+
+        .example-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .example-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+        }
+        .ec-purple .example-num { background: linear-gradient(135deg, #7C3AED, #8B5CF6); }
+        .ec-blue .example-num { background: linear-gradient(135deg, #2563EB, #3B82F6); }
+        .ec-cyan .example-num { background: linear-gradient(135deg, #0EA5E9, #06B6D4); }
+        .ec-orange .example-num { background: linear-gradient(135deg, #F59E0B, #EF4444); }
+        .ec-green .example-num { background: linear-gradient(135deg, #10B981, #059669); }
+
+        .example-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .example-title .et-sub {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--gray-500);
+            margin-left: 6px;
+        }
+        .example-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .ec-purple .example-tag { background: #EDE9FE; color: #6D28D9; }
+        .ec-blue .example-tag { background: #DBEAFE; color: #1D4ED8; }
+        .ec-cyan .example-tag { background: #ECFEFF; color: #0E7490; }
+        .ec-orange .example-tag { background: #FEF3C7; color: #B45309; }
+        .ec-green .example-tag { background: #D1FAE5; color: #047857; }
+
+        .example-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 768px) {
+            .example-compare { grid-template-columns: 1fr; }
+        }
+        .example-box {
+            border-radius: 10px;
+            padding: 16px 18px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #334155;
+        }
+        .example-box.ex-bad {
+            background: #FEF2F2;
+            border: 1.5px solid #FECACA;
+        }
+        .example-box.ex-good {
+            background: #F0FDF4;
+            border: 1.5px solid #86EFAC;
+        }
+        .example-box-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .ex-bad .example-box-label {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        .ex-good .example-box-label {
+            background: #DCFCE7;
+            color: #16A34A;
+        }
+        .example-box p { margin-bottom: 6px; }
+        .example-box p:last-child { margin-bottom: 0; }
+        .example-box strong { color: #1E293B; }
+
+        .example-problem {
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: #FFF7ED;
+            border-radius: 6px;
+            border-left: 3px solid #F97316;
+            font-size: 12px;
+            color: #9A3412;
+            line-height: 1.6;
+        }
+        .example-mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 6px 0;
+            font-size: 12px;
+        }
+        .example-mini-table th {
+            background: #F8FAFC;
+            padding: 5px 10px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #E2E8F0;
+            color: #475569;
+        }
+        .example-mini-table td {
+            padding: 5px 10px;
+            border: 1px solid #E2E8F0;
+            color: #334155;
+            background: white;
+        }
+        .example-meta-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 6px 0;
+        }
+        .example-meta-tag {
+            font-size: 10.5px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #E2E8F0;
+        }
+        .case-anchor-link {
+            font-size: 11px;
+            color: #7C3AED;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            margin: 0;
+            opacity: 0.85;
+            transition: all 0.2s;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 5px;
+            background: #F5F3FF;
+            border: 1px solid #EDE9FE;
+            white-space: nowrap;
+        }
+        .case-anchor-link:hover {
+            opacity: 1;
+            text-decoration: none;
+            background: #EDE9FE;
+            border-color: #C4B5FD;
+            color: #5B21B6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(124, 58, 237, 0.15);
+        }
+        .case-anchor-link::before {
+            content: '👆';
+            font-size: 10px;
+        }
+
+        /* ===== 打印 ===== */
+        @media print {
+            .top-nav { display: none; }
+            .container { padding-top: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<nav class="top-nav">
+    <div class="top-nav-inner">
+        <a href="#module-1">① 常见误区</a>
+        <a href="#module-2">② RAG原理</a>
+        <a href="#module-3">③ 内容维护准则</a>
+        <a href="#module-4">④ 影响回答质量的其他因素</a>
+    </div>
+</nav>
+
+<!-- 主容器 -->
+<div class="container">
+
+    <!-- ===== 封面 ===== -->
+    <div class="hero">
+        <h1>生产和维护AI更容易懂的知识</h1>
+        <p class="subtitle">AI回答质量 = 知识质量 ✖️ 检索精准度 ✖️ 大模型能力</p>
+    </div>
+
+    <!-- ===== 分享内容总览 ===== -->
+    <div class="agenda-overview">
+        <h2>📋 分享内容</h2>
+        <div class="agenda-steps">
+            <div class="agenda-step">
+                <span class="step-num">①</span>
+                AI知识问答的<br>常见误区
+                <span class="step-tag">破除误区</span>
+            </div>
+            <div class="agenda-step">
+                <span class="step-num">②</span>
+                了解RAG<br>技术实现原理
+                <span class="step-tag">理解原理</span>
+            </div>
+            <div class="agenda-step">
+                <span class="step-num">③</span>
+                基于实现原理的<br>内容维护准则
+                <span class="step-tag">掌握方法</span>
+            </div>
+            <div class="agenda-step">
+                <span class="step-num">④</span>
+                影响回答质量的<br>其他因素
+                <span class="step-tag">全局视角</span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- ==================== 模块一：原理 ========================= -->
+    <!-- ============================================================ -->
+    <div class="module module-1" id="module-1">
+        <div class="module-header">
+            <div class="module-num">①</div>
+            <div class="module-title-group">
+                <div class="module-title">AI 知识问答的常见误区</div>
+                <div class="module-subtitle">先破除这些认知偏差，才能正确维护知识</div>
+            </div>
+        </div>
+
+        <div class="myth-grid">
+            <!-- 误区 1 -->
+            <div class="myth-card">
+                <div class="myth-card-top">
+                    <div class="myth-num">❌ 误区 1</div>
+                    <div class="myth-title">知识准备得越多越丰富越好</div>
+                    <div class="myth-desc">把所有知识文档一股脑全部导入知识库，觉得"信息越全，AI 回答越准"。</div>
+                </div>
+                <div class="myth-divider"></div>
+                <div class="myth-card-bottom">
+                    <div class="myth-reality-label">✅ 实际情况</div>
+                    <div class="myth-reality">
+                        <ul>
+                            <li>知识越多噪音越多，反而越容易干扰检索结果</li>
+                            <li>AI 每次只找最相似的片段，而非最准确的</li>
+                            <li>多模态内容解析能力有参差，要想十分准确需精调</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 误区 2 -->
+            <div class="myth-card">
+                <div class="myth-card-top">
+                    <div class="myth-num">❌ 误区 2</div>
+                    <div class="myth-title">AI 用久了会越来越聪明</div>
+                    <div class="myth-desc">觉得 AI 像个有经验的老员工，踩过的坑、犯过的错、学习到的经验，让自己成长到下一次做得更好。</div>
+                </div>
+                <div class="myth-divider"></div>
+                <div class="myth-card-bottom">
+                    <div class="myth-reality-label">✅ 实际情况</div>
+                    <div class="myth-reality">
+                        <ul>
+                            <li>AI 更像一个天才实习生——检索能力强、反应速度快，但经常失忆、脑容量也有限</li>
+                            <li>每次对话都是"从零开始"，不会因为答对过就记住经验，也不会因为被纠正就自动改进</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 误区 3 -->
+            <div class="myth-card">
+                <div class="myth-card-top">
+                    <div class="myth-num">❌ 误区 3</div>
+                    <div class="myth-title">只要技术到位，就能实现 0 幻觉</div>
+                    <div class="myth-desc">觉得幻觉只是技术问题，等模型升级或 Prompt 调好了，AI 就不会再"瞎编"了。</div>
+                </div>
+                <div class="myth-divider"></div>
+                <div class="myth-card-bottom">
+                    <div class="myth-reality-label">✅ 实际情况</div>
+                    <div class="myth-reality">
+                        <ul>
+                            <li>幻觉是大语言模型的固有特性，无法完全消除，但可以通过把知识写清楚、减少相似片段和歧义表述来降低发生概率</li>
+                            <li>知识问答的整个链路中，每个环节都可能出错，幻觉只是其中一环</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- ==================== 模块二：RAG 原理 ===================== -->
+    <!-- ============================================================ -->
+    <div class="module module-2" id="module-2">
+        <div class="module-header">
+            <div class="module-num">②</div>
+            <div class="module-title-group">
+                <div class="module-title">了解 RAG 技术实现原理</div>
+                <div class="module-subtitle">知道 AI 是怎么找答案的，才能写出它更容易读懂的知识</div>
+            </div>
+        </div>
+
+        <!-- 一句话解释 -->
+        <div class="card">
+            <h3>💡 RAG 是什么？</h3>
+            <p><strong>RAG（Retrieval-Augmented Generation）</strong>= 检索增强生成，是当前主流的知识问答技术方案。</p>
+            <p>简单说：<span class="hl">AI 不是靠"记住"知识来回答问题，而是每次先去知识库里"搜"相关内容，再基于搜到的内容生成答案后，回复给用户。</span></p>
+        </div>
+
+        <!-- RAG 完整流程 -->
+        <div class="card">
+            <h3>🔄 RAG工作流程（简单版）</h3>
+
+            <div class="rag-pipeline">
+                <!-- 可点击展开的流程图 -->
+                <div class="rag-flow-visual">
+                    <div class="rag-flow-node" onclick="toggleRagStep(this, 'panel-1')">
+                        <div class="rag-node-circle">❓</div>
+                        <div class="rag-node-label">STEP 1</div>
+                        <div class="rag-node-name">用户提问</div>
+                    </div>
+                    <div class="rag-flow-arrow">→</div>
+                    <div class="rag-flow-node" onclick="toggleRagStep(this, 'panel-2')">
+                        <div class="rag-node-circle">🧩</div>
+                        <div class="rag-node-label">STEP 2</div>
+                        <div class="rag-node-name">语义理解</div>
+                    </div>
+                    <div class="rag-flow-arrow">→</div>
+                    <div class="rag-flow-node" onclick="toggleRagStep(this, 'panel-3')">
+                        <div class="rag-node-circle">🔍</div>
+                        <div class="rag-node-label">STEP 3</div>
+                        <div class="rag-node-name">知识检索</div>
+                    </div>
+                    <div class="rag-flow-arrow">→</div>
+                    <div class="rag-flow-node" onclick="toggleRagStep(this, 'panel-4')">
+                        <div class="rag-node-circle">🤖</div>
+                        <div class="rag-node-label">STEP 4</div>
+                        <div class="rag-node-name">模型生成</div>
+                    </div>
+                    <div class="rag-flow-arrow">→</div>
+                    <div class="rag-flow-node" onclick="toggleRagStep(this, 'panel-5')">
+                        <div class="rag-node-circle">💬</div>
+                        <div class="rag-node-label">STEP 5</div>
+                        <div class="rag-node-name">输出回答</div>
+                    </div>
+                </div>
+
+                <!-- Step 1 展开面板 -->
+                <div class="rag-expand-panel" id="panel-1">
+                    <div class="rag-expand-inner">
+                        <div class="rag-expand-head">
+                            <div class="rag-expand-head-icon" style="background: #DBEAFE;">❓</div>
+                            <div class="rag-expand-head-title">STEP 1 · 用户提问</div>
+                            <button class="rag-next-step-btn" onclick="gotoNextStep(2); event.stopPropagation();">下一环节 →</button>
+                            <button class="rag-expand-close" onclick="closeRagPanel('panel-1')">✕</button>
+                        </div>
+                        <div class="rag-expand-columns">
+                            <div class="rag-expand-col rag-col-tech">
+                                <div class="rag-expand-col-label">🔧 技术处理</div>
+                                <p>用户输入问题后，系统会对原始 Query 进行预处理，主要包括：</p>
+                                <p><strong>① 分词与文本清洗</strong>——将句子拆分为关键词 / 短语，去除停用词、纠正错别字等，提取有效检索信息。</p>
+                                <p><strong>② Query 改写 / 扩展</strong>——部分系统会用大模型对口语化的问题进行改写，使其更适合语义检索。例如将"试用期能延多久"改写为"试用期延长的最长期限是多少"。</p>
+                            </div>
+                            <div class="rag-expand-col rag-col-insight">
+                                <div class="rag-expand-col-label">📝 知识维护启发</div>
+                                <p>此环节为系统自动处理，知识维护者无法直接干预。但理解这一步有助于认识到：<strong>用户的提问方式千差万别，知识能否被找到，取决于后续环节的语义匹配能力。</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 展开面板 -->
+                <div class="rag-expand-panel" id="panel-2">
+                    <div class="rag-expand-inner">
+                        <div class="rag-expand-head">
+                            <div class="rag-expand-head-icon" style="background: #EDE9FE;">🧩</div>
+                            <div class="rag-expand-head-title">STEP 2 · 语义理解</div>
+                            <button class="rag-next-step-btn" onclick="gotoNextStep(3); event.stopPropagation();">下一环节 →</button>
+                            <button class="rag-expand-close" onclick="closeRagPanel('panel-2')">✕</button>
+                        </div>
+                        <div class="rag-expand-columns">
+                            <div class="rag-expand-col rag-col-tech">
+                                <div class="rag-expand-col-label">🔧 技术处理</div>
+                                <p><strong>Embedding 向量化</strong>——把每句话变成一串数字（几百个数字组成的一个"坐标"），意思相近的话，坐标也会很接近。</p>
+                                <p>用户的问题和知识库中的每个片段，都会被转成这样的坐标点。知识片段在入库时已提前完成向量化，用户提问时实时转换。</p>
+                                <p>这一步的作用：<strong>为下一步的检索召回提供"可比较"的数字坐标。</strong></p>
+                            </div>
+                            <div class="rag-expand-col rag-col-insight">
+                                <div class="rag-expand-col-label">📝 知识维护启发</div>
+                                <p><strong>目标：</strong>让知识片段向量化后的"坐标"能准确代表它真正要表达的意思。</p>
+                                <p><strong>具体做法：</strong></p>
+                                <ul style="margin:4px 0 0 18px; padding:0; line-height:1.8;">
+                                    <li><strong>说人话</strong>——写得含糊或全是缩写，向量化后坐标会"漂移"，系统不知道你在说什么。用完整、自然的语句表述</li>
+                                    <li><strong>写全称</strong>——首次出现的术语给出全称 + 缩写对照，如"绩效改进计划（PIP）"，帮助模型理解真实含义</li>
+                                    <li><strong>黑话词库</strong>——维护企业内部术语的同义词映射（如"HC = 编制"），让向量化时有明确的语义锚点</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 展开面板 -->
+                <div class="rag-expand-panel" id="panel-3">
+                    <div class="rag-expand-inner">
+                        <div class="rag-expand-head">
+                            <div class="rag-expand-head-icon" style="background: #FCE7F3;">🔍</div>
+                            <div class="rag-expand-head-title">STEP 3 · 知识检索</div>
+                            <button class="rag-next-step-btn" onclick="gotoNextStep(4); event.stopPropagation();">下一环节 →</button>
+                            <button class="rag-expand-close" onclick="closeRagPanel('panel-3')">✕</button>
+                        </div>
+                        <div class="rag-expand-columns">
+                            <div class="rag-expand-col rag-col-tech">
+                                <div class="rag-expand-col-label">🔧 技术处理</div>
+                                <p><strong>① 语义匹配</strong>——拿上一步生成的"问题坐标"，去和知识库里每个片段的坐标比方向，方向越一致 = 语义越接近。</p>
+                                <p style="margin:6px 0 6px 0; padding:10px 14px; background:#FFF7ED; border-left:3px solid #F59E0B; border-radius:4px; font-size:13px; color:#92400E;">
+                                    ⚠️ <strong>但方向近 ≠ 意思完全一样。</strong>比如用户问"年假怎么请"，知识库里"年假有几天"和"年假怎么请"方向都很近，系统可能两个都召回——虽然主题相关，但回答的不是同一件事。这就是为什么"匹配到了不一定对"。
+                                </p>
+                                <p><strong>② 排序召回</strong>——按相关度从高到低排序，取出最相关的 3~5 个片段送给模型。系统返回的是"方向最近的"，而非"最正确的"——知识库里主题相近的内容越多，越容易混入不相关的片段。</p>
+                            </div>
+                            <div class="rag-expand-col rag-col-insight">
+                                <div class="rag-expand-col-label">📝 知识维护启发</div>
+                                <p><strong>目标：</strong>检索返回的是"最相似的"而非"最正确的"——内容重复 / 主题混杂会制造"噪声邻居"，干扰正确片段的排序，导致召回错误。</p>
+                                <p><strong>具体做法：</strong></p>
+                                <ul style="margin:4px 0 0 18px; padding:0; line-height:1.8;">
+                                    <li><strong>去冗余</strong>——同一知识点只保留一份权威版本，删除过期 / 重复内容</li>
+                                    <li><strong>精标题</strong>——标题是最重要的语义索引，直接决定能否被正确召回</li>
+                                    <li><strong>一篇一事</strong>——每篇知识只讲一个主题，避免多问题混杂在同一段落</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 展开面板 -->
+                <div class="rag-expand-panel" id="panel-4">
+                    <div class="rag-expand-inner">
+                        <div class="rag-expand-head">
+                            <div class="rag-expand-head-icon" style="background: #FEF3C7;">🤖</div>
+                            <div class="rag-expand-head-title">STEP 4 · 模型生成</div>
+                            <button class="rag-next-step-btn" onclick="gotoNextStep(5); event.stopPropagation();">下一环节 →</button>
+                            <button class="rag-expand-close" onclick="closeRagPanel('panel-4')">✕</button>
+                        </div>
+                        <div class="rag-expand-columns">
+                            <div class="rag-expand-col rag-col-tech">
+                                <div class="rag-expand-col-label">🔧 技术处理</div>
+                                <p><strong>① 上下文组装</strong>——把上一步召回的知识片段 + 用户的原始问题 + 系统预设指令（如"请基于以下内容回答"），拼装成一个完整的 Prompt 送给大模型。这一步决定了模型能"看到"什么参考材料。</p>
+                                <p><strong>② 模型生成</strong>——大模型基于拼装好的 Prompt，逐字逐句预测生成答案。模型不会跳出 Prompt 去找其他信息，只能基于你给它看的内容来回答。如果参考材料写得模糊或有歧义，模型就会"自由发挥"填空，这就是幻觉产生的根源。</p>
+                            </div>
+                            <div class="rag-expand-col rag-col-insight">
+                                <div class="rag-expand-col-label">📝 知识维护启发</div>
+                                <p><strong>目标：</strong>让知识表述足够明确，不给模型"自由发挥"的空间，从源头降低幻觉概率。</p>
+                                <p><strong>具体做法：</strong></p>
+                                <ul style="margin:4px 0 0 18px; padding:0; line-height:1.8;">
+                                    <li><strong>结构化</strong>——用"A 情况 → B 结论"的条件式写法，替代"视情况而定""参照相关规定"等模糊表述，避免模型自行推理填空</li>
+                                    <li><strong>给定论</strong>——每条知识要有明确结论，不要只描述背景不给答案</li>
+                                    <li><strong>消歧义</strong>——对边界条件、例外情形显式说明，不留模型"猜测"的空间</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5 展开面板 -->
+                <div class="rag-expand-panel" id="panel-5">
+                    <div class="rag-expand-inner">
+                        <div class="rag-expand-head">
+                            <div class="rag-expand-head-icon" style="background: #D1FAE5;">💬</div>
+                            <div class="rag-expand-head-title">STEP 5 · 输出回答</div>
+                            <button class="rag-expand-close" onclick="closeRagPanel('panel-5')">✕</button>
+                        </div>
+                        <div class="rag-expand-columns">
+                            <div class="rag-expand-col rag-col-tech">
+                                <div class="rag-expand-col-label">🔧 技术处理</div>
+                                <p>模型生成的文本直接返回给用户，整个流程通常在数秒内完成。</p>
+                            </div>
+                            <div class="rag-expand-col rag-col-insight">
+                                <div class="rag-expand-col-label">📝 知识维护启发</div>
+                                <p>此环节为系统自动输出，知识维护者无法直接干预。但最终回答是前四个环节的叠加结果——<strong>答错不等于"模型笨"，可能是任何一环出了问题。</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+            function toggleRagStep(node, panelId) {
+                var panel = document.getElementById(panelId);
+                var allPanels = document.querySelectorAll('.rag-expand-panel');
+                var allNodes = document.querySelectorAll('.rag-flow-node');
+                var isOpen = panel.classList.contains('open');
+
+                // 先收起所有
+                allPanels.forEach(function(p) { p.classList.remove('open'); });
+                allNodes.forEach(function(n) { n.classList.remove('active'); });
+
+                // 如果当前没打开，就打开它
+                if (!isOpen) {
+                    panel.classList.add('open');
+                    node.classList.add('active');
+                }
+            }
+
+            function closeRagPanel(panelId) {
+                document.getElementById(panelId).classList.remove('open');
+                document.querySelectorAll('.rag-flow-node').forEach(function(n) { n.classList.remove('active'); });
+                event.stopPropagation();
+            }
+
+            function gotoNextStep(stepNum) {
+                var panelId = 'panel-' + stepNum;
+                var allPanels = document.querySelectorAll('.rag-expand-panel');
+                var allNodes = document.querySelectorAll('.rag-flow-node');
+                // 先收起所有
+                allPanels.forEach(function(p) { p.classList.remove('open'); });
+                allNodes.forEach(function(n) { n.classList.remove('active'); });
+                // 打开目标面板
+                var targetPanel = document.getElementById(panelId);
+                if (targetPanel) {
+                    targetPanel.classList.add('open');
+                }
+                // 激活对应的圆形节点（第 stepNum 个，索引 stepNum-1）
+                var targetNode = document.querySelectorAll('.rag-flow-node')[stepNum - 1];
+                if (targetNode) {
+                    targetNode.classList.add('active');
+                    // 滚动到可视区域
+                    targetNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            // 页面加载后默认展开 STEP 1
+            document.addEventListener('DOMContentLoaded', function() {
+                var firstNode = document.querySelector('.rag-flow-node');
+                if (firstNode) {
+                    firstNode.classList.add('active');
+                    document.getElementById('panel-1').classList.add('open');
+                }
+            });
+            </script>
+        </div>
+
+
+    </div>
+    <!-- ============================================================ -->
+    <!-- ==================== 模块三：内容维护准则 ================== -->
+    <!-- ============================================================ -->
+    <div class="module module-3" id="module-3">
+        <div class="module-header">
+            <div class="module-num">③</div>
+            <div class="module-title-group">
+                <div class="module-title">基于实现原理的内容维护准则</div>
+                <div class="module-subtitle">三大原则 · 九条做法——从 RAG 每一步推导出的写作规范</div>
+            </div>
+        </div>
+
+        <!-- 三大原则九条做法一览表 -->
+        <div class="card">
+            <h3>📋 三大原则 · 九条做法一览</h3>
+            <p style="margin: -4px 0 14px 0; font-size: 14px; color: #EF4444; font-weight: 700;">⚠️ 知识库少而精远好于大而全 <span style="font-size: 11px; font-weight: 400; background: #FEF2F2; padding: 2px 8px; border-radius: 4px; border: 1px dashed #EF4444; margin-left: 6px;">待优化</span></p>
+            <div style="overflow-x: auto;">
+                <table style="width:100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; font-size: 14px; line-height: 1.7; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+                    <thead>
+                        <tr>
+                            <th style="background: linear-gradient(135deg, #5B21B6, #7C3AED); color: white; padding: 14px 18px; text-align: left; font-weight: 600; width: 12%;">原则</th>
+                            <th style="background: linear-gradient(135deg, #5B21B6, #7C3AED); color: white; padding: 14px 18px; text-align: left; font-weight: 600; width: 25%;">影响环节</th>
+                            <th style="background: linear-gradient(135deg, #5B21B6, #7C3AED); color: white; padding: 14px 18px; text-align: left; font-weight: 600; width: 11%;">做法</th>
+                            <th style="background: linear-gradient(135deg, #5B21B6, #7C3AED); color: white; padding: 14px 18px; text-align: left; font-weight: 600;">具体说明</th>
+                            <th style="background: linear-gradient(135deg, #5B21B6, #7C3AED); color: white; padding: 14px 18px; text-align: center; font-weight: 600; width: 12%;">写作示例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 写清楚 -->
+                        <tr>
+                            <td rowspan="3" style="padding: 14px 18px; background: #F5F3FF; border-bottom: 3px solid #E9E5F5; vertical-align: middle; font-weight: 700; color: #7C3AED; font-size: 15px;">
+                                ✍️ 写清楚<br><span style="font-size: 12px; font-weight: 400; color: #8B5CF6;">让系统"读懂"</span>
+                            </td>
+                            <td rowspan="3" style="padding: 14px 18px; background: #F5F3FF; border-bottom: 3px solid #E9E5F5; vertical-align: middle; color: #5B5675;">
+                                <span style="display: inline-block; background: #EDE9FE; color: #6D28D9; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 8px;">STEP 2 向量化</span><br>
+                                向量化质量取决于文本表述清晰度，含糊或全是缩写会导致语义坐标"漂移"
+                            </td>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 1px solid #EDE9FE; font-weight: 600; color: #5B21B6;">💬 说人话</td>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 1px solid #EDE9FE; color: #5B5675;">用完整、自然的语句表述，避免只写缩写或内部代号</td>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 1px solid #EDE9FE; text-align: center;"><a href="#case-1" class="case-anchor-link" style="margin:0;">案例 1</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 1px solid #EDE9FE; font-weight: 600; color: #5B21B6;">📝 写全称</td>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 1px solid #EDE9FE; color: #5B5675;">首次出现的术语给出全称 + 缩写对照，如"绩效改进计划（PIP）"</td>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 1px solid #EDE9FE; text-align: center;"><a href="#case-2" class="case-anchor-link" style="margin:0;">案例 2</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 3px solid #E9E5F5; font-weight: 600; color: #5B21B6;">📖 黑话词库</td>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 3px solid #E9E5F5; color: #5B5675;">维护企业术语同义词映射（如"HC = 编制"），提供明确语义锚点</td>
+                            <td style="padding: 12px 18px; background: #F5F3FF; border-bottom: 3px solid #E9E5F5; text-align: center;"><a href="#case-3" class="case-anchor-link" style="margin:0;">案例 3</a></td>
+                        </tr>
+                        <!-- 写干净 -->
+                        <tr>
+                            <td rowspan="3" style="padding: 14px 18px; background: #EFF6FF; border-bottom: 3px solid #DCE8F5; vertical-align: middle; font-weight: 700; color: #2563EB; font-size: 15px;">
+                                🧹 写干净<br><span style="font-size: 12px; font-weight: 400; color: #60A5FA;">让系统"找对"</span>
+                            </td>
+                            <td rowspan="3" style="padding: 14px 18px; background: #EFF6FF; border-bottom: 3px solid #DCE8F5; vertical-align: middle; color: #475569;">
+                                <span style="display: inline-block; background: #DBEAFE; color: #1D4ED8; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 8px;">STEP 3 检索召回</span><br>
+                                检索返回"最相似的"而非"最正确的"，重复/混杂内容会制造"噪声邻居"
+                            </td>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 1px solid #DBEAFE; font-weight: 600; color: #1E40AF;">🗑️ 去冗余</td>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 1px solid #DBEAFE; color: #475569;">同一知识点只保留一份权威版本，删除过期/重复内容</td>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 1px solid #DBEAFE; text-align: center;"><a href="#case-4" class="case-anchor-link" style="margin:0;">案例 4</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 1px solid #DBEAFE; font-weight: 600; color: #1E40AF;">🏷️ 精标题</td>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 1px solid #DBEAFE; color: #475569;">标题是最重要的语义索引，直接决定能否被正确召回</td>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 1px solid #DBEAFE; text-align: center;"><a href="#case-5" class="case-anchor-link" style="margin:0;">案例 5</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 3px solid #DCE8F5; font-weight: 600; color: #1E40AF;">📄 一篇一事</td>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 3px solid #DCE8F5; color: #475569;">每篇知识只讲一个主题，避免多问题混杂在同一段落</td>
+                            <td style="padding: 12px 18px; background: #EFF6FF; border-bottom: 3px solid #DCE8F5; text-align: center;"><a href="#case-6" class="case-anchor-link" style="margin:0;">案例 6</a></td>
+                        </tr>
+                        <!-- 写明白 -->
+                        <tr>
+                            <td rowspan="3" style="padding: 14px 18px; background: #FFFBEB; vertical-align: middle; font-weight: 700; color: #D97706; font-size: 15px;">
+                                💡 写明白<br><span style="font-size: 12px; font-weight: 400; color: #FBBF24;">让模型"答对"</span>
+                            </td>
+                            <td rowspan="3" style="padding: 14px 18px; background: #FFFBEB; vertical-align: middle; color: #78716C;">
+                                <span style="display: inline-block; background: #FEF3C7; color: #B45309; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 8px;">STEP 4 模型生成</span><br>
+                                知识表述越模糊，模型"自由发挥"空间越大，幻觉概率越高
+                            </td>
+                            <td style="padding: 12px 18px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; font-weight: 600; color: #92400E;">🔀 结构化</td>
+                            <td style="padding: 12px 18px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; color: #78716C;">用"A 情况 → B 结论"条件式写法，替代"视情况而定"等模糊表述</td>
+                            <td style="padding: 12px 18px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; text-align: center;"><a href="#case-7" class="case-anchor-link" style="margin:0;">案例 7</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 18px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; font-weight: 600; color: #92400E;">✅ 给定论</td>
+                            <td style="padding: 12px 18px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; color: #78716C;">每条知识要有明确结论，不要只描述背景不给答案</td>
+                            <td style="padding: 12px 18px; background: #FFFBEB; border-bottom: 1px solid #FEF3C7; text-align: center;"><a href="#case-8" class="case-anchor-link" style="margin:0;">案例 8</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 18px; background: #FFFBEB; font-weight: 600; color: #92400E;">🎯 消歧义</td>
+                            <td style="padding: 12px 18px; background: #FFFBEB; color: #78716C;">对边界条件、例外情形显式说明，不留模型"猜测"的空间</td>
+                            <td style="padding: 12px 18px; background: #FFFBEB; text-align: center;"><a href="#case-9" class="case-anchor-link" style="margin:0;">案例 9</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== 写作示例对照区 ===== -->
+        <div class="example-section">
+
+            <!-- ===== 写清楚 · 让系统"读懂" ===== -->
+
+            <!-- 案例 1：说人话 -->
+            <div class="example-card ec-purple" id="case-1">
+                <div class="example-header">
+                    <div class="example-num">1</div>
+                    <div class="example-title">说人话 <span class="et-sub">让向量化不"漂移"</span></div>
+                    <div class="example-tag">💬 对应做法：说人话</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>T+1 CBD OD review，BP align HRBP，走 SSC ticket，CC CoE owner。</p>
+                        <div class="example-problem">⚠️ 全是缩写和内部黑话，向量化后语义坐标严重漂移。用户问"转正审批怎么走"时，Embedding 完全匹配不上</div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>转正审批流程</strong></p>
+                        <p>员工试用期满后次日（T+1），由直属上级在系统中发起转正评估。</p>
+                        <p>流程：直属上级提交评估 → HRBP 审核 → SSC 共享服务中心处理系统工单 → 抄送 CoE 政策负责人备案。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例 2：写全称 -->
+            <div class="example-card ec-purple" id="case-2">
+                <div class="example-header">
+                    <div class="example-num">2</div>
+                    <div class="example-title">语义丰富度 <span class="et-sub">让检索"找得到"</span></div>
+                    <div class="example-tag">📝 对应做法：写全称</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>PIP 流程：HR 发起 → 直属上级制定改进计划 → 员工签字确认 → 执行 60 天 → 评估结果。</p>
+                        <div class="example-problem">⚠️ 只有缩写 "PIP"，用户问"绩效改进计划怎么走"时，Embedding 向量距离远，<strong>完全召回不到</strong></div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>绩效改进计划（PIP / Performance Improvement Plan）流程</strong></p>
+                        <p>适用场景：员工绩效不达标、绩效考核结果为"待改进"时启动。</p>
+                        <p>流程：HR 发起 → 直属上级制定改进计划 → 员工签字确认 → 执行 60 天 → 评估结果。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例 3：黑话词库 -->
+            <div class="example-card ec-purple" id="case-3">
+                <div class="example-header">
+                    <div class="example-num">3</div>
+                    <div class="example-title">黑话词库 <span class="et-sub">建立术语映射表</span></div>
+                    <div class="example-tag">📖 对应做法：黑话词库</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>关于 HC 冻结：当 BU 的 HC 被冻结时，所有 JD 暂停发布，等 CFO 审批解冻后 TA 再重新操作。</p>
+                        <div class="example-problem">⚠️ HC、BU、JD、CFO、TA 全部是缩写，没有同义词映射。用户问"编制冻结了怎么招人"时，向量完全对不上</div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>编制（HC）冻结期间的招聘处理</strong></p>
+                        <p>当业务单元（BU）的编制（HC / Headcount）被冻结时：</p>
+                        <p>① 所有岗位描述（JD / Job Description）暂停发布；<br>② 等待财务负责人（CFO）审批解冻；<br>③ 解冻后由招聘专员（TA / Talent Acquisition）重新启动发布流程。</p>
+                        <div class="example-meta-tags">
+                            <span class="example-meta-tag">💡 建议同步维护术语映射表：HC=编制，BU=业务单元，TA=招聘专员</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 写干净 · 让系统"找对" ===== -->
+
+            <!-- 案例 4：去冗余 -->
+            <div class="example-card ec-blue" id="case-4">
+                <div class="example-header">
+                    <div class="example-num">4</div>
+                    <div class="example-title">去冗余 <span class="et-sub">清除"噪声邻居"</span></div>
+                    <div class="example-tag">🗑️ 对应做法：去冗余</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>知识库中同时存在以下三篇：</p>
+                        <p>📄 《年假管理办法（2022版）》——年假 5/10/15 天<br>📄 《年假管理办法（2023修订）》——年假 5/10/15 天，新增调休规则<br>📄 《员工福利手册》第三章——年假天数与 2022 版相同</p>
+                        <div class="example-problem">⚠️ 三篇内容高度重叠，检索时互相"抢排名"。模型可能召回过期的 2022 版，或把三篇混杂拼凑，导致<strong>回答自相矛盾</strong></div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>处理方式：</strong></p>
+                        <p>① 只保留 《年假管理办法（2023修订）》 作为唯一权威版本<br>② 将 2022 版标记为「已废止」并从知识库下架<br>③ 福利手册中年假章节改为引用链接："年假规则详见《年假管理办法（2023修订）》"</p>
+                        <p><strong>原则：同一知识点 = 一份权威源，其余要么删除要么引用。</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例 5：精标题 -->
+            <div class="example-card ec-blue" id="case-5">
+                <div class="example-header">
+                    <div class="example-num">5</div>
+                    <div class="example-title">元数据标注 <span class="et-sub">让筛选更精准</span></div>
+                    <div class="example-tag">🏷️ 对应做法：精标题</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>加班费计算方式：工作日加班按 1.5 倍计算，周末按 2 倍，法定节假日按 3 倍。</p>
+                        <div class="example-problem">⚠️ 无适用范围标注。正式员工、外包、香港员工规则完全不同，模型无法区分，<strong>可能张冠李戴</strong></div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>加班费计算方式</strong></p>
+                        <div class="example-meta-tags">
+                            <span class="example-meta-tag">👤 适用人群：中国大陆正式员工</span>
+                            <span class="example-meta-tag">📍 适用地域：中国大陆</span>
+                            <span class="example-meta-tag">🏷️ 业务标签：薪酬</span>
+                        </div>
+                        <table class="example-mini-table">
+                            <tr><th>加班类型</th><th>倍率</th></tr>
+                            <tr><td>工作日加班</td><td>1.5 倍</td></tr>
+                            <tr><td>周末加班</td><td>2.0 倍</td></tr>
+                            <tr><td>法定节假日加班</td><td>3.0 倍</td></tr>
+                        </table>
+                        <p style="font-size:11px; color:#64748b;">⚠️ 香港地区加班规则请参见《香港办公室薪酬制度》</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例 6：一篇一事 -->
+            <div class="example-card ec-blue" id="case-6">
+                <div class="example-header">
+                    <div class="example-num">6</div>
+                    <div class="example-title">颗粒度控制 <span class="et-sub">切片友好，一事一段</span></div>
+                    <div class="example-tag">📄 对应做法：一篇一事</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>关于薪酬调整：公司每年4月进行年度调薪，调薪幅度参考市场分位值和个人绩效。另外关于报销，差旅报销需在出差结束后15个工作日内提交，超过30天不予报销。还有就是社保问题，新员工入职当月即缴纳五险一金，基数按offer约定的月薪确定。</p>
+                        <div class="example-problem">⚠️ 一段话塞了<strong>调薪、报销、社保</strong>三个不同话题，切片后语义混乱</div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>【年度调薪规则】</strong><br>公司每年 4 月进行年度调薪，调薪幅度参考市场分位值和个人绩效。</p>
+                        <p><strong>【差旅报销时限】</strong><br>差旅报销需在出差结束后 15 个工作日内提交，超过 30 天不予报销。</p>
+                        <p><strong>【新员工社保缴纳】</strong><br>新员工入职当月即缴纳五险一金，基数按 Offer 约定月薪确定。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 写明白 · 让模型"答对" ===== -->
+
+            <!-- 案例 7：结构化 -->
+            <div class="example-card ec-orange" id="case-7">
+                <div class="example-header">
+                    <div class="example-num">7</div>
+                    <div class="example-title">结构化优先 <span class="et-sub">让机器"看得懂"</span></div>
+                    <div class="example-tag">🔀 对应做法：结构化</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>年假天数是根据员工的工龄来确定的，工龄不满一年的没有年假，满一年不满十年的有5天，满十年不满二十年的有10天，满二十年的有15天，另外如果是管理层的话可以额外多3天，但是试用期内不能休年假，转正后才开始计算。</p>
+                        <div class="example-problem">⚠️ 一坨文字堆在一起，模型很难精准提取某一档的具体天数</div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>年假天数标准（2024年版）</strong></p>
+                        <table class="example-mini-table">
+                            <tr><th>工龄</th><th>年假天数</th></tr>
+                            <tr><td>不满 1 年</td><td>0 天</td></tr>
+                            <tr><td>1 年 ≤ 工龄 &lt; 10 年</td><td>5 天</td></tr>
+                            <tr><td>10 年 ≤ 工龄 &lt; 20 年</td><td>10 天</td></tr>
+                            <tr><td>≥ 20 年</td><td>15 天</td></tr>
+                        </table>
+                        <p>补充：管理层额外 +3 天；试用期内不可休，转正后起算。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例 8：给定论 -->
+            <div class="example-card ec-orange" id="case-8">
+                <div class="example-header">
+                    <div class="example-num">8</div>
+                    <div class="example-title">给定论 <span class="et-sub">不留空白让模型填</span></div>
+                    <div class="example-tag">✅ 对应做法：给定论</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>试用期延长的相关规定：根据劳动法，试用期的长短取决于合同期限。企业可以根据实际情况，与员工协商是否延长试用期。具体延长多久需要参照公司制度和相关法规。</p>
+                        <div class="example-problem">⚠️ 只说了"取决于""参照""根据实际情况"，<strong>没有给出任何明确结论</strong>。模型读完也不知道到底能不能延长、最多延多久，只能"自由发挥"编答案</div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>试用期延长规则</strong></p>
+                        <table class="example-mini-table">
+                            <tr><th>合同期限</th><th>试用期上限</th><th>能否延长</th></tr>
+                            <tr><td>≤ 1 年</td><td>1 个月</td><td>不可延长</td></tr>
+                            <tr><td>1~3 年</td><td>2 个月</td><td>可延长 1 次，最多延 1 个月</td></tr>
+                            <tr><td>≥ 3 年 / 无固定期限</td><td>6 个月</td><td>可延长 1 次，最多延 2 个月</td></tr>
+                        </table>
+                        <p><strong>结论：</strong>试用期只能延长一次，且延长后总时长不得超过法定上限。延长须双方书面协商一致。</p>
+                        <p style="font-size:11px; color:#64748b;">📌 依据：《劳动合同法》第十九条 + 公司《员工入职管理规定 V3.0》第 4.2 条</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例 9：消歧义 -->
+            <div class="example-card ec-orange" id="case-9">
+                <div class="example-header">
+                    <div class="example-num">9</div>
+                    <div class="example-title">准确性与时效性 <span class="et-sub">源头保证质量</span></div>
+                    <div class="example-tag">🎯 对应做法：消歧义</div>
+                </div>
+                <div class="example-compare">
+                    <div class="example-box ex-bad">
+                        <div class="example-box-label">❌ 错误写法</div>
+                        <p>产假天数为 98 天，难产加 15 天。</p>
+                        <div class="example-problem">⚠️ 2016 年旧标准，无生效日期、无出处。若地区已延长至 178 天，模型仍自信回答"98 天" —— <strong>过时且错误</strong></div>
+                    </div>
+                    <div class="example-box ex-good">
+                        <div class="example-box-label">✅ 正确写法</div>
+                        <p><strong>产假天数</strong></p>
+                        <div class="example-meta-tags">
+                            <span class="example-meta-tag">📍 适用地区：广东省</span>
+                            <span class="example-meta-tag">📅 生效日期：2024-01-01</span>
+                        </div>
+                        <table class="example-mini-table">
+                            <tr><th>类型</th><th>天数</th></tr>
+                            <tr><td>正常产假</td><td>178 天（法定 98 + 省奖励 80）</td></tr>
+                            <tr><td>难产</td><td>额外 +30 天</td></tr>
+                        </table>
+                        <p style="font-size:11px; color:#64748b;">📌 依据：《广东省人口与计划生育条例》（2023修正版）第三十条</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- ==================== 模块四：不只是知识的问题 =============== -->
+    <!-- ============================================================ -->
+    <div class="module module-4" id="module-4">
+        <div class="module-header">
+            <div class="module-num">④</div>
+            <div class="module-title-group">
+                <div class="module-title">AI 回答质量也不单受知识质量的影响</div>
+                <div class="module-subtitle">知识写好了只是第一步，还有哪些因素在影响最终效果？</div>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #FFFBEB, #FEF3C7); border: 1px solid #FDE68A; border-radius: 14px; padding: 32px 36px; margin-top: 20px;">
+            <div style="font-size: 15px; color: #92400E; line-height: 1.8; margin-bottom: 20px;">
+                AI 回答质量还受 <strong>检索策略、Prompt 工程、模型能力、业务Skill适配</strong> 等多环节共同影响，详细分析请点击下方链接：
+            </div>
+            <a href="https://chrisluoli.github.io/chris-space/RAG%E7%9F%A5%E8%AF%86%E9%97%AE%E7%AD%94%E5%85%A8%E9%93%BE%E8%B7%AF%E5%BD%B1%E5%93%8D%E5%9B%A0%E7%B4%A0%E5%9B%BE.html"
+               target="_blank"
+               style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; background: linear-gradient(135deg, #D97706, #B45309); color: white; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600; transition: all 0.25s; box-shadow: 0 3px 12px rgba(217, 119, 6, 0.3); cursor: pointer;">
+                <span style="font-size: 20px;">🔗</span>
+                RAG 知识问答全链路 · 影响因素分解
+                <span style="font-size: 12px; opacity: 0.8; margin-left: 4px;">↗</span>
+            </a>
+            <div style="margin-top: 20px; padding: 14px 18px; background: rgba(255,255,255,0.6); border-radius: 8px; border-left: 3px solid #D97706;">
+                <p style="font-size: 13px; color: #78716C; margin: 0; line-height: 1.7;">
+                    ⏱️ 时间不够的话，请自取上方文档链接，有任何问题欢迎线下交流 🙌
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+</body>
+</html>
