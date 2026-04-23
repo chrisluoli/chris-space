@@ -209,6 +209,7 @@
         .agenda-step:nth-child(3) .step-num { background: #EC4899; }
         .agenda-step:nth-child(4) .step-num { background: #F59E0B; }
         .agenda-step:nth-child(5) .step-num { background: #10B981; }
+        .agenda-step:nth-child(6) .step-num { background: #0EA5E9; }
 
         .step-tag {
             display: inline-block;
@@ -239,6 +240,10 @@
         .agenda-step:nth-child(5) .step-tag {
             background: #D1FAE5;
             color: #047857;
+        }
+        .agenda-step:nth-child(6) .step-tag {
+            background: #E0F2FE;
+            color: #0369A1;
         }
 
         /* ===== 模块通用 ===== */
@@ -295,8 +300,8 @@
         .module-3 .module-num { background: #EC4899; }
         .module-4 .module-header { border-bottom-color: #FDE68A; }
         .module-4 .module-num { background: #D97706; }
-        .module-5 .module-header { border-bottom-color: #A7F3D0; }
-        .module-5 .module-num { background: #059669; }
+        .module-5 .module-header { border-bottom-color: #C7D2FE; }
+        .module-5 .module-num { background: linear-gradient(135deg, #6366F1, #8B5CF6); }
 
         /* ===== 卡片 ===== */
         .card {
@@ -1248,6 +1253,255 @@
             50% { transform: translateX(-50%) translateY(3px); }
         }
 
+        /* ===== LLM+Wiki 流程图 ===== */
+        .wiki-pipeline { margin: 20px 0; }
+
+        .wiki-flow-visual {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0;
+            padding: 28px 24px 12px;
+            background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .wiki-flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            min-width: 90px;
+            position: relative;
+        }
+
+        .wiki-flow-node:hover { transform: translateY(-2px); }
+        .wiki-flow-node:hover .wiki-node-circle { transform: scale(1.08); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        .wiki-flow-node.active .wiki-node-circle { transform: scale(1.12); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+
+        .wiki-flow-node:nth-child(1).active .wiki-node-circle { background: #7C3AED; border-color: #7C3AED; }
+        .wiki-flow-node:nth-child(3).active .wiki-node-circle { background: #6366F1; border-color: #6366F1; }
+        .wiki-flow-node:nth-child(5).active .wiki-node-circle { background: #8B5CF6; border-color: #8B5CF6; }
+        .wiki-flow-node:nth-child(7).active .wiki-node-circle { background: #A855F7; border-color: #A855F7; }
+        .wiki-flow-node:nth-child(9).active .wiki-node-circle { background: #10B981; border-color: #10B981; }
+
+        .wiki-node-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 8px;
+            border: 3px solid;
+            background: white;
+            transition: all 0.25s ease;
+        }
+
+        .wiki-flow-node:nth-child(1) .wiki-node-circle { border-color: #7C3AED; }
+        .wiki-flow-node:nth-child(3) .wiki-node-circle { border-color: #6366F1; }
+        .wiki-flow-node:nth-child(5) .wiki-node-circle { border-color: #8B5CF6; }
+        .wiki-flow-node:nth-child(7) .wiki-node-circle { border-color: #A855F7; }
+        .wiki-flow-node:nth-child(9) .wiki-node-circle { border-color: #10B981; }
+
+        .wiki-node-label { font-size: 11px; color: var(--gray-500); font-weight: 600; letter-spacing: 0.5px; }
+        .wiki-node-name { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+
+        .wiki-flow-arrow { color: #C4B5FD; font-size: 20px; padding: 0 2px; padding-top: 14px; }
+
+        .wiki-flow-node.active::after {
+            content: '▼';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #C4B5FD;
+            animation: bounceDown 1s ease infinite;
+        }
+
+        /* Wiki 展开面板 */
+        .wiki-expand-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid var(--gray-200);
+        }
+
+        .wiki-expand-panel.open {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        .wiki-expand-inner { padding: 20px 24px; font-size: 14px; color: var(--gray-600); line-height: 1.8; }
+
+        .wiki-expand-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .wiki-expand-head-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .wiki-expand-head-title { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+
+        .wiki-expand-close {
+            margin-left: auto;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--gray-400);
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .wiki-expand-close:hover { background: var(--gray-200); color: var(--gray-600); }
+
+        .wiki-next-step-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 14px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(124, 58, 237, 0.25);
+            flex-shrink: 0;
+        }
+        .wiki-next-step-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(124, 58, 237, 0.35);
+            background: linear-gradient(135deg, #6D28D9, #5B21B6);
+        }
+
+        .wiki-expand-inner p { margin: 0 0 8px; }
+        .wiki-expand-inner p:last-child { margin-bottom: 0; }
+
+        .wiki-expand-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        @media (max-width: 768px) {
+            .wiki-expand-columns { grid-template-columns: 1fr; }
+            .wiki-expand-col { border-right: none !important; border-bottom: 1px solid #E5E7EB; }
+            .wiki-expand-col:last-child { border-bottom: none; }
+        }
+
+        .wiki-expand-col { font-size: 14px; color: var(--gray-600); line-height: 1.8; padding: 16px 20px; }
+
+        .wiki-col-tech {
+            background: #FAF5FF;
+            border-right: 1px solid #E5E7EB;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .wiki-col-diff {
+            background: #FFF7ED;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .wiki-expand-col-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        .wiki-col-tech .wiki-expand-col-label { background: #F5F3FF; color: #6D28D9; }
+        .wiki-col-diff .wiki-expand-col-label { background: #FFF7ED; color: #B45309; }
+
+        .wiki-expand-col p { margin: 0 0 8px; }
+        .wiki-expand-col p:last-child { margin-bottom: 0; }
+
+        /* 对比表格 */
+        .compare-table-wrap { margin: 20px 0; overflow-x: auto; }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+        .compare-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .compare-table th:first-child { background: var(--gray-50); color: var(--gray-700); width: 14%; }
+        .compare-table th:nth-child(2) { background: #EFF6FF; color: #1D4ED8; }
+        .compare-table th:nth-child(3) { background: #F5F3FF; color: #6D28D9; }
+        .compare-table th:nth-child(4) { background: #FFF7ED; color: #B45309; }
+        .compare-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: top;
+        }
+        .compare-table td:first-child { font-weight: 600; color: var(--gray-700); background: var(--gray-50); }
+        .compare-table tr:last-child td { border-bottom: none; }
+        .compare-table .tag-rag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+        .compare-table .tag-wiki {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #EDE9FE;
+            color: #6D28D9;
+        }
+
         /* ===== 案例对照卡片 ===== */
         .example-section {
             margin-top: 28px;
@@ -1456,6 +1710,87 @@
             font-size: 10px;
         }
 
+        /* ===== 案例 Tab 切换 ===== */
+        .case-tabs-wrapper {
+            margin-top: 28px;
+        }
+        .case-tabs-nav {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--gray-200);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .case-tabs-nav::-webkit-scrollbar { display: none; }
+        .case-tab-btn {
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-500);
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            position: relative;
+            margin-bottom: -2px;
+        }
+        .case-tab-btn:hover {
+            color: var(--gray-700);
+            background: var(--gray-50);
+        }
+        .case-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        .case-tab-btn .tab-badge {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            margin-right: 6px;
+        }
+        .case-tab-btn.tab-purple .tab-badge { background: #7C3AED; }
+        .case-tab-btn.tab-blue .tab-badge { background: #2563EB; }
+        .case-tab-btn.tab-orange .tab-badge { background: #D97706; }
+        .case-tab-btn.tab-purple.active { color: #7C3AED; border-bottom-color: #7C3AED; }
+        .case-tab-btn.tab-blue.active { color: #2563EB; border-bottom-color: #2563EB; }
+        .case-tab-btn.tab-orange.active { color: #D97706; border-bottom-color: #D97706; }
+
+        .case-tab-group-divider {
+            width: 1px;
+            background: var(--gray-200);
+            margin: 6px 4px;
+            flex-shrink: 0;
+        }
+
+        .case-tabs-content {
+            margin-top: 0;
+        }
+        .case-tab-panel {
+            display: none;
+            animation: tabFadeIn 0.3s ease;
+        }
+        .case-tab-panel.active {
+            display: block;
+        }
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .case-tab-panel .example-card {
+            margin-bottom: 0;
+            border-radius: 0 0 var(--radius) var(--radius);
+            scroll-margin-top: 80px;
+        }
+
         /* ===== 打印 ===== */
         @media print {
             .top-nav { display: none; }
@@ -1472,6 +1807,7 @@
         <a href="#module-2">② RAG原理</a>
         <a href="#module-3">③ 内容维护准则</a>
         <a href="#module-4">④ 影响回答质量的其他因素</a>
+        <a href="#module-2b">⑤ LLM+Wiki vs RAG</a>
     </div>
 </nav>
 
@@ -1507,6 +1843,11 @@
                 <span class="step-num">④</span>
                 影响回答质量的<br>其他因素
                 <span class="step-tag">全局视角</span>
+            </div>
+            <div class="agenda-step">
+                <span class="step-num" style="font-size: 10px;">⑤</span>
+                LLM+Wiki 和 RAG<br>实现原理的区别
+                <span class="step-tag">对比理解</span>
             </div>
 
         </div>
@@ -1835,11 +2176,47 @@
                     document.getElementById('panel-1').classList.add('open');
                 }
             });
+
+            // ===== 案例 Tab 切换 =====
+            function switchCaseTab(num) {
+                // 移除所有 btn active
+                var btns = document.querySelectorAll('.case-tab-btn');
+                btns.forEach(function(b) { b.classList.remove('active'); });
+                // 隐藏所有 panel
+                var panels = document.querySelectorAll('.case-tab-panel');
+                panels.forEach(function(p) { p.classList.remove('active'); });
+                // 激活目标
+                var targetBtn = document.getElementById('caseTabBtn' + num);
+                var targetPanel = document.getElementById('casePanel' + num);
+                if (targetBtn) targetBtn.classList.add('active');
+                if (targetPanel) targetPanel.classList.add('active');
+                // 滚动到 tab 区域
+                var tabSection = document.getElementById('case-tabs-section');
+                if (tabSection) {
+                    tabSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+
+            // 表格中的案例链接点击跳转到对应 tab
+            document.addEventListener('DOMContentLoaded', function() {
+                var caseLinks = document.querySelectorAll('.case-anchor-link');
+                caseLinks.forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var href = this.getAttribute('href');
+                        if (href) {
+                            var caseNum = href.replace('#case-', '');
+                            switchCaseTab(parseInt(caseNum));
+                        }
+                    });
+                });
+            });
             </script>
         </div>
 
 
     </div>
+
     <!-- ============================================================ -->
     <!-- ==================== 模块三：内容维护准则 ================== -->
     <!-- ============================================================ -->
@@ -1855,7 +2232,11 @@
         <!-- 三大原则九条做法一览表 -->
         <div class="card">
             <h3>📋 三大原则 · 九条做法一览</h3>
-            <p style="margin: -4px 0 14px 0; font-size: 14px; color: #EF4444; font-weight: 700;">⚠️ 知识库少而精远好于大而全 <span style="font-size: 11px; font-weight: 400; background: #FEF2F2; padding: 2px 8px; border-radius: 4px; border: 1px dashed #EF4444; margin-left: 6px;">待优化</span></p>
+
+            <div style="margin-bottom: 20px; padding: 16px 20px; background: linear-gradient(135deg, #F0F9FF, #EDE9FE); border-radius: 10px; border-left: 4px solid #7C3AED; font-size: 14px; line-height: 1.8; color: #374151;">
+                💡 <strong>为什么大模型理解 Markdown 最好？</strong>是因为基模训练见得多、结构给得准、文本够干净、容错足够高。
+            </div>
+
             <div style="overflow-x: auto;">
                 <table style="width:100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; font-size: 14px; line-height: 1.7; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
                     <thead>
@@ -1942,245 +2323,298 @@
             </div>
         </div>
 
-        <!-- ===== 写作示例对照区 ===== -->
-        <div class="example-section">
+        <!-- ===== 写作示例对照区（Tab 切换） ===== -->
+        <div class="case-tabs-wrapper" id="case-tabs-section">
 
-            <!-- ===== 写清楚 · 让系统"读懂" ===== -->
-
-            <!-- 案例 1：说人话 -->
-            <div class="example-card ec-purple" id="case-1">
-                <div class="example-header">
-                    <div class="example-num">1</div>
-                    <div class="example-title">说人话 <span class="et-sub">让向量化不"漂移"</span></div>
-                    <div class="example-tag">💬 对应做法：说人话</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>T+1 CBD OD review，BP align HRBP，走 SSC ticket，CC CoE owner。</p>
-                        <div class="example-problem">⚠️ 全是缩写和内部黑话，向量化后语义坐标严重漂移。用户问"转正审批怎么走"时，Embedding 完全匹配不上</div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>转正审批流程</strong></p>
-                        <p>员工试用期满后次日（T+1），由直属上级在系统中发起转正评估。</p>
-                        <p>流程：直属上级提交评估 → HRBP 审核 → SSC 共享服务中心处理系统工单 → 抄送 CoE 政策负责人备案。</p>
-                    </div>
-                </div>
+            <!-- Tab 导航 -->
+            <div class="case-tabs-nav" id="caseTabsNav">
+                <!-- 写清楚 -->
+                <button class="case-tab-btn tab-purple active" onclick="switchCaseTab(1)" id="caseTabBtn1">
+                    <span class="tab-badge">1</span>说人话
+                </button>
+                <button class="case-tab-btn tab-purple" onclick="switchCaseTab(2)" id="caseTabBtn2">
+                    <span class="tab-badge">2</span>写全称
+                </button>
+                <button class="case-tab-btn tab-purple" onclick="switchCaseTab(3)" id="caseTabBtn3">
+                    <span class="tab-badge">3</span>黑话词库
+                </button>
+                <div class="case-tab-group-divider"></div>
+                <!-- 写干净 -->
+                <button class="case-tab-btn tab-blue" onclick="switchCaseTab(4)" id="caseTabBtn4">
+                    <span class="tab-badge">4</span>去冗余
+                </button>
+                <button class="case-tab-btn tab-blue" onclick="switchCaseTab(5)" id="caseTabBtn5">
+                    <span class="tab-badge">5</span>精标题
+                </button>
+                <button class="case-tab-btn tab-blue" onclick="switchCaseTab(6)" id="caseTabBtn6">
+                    <span class="tab-badge">6</span>一篇一事
+                </button>
+                <div class="case-tab-group-divider"></div>
+                <!-- 写明白 -->
+                <button class="case-tab-btn tab-orange" onclick="switchCaseTab(7)" id="caseTabBtn7">
+                    <span class="tab-badge">7</span>结构化
+                </button>
+                <button class="case-tab-btn tab-orange" onclick="switchCaseTab(8)" id="caseTabBtn8">
+                    <span class="tab-badge">8</span>给定论
+                </button>
+                <button class="case-tab-btn tab-orange" onclick="switchCaseTab(9)" id="caseTabBtn9">
+                    <span class="tab-badge">9</span>消歧义
+                </button>
             </div>
 
-            <!-- 案例 2：写全称 -->
-            <div class="example-card ec-purple" id="case-2">
-                <div class="example-header">
-                    <div class="example-num">2</div>
-                    <div class="example-title">语义丰富度 <span class="et-sub">让检索"找得到"</span></div>
-                    <div class="example-tag">📝 对应做法：写全称</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>PIP 流程：HR 发起 → 直属上级制定改进计划 → 员工签字确认 → 执行 60 天 → 评估结果。</p>
-                        <div class="example-problem">⚠️ 只有缩写 "PIP"，用户问"绩效改进计划怎么走"时，Embedding 向量距离远，<strong>完全召回不到</strong></div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>绩效改进计划（PIP / Performance Improvement Plan）流程</strong></p>
-                        <p>适用场景：员工绩效不达标、绩效考核结果为"待改进"时启动。</p>
-                        <p>流程：HR 发起 → 直属上级制定改进计划 → 员工签字确认 → 执行 60 天 → 评估结果。</p>
-                    </div>
-                </div>
-            </div>
+            <!-- Tab 内容面板 -->
+            <div class="case-tabs-content">
 
-            <!-- 案例 3：黑话词库 -->
-            <div class="example-card ec-purple" id="case-3">
-                <div class="example-header">
-                    <div class="example-num">3</div>
-                    <div class="example-title">黑话词库 <span class="et-sub">建立术语映射表</span></div>
-                    <div class="example-tag">📖 对应做法：黑话词库</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>关于 HC 冻结：当 BU 的 HC 被冻结时，所有 JD 暂停发布，等 CFO 审批解冻后 TA 再重新操作。</p>
-                        <div class="example-problem">⚠️ HC、BU、JD、CFO、TA 全部是缩写，没有同义词映射。用户问"编制冻结了怎么招人"时，向量完全对不上</div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>编制（HC）冻结期间的招聘处理</strong></p>
-                        <p>当业务单元（BU）的编制（HC / Headcount）被冻结时：</p>
-                        <p>① 所有岗位描述（JD / Job Description）暂停发布；<br>② 等待财务负责人（CFO）审批解冻；<br>③ 解冻后由招聘专员（TA / Talent Acquisition）重新启动发布流程。</p>
-                        <div class="example-meta-tags">
-                            <span class="example-meta-tag">💡 建议同步维护术语映射表：HC=编制，BU=业务单元，TA=招聘专员</span>
+                <!-- 案例 1：说人话 -->
+                <div class="case-tab-panel active" id="casePanel1">
+                    <div class="example-card ec-purple" id="case-1" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">1</div>
+                            <div class="example-title">说人话 <span class="et-sub">让向量化不"漂移"</span></div>
+                            <div class="example-tag">💬 对应做法：说人话</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>T+1 CBD OD review，BP align HRBP，走 SSC ticket，CC CoE owner。</p>
+                                <div class="example-problem">⚠️ 全是缩写和内部黑话，向量化后语义坐标严重漂移。用户问"转正审批怎么走"时，Embedding 完全匹配不上</div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>转正审批流程</strong></p>
+                                <p>员工试用期满后次日（T+1），由直属上级在系统中发起转正评估。</p>
+                                <p>流程：直属上级提交评估 → HRBP 审核 → SSC 共享服务中心处理系统工单 → 抄送 CoE 政策负责人备案。</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ===== 写干净 · 让系统"找对" ===== -->
-
-            <!-- 案例 4：去冗余 -->
-            <div class="example-card ec-blue" id="case-4">
-                <div class="example-header">
-                    <div class="example-num">4</div>
-                    <div class="example-title">去冗余 <span class="et-sub">清除"噪声邻居"</span></div>
-                    <div class="example-tag">🗑️ 对应做法：去冗余</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>知识库中同时存在以下三篇：</p>
-                        <p>📄 《年假管理办法（2022版）》——年假 5/10/15 天<br>📄 《年假管理办法（2023修订）》——年假 5/10/15 天，新增调休规则<br>📄 《员工福利手册》第三章——年假天数与 2022 版相同</p>
-                        <div class="example-problem">⚠️ 三篇内容高度重叠，检索时互相"抢排名"。模型可能召回过期的 2022 版，或把三篇混杂拼凑，导致<strong>回答自相矛盾</strong></div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>处理方式：</strong></p>
-                        <p>① 只保留 《年假管理办法（2023修订）》 作为唯一权威版本<br>② 将 2022 版标记为「已废止」并从知识库下架<br>③ 福利手册中年假章节改为引用链接："年假规则详见《年假管理办法（2023修订）》"</p>
-                        <p><strong>原则：同一知识点 = 一份权威源，其余要么删除要么引用。</strong></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 案例 5：精标题 -->
-            <div class="example-card ec-blue" id="case-5">
-                <div class="example-header">
-                    <div class="example-num">5</div>
-                    <div class="example-title">元数据标注 <span class="et-sub">让筛选更精准</span></div>
-                    <div class="example-tag">🏷️ 对应做法：精标题</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>加班费计算方式：工作日加班按 1.5 倍计算，周末按 2 倍，法定节假日按 3 倍。</p>
-                        <div class="example-problem">⚠️ 无适用范围标注。正式员工、外包、香港员工规则完全不同，模型无法区分，<strong>可能张冠李戴</strong></div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>加班费计算方式</strong></p>
-                        <div class="example-meta-tags">
-                            <span class="example-meta-tag">👤 适用人群：中国大陆正式员工</span>
-                            <span class="example-meta-tag">📍 适用地域：中国大陆</span>
-                            <span class="example-meta-tag">🏷️ 业务标签：薪酬</span>
+                <!-- 案例 2：写全称 -->
+                <div class="case-tab-panel" id="casePanel2">
+                    <div class="example-card ec-purple" id="case-2" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">2</div>
+                            <div class="example-title">语义丰富度 <span class="et-sub">让检索"找得到"</span></div>
+                            <div class="example-tag">📝 对应做法：写全称</div>
                         </div>
-                        <table class="example-mini-table">
-                            <tr><th>加班类型</th><th>倍率</th></tr>
-                            <tr><td>工作日加班</td><td>1.5 倍</td></tr>
-                            <tr><td>周末加班</td><td>2.0 倍</td></tr>
-                            <tr><td>法定节假日加班</td><td>3.0 倍</td></tr>
-                        </table>
-                        <p style="font-size:11px; color:#64748b;">⚠️ 香港地区加班规则请参见《香港办公室薪酬制度》</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 案例 6：一篇一事 -->
-            <div class="example-card ec-blue" id="case-6">
-                <div class="example-header">
-                    <div class="example-num">6</div>
-                    <div class="example-title">颗粒度控制 <span class="et-sub">切片友好，一事一段</span></div>
-                    <div class="example-tag">📄 对应做法：一篇一事</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>关于薪酬调整：公司每年4月进行年度调薪，调薪幅度参考市场分位值和个人绩效。另外关于报销，差旅报销需在出差结束后15个工作日内提交，超过30天不予报销。还有就是社保问题，新员工入职当月即缴纳五险一金，基数按offer约定的月薪确定。</p>
-                        <div class="example-problem">⚠️ 一段话塞了<strong>调薪、报销、社保</strong>三个不同话题，切片后语义混乱</div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>【年度调薪规则】</strong><br>公司每年 4 月进行年度调薪，调薪幅度参考市场分位值和个人绩效。</p>
-                        <p><strong>【差旅报销时限】</strong><br>差旅报销需在出差结束后 15 个工作日内提交，超过 30 天不予报销。</p>
-                        <p><strong>【新员工社保缴纳】</strong><br>新员工入职当月即缴纳五险一金，基数按 Offer 约定月薪确定。</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ===== 写明白 · 让模型"答对" ===== -->
-
-            <!-- 案例 7：结构化 -->
-            <div class="example-card ec-orange" id="case-7">
-                <div class="example-header">
-                    <div class="example-num">7</div>
-                    <div class="example-title">结构化优先 <span class="et-sub">让机器"看得懂"</span></div>
-                    <div class="example-tag">🔀 对应做法：结构化</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>年假天数是根据员工的工龄来确定的，工龄不满一年的没有年假，满一年不满十年的有5天，满十年不满二十年的有10天，满二十年的有15天，另外如果是管理层的话可以额外多3天，但是试用期内不能休年假，转正后才开始计算。</p>
-                        <div class="example-problem">⚠️ 一坨文字堆在一起，模型很难精准提取某一档的具体天数</div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>年假天数标准（2024年版）</strong></p>
-                        <table class="example-mini-table">
-                            <tr><th>工龄</th><th>年假天数</th></tr>
-                            <tr><td>不满 1 年</td><td>0 天</td></tr>
-                            <tr><td>1 年 ≤ 工龄 &lt; 10 年</td><td>5 天</td></tr>
-                            <tr><td>10 年 ≤ 工龄 &lt; 20 年</td><td>10 天</td></tr>
-                            <tr><td>≥ 20 年</td><td>15 天</td></tr>
-                        </table>
-                        <p>补充：管理层额外 +3 天；试用期内不可休，转正后起算。</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 案例 8：给定论 -->
-            <div class="example-card ec-orange" id="case-8">
-                <div class="example-header">
-                    <div class="example-num">8</div>
-                    <div class="example-title">给定论 <span class="et-sub">不留空白让模型填</span></div>
-                    <div class="example-tag">✅ 对应做法：给定论</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>试用期延长的相关规定：根据劳动法，试用期的长短取决于合同期限。企业可以根据实际情况，与员工协商是否延长试用期。具体延长多久需要参照公司制度和相关法规。</p>
-                        <div class="example-problem">⚠️ 只说了"取决于""参照""根据实际情况"，<strong>没有给出任何明确结论</strong>。模型读完也不知道到底能不能延长、最多延多久，只能"自由发挥"编答案</div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>试用期延长规则</strong></p>
-                        <table class="example-mini-table">
-                            <tr><th>合同期限</th><th>试用期上限</th><th>能否延长</th></tr>
-                            <tr><td>≤ 1 年</td><td>1 个月</td><td>不可延长</td></tr>
-                            <tr><td>1~3 年</td><td>2 个月</td><td>可延长 1 次，最多延 1 个月</td></tr>
-                            <tr><td>≥ 3 年 / 无固定期限</td><td>6 个月</td><td>可延长 1 次，最多延 2 个月</td></tr>
-                        </table>
-                        <p><strong>结论：</strong>试用期只能延长一次，且延长后总时长不得超过法定上限。延长须双方书面协商一致。</p>
-                        <p style="font-size:11px; color:#64748b;">📌 依据：《劳动合同法》第十九条 + 公司《员工入职管理规定 V3.0》第 4.2 条</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 案例 9：消歧义 -->
-            <div class="example-card ec-orange" id="case-9">
-                <div class="example-header">
-                    <div class="example-num">9</div>
-                    <div class="example-title">准确性与时效性 <span class="et-sub">源头保证质量</span></div>
-                    <div class="example-tag">🎯 对应做法：消歧义</div>
-                </div>
-                <div class="example-compare">
-                    <div class="example-box ex-bad">
-                        <div class="example-box-label">❌ 错误写法</div>
-                        <p>产假天数为 98 天，难产加 15 天。</p>
-                        <div class="example-problem">⚠️ 2016 年旧标准，无生效日期、无出处。若地区已延长至 178 天，模型仍自信回答"98 天" —— <strong>过时且错误</strong></div>
-                    </div>
-                    <div class="example-box ex-good">
-                        <div class="example-box-label">✅ 正确写法</div>
-                        <p><strong>产假天数</strong></p>
-                        <div class="example-meta-tags">
-                            <span class="example-meta-tag">📍 适用地区：广东省</span>
-                            <span class="example-meta-tag">📅 生效日期：2024-01-01</span>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>PIP 流程：HR 发起 → 直属上级制定改进计划 → 员工签字确认 → 执行 60 天 → 评估结果。</p>
+                                <div class="example-problem">⚠️ 只有缩写 "PIP"，用户问"绩效改进计划怎么走"时，Embedding 向量距离远，<strong>完全召回不到</strong></div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>绩效改进计划（PIP / Performance Improvement Plan）流程</strong></p>
+                                <p>适用场景：员工绩效不达标、绩效考核结果为"待改进"时启动。</p>
+                                <p>流程：HR 发起 → 直属上级制定改进计划 → 员工签字确认 → 执行 60 天 → 评估结果。</p>
+                            </div>
                         </div>
-                        <table class="example-mini-table">
-                            <tr><th>类型</th><th>天数</th></tr>
-                            <tr><td>正常产假</td><td>178 天（法定 98 + 省奖励 80）</td></tr>
-                            <tr><td>难产</td><td>额外 +30 天</td></tr>
-                        </table>
-                        <p style="font-size:11px; color:#64748b;">📌 依据：《广东省人口与计划生育条例》（2023修正版）第三十条</p>
                     </div>
                 </div>
+
+                <!-- 案例 3：黑话词库 -->
+                <div class="case-tab-panel" id="casePanel3">
+                    <div class="example-card ec-purple" id="case-3" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">3</div>
+                            <div class="example-title">黑话词库 <span class="et-sub">建立术语映射表</span></div>
+                            <div class="example-tag">📖 对应做法：黑话词库</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>关于 HC 冻结：当 BU 的 HC 被冻结时，所有 JD 暂停发布，等 CFO 审批解冻后 TA 再重新操作。</p>
+                                <div class="example-problem">⚠️ HC、BU、JD、CFO、TA 全部是缩写，没有同义词映射。用户问"编制冻结了怎么招人"时，向量完全对不上</div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>编制（HC）冻结期间的招聘处理</strong></p>
+                                <p>当业务单元（BU）的编制（HC / Headcount）被冻结时：</p>
+                                <p>① 所有岗位描述（JD / Job Description）暂停发布；<br>② 等待财务负责人（CFO）审批解冻；<br>③ 解冻后由招聘专员（TA / Talent Acquisition）重新启动发布流程。</p>
+                                <div class="example-meta-tags">
+                                    <span class="example-meta-tag">💡 建议同步维护术语映射表：HC=编制，BU=业务单元，TA=招聘专员</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 案例 4：去冗余 -->
+                <div class="case-tab-panel" id="casePanel4">
+                    <div class="example-card ec-blue" id="case-4" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">4</div>
+                            <div class="example-title">去冗余 <span class="et-sub">清除"噪声邻居"</span></div>
+                            <div class="example-tag">🗑️ 对应做法：去冗余</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>知识库中同时存在以下三篇：</p>
+                                <p>📄 《年假管理办法（2022版）》——年假 5/10/15 天<br>📄 《年假管理办法（2023修订）》——年假 5/10/15 天，新增调休规则<br>📄 《员工福利手册》第三章——年假天数与 2022 版相同</p>
+                                <div class="example-problem">⚠️ 三篇内容高度重叠，检索时互相"抢排名"。模型可能召回过期的 2022 版，或把三篇混杂拼凑，导致<strong>回答自相矛盾</strong></div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>处理方式：</strong></p>
+                                <p>① 只保留 《年假管理办法（2023修订）》 作为唯一权威版本<br>② 将 2022 版标记为「已废止」并从知识库下架<br>③ 福利手册中年假章节改为引用链接："年假规则详见《年假管理办法（2023修订）》"</p>
+                                <p><strong>原则：同一知识点 = 一份权威源，其余要么删除要么引用。</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 案例 5：精标题 -->
+                <div class="case-tab-panel" id="casePanel5">
+                    <div class="example-card ec-blue" id="case-5" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">5</div>
+                            <div class="example-title">元数据标注 <span class="et-sub">让筛选更精准</span></div>
+                            <div class="example-tag">🏷️ 对应做法：精标题</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>加班费计算方式：工作日加班按 1.5 倍计算，周末按 2 倍，法定节假日按 3 倍。</p>
+                                <div class="example-problem">⚠️ 无适用范围标注。正式员工、外包、香港员工规则完全不同，模型无法区分，<strong>可能张冠李戴</strong></div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>加班费计算方式</strong></p>
+                                <div class="example-meta-tags">
+                                    <span class="example-meta-tag">👤 适用人群：中国大陆正式员工</span>
+                                    <span class="example-meta-tag">📍 适用地域：中国大陆</span>
+                                    <span class="example-meta-tag">🏷️ 业务标签：薪酬</span>
+                                </div>
+                                <table class="example-mini-table">
+                                    <tr><th>加班类型</th><th>倍率</th></tr>
+                                    <tr><td>工作日加班</td><td>1.5 倍</td></tr>
+                                    <tr><td>周末加班</td><td>2.0 倍</td></tr>
+                                    <tr><td>法定节假日加班</td><td>3.0 倍</td></tr>
+                                </table>
+                                <p style="font-size:11px; color:#64748b;">⚠️ 香港地区加班规则请参见《香港办公室薪酬制度》</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 案例 6：一篇一事 -->
+                <div class="case-tab-panel" id="casePanel6">
+                    <div class="example-card ec-blue" id="case-6" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">6</div>
+                            <div class="example-title">颗粒度控制 <span class="et-sub">切片友好，一事一段</span></div>
+                            <div class="example-tag">📄 对应做法：一篇一事</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>关于薪酬调整：公司每年4月进行年度调薪，调薪幅度参考市场分位值和个人绩效。另外关于报销，差旅报销需在出差结束后15个工作日内提交，超过30天不予报销。还有就是社保问题，新员工入职当月即缴纳五险一金，基数按offer约定的月薪确定。</p>
+                                <div class="example-problem">⚠️ 一段话塞了<strong>调薪、报销、社保</strong>三个不同话题，切片后语义混乱</div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>【年度调薪规则】</strong><br>公司每年 4 月进行年度调薪，调薪幅度参考市场分位值和个人绩效。</p>
+                                <p><strong>【差旅报销时限】</strong><br>差旅报销需在出差结束后 15 个工作日内提交，超过 30 天不予报销。</p>
+                                <p><strong>【新员工社保缴纳】</strong><br>新员工入职当月即缴纳五险一金，基数按 Offer 约定月薪确定。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 案例 7：结构化 -->
+                <div class="case-tab-panel" id="casePanel7">
+                    <div class="example-card ec-orange" id="case-7" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">7</div>
+                            <div class="example-title">结构化优先 <span class="et-sub">让机器"看得懂"</span></div>
+                            <div class="example-tag">🔀 对应做法：结构化</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>年假天数是根据员工的工龄来确定的，工龄不满一年的没有年假，满一年不满十年的有5天，满十年不满二十年的有10天，满二十年的有15天，另外如果是管理层的话可以额外多3天，但是试用期内不能休年假，转正后才开始计算。</p>
+                                <div class="example-problem">⚠️ 一坨文字堆在一起，模型很难精准提取某一档的具体天数</div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>年假天数标准（2024年版）</strong></p>
+                                <table class="example-mini-table">
+                                    <tr><th>工龄</th><th>年假天数</th></tr>
+                                    <tr><td>不满 1 年</td><td>0 天</td></tr>
+                                    <tr><td>1 年 ≤ 工龄 &lt; 10 年</td><td>5 天</td></tr>
+                                    <tr><td>10 年 ≤ 工龄 &lt; 20 年</td><td>10 天</td></tr>
+                                    <tr><td>≥ 20 年</td><td>15 天</td></tr>
+                                </table>
+                                <p>补充：管理层额外 +3 天；试用期内不可休，转正后起算。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 案例 8：给定论 -->
+                <div class="case-tab-panel" id="casePanel8">
+                    <div class="example-card ec-orange" id="case-8" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">8</div>
+                            <div class="example-title">给定论 <span class="et-sub">不留空白让模型填</span></div>
+                            <div class="example-tag">✅ 对应做法：给定论</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>试用期延长的相关规定：根据劳动法，试用期的长短取决于合同期限。企业可以根据实际情况，与员工协商是否延长试用期。具体延长多久需要参照公司制度和相关法规。</p>
+                                <div class="example-problem">⚠️ 只说了"取决于""参照""根据实际情况"，<strong>没有给出任何明确结论</strong>。模型读完也不知道到底能不能延长、最多延多久，只能"自由发挥"编答案</div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>试用期延长规则</strong></p>
+                                <table class="example-mini-table">
+                                    <tr><th>合同期限</th><th>试用期上限</th><th>能否延长</th></tr>
+                                    <tr><td>≤ 1 年</td><td>1 个月</td><td>不可延长</td></tr>
+                                    <tr><td>1~3 年</td><td>2 个月</td><td>可延长 1 次，最多延 1 个月</td></tr>
+                                    <tr><td>≥ 3 年 / 无固定期限</td><td>6 个月</td><td>可延长 1 次，最多延 2 个月</td></tr>
+                                </table>
+                                <p><strong>结论：</strong>试用期只能延长一次，且延长后总时长不得超过法定上限。延长须双方书面协商一致。</p>
+                                <p style="font-size:11px; color:#64748b;">📌 依据：《劳动合同法》第十九条 + 公司《员工入职管理规定 V3.0》第 4.2 条</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 案例 9：消歧义 -->
+                <div class="case-tab-panel" id="casePanel9">
+                    <div class="example-card ec-orange" id="case-9" style="margin-bottom:0; border-radius: 0 0 12px 12px;">
+                        <div class="example-header">
+                            <div class="example-num">9</div>
+                            <div class="example-title">准确性与时效性 <span class="et-sub">源头保证质量</span></div>
+                            <div class="example-tag">🎯 对应做法：消歧义</div>
+                        </div>
+                        <div class="example-compare">
+                            <div class="example-box ex-bad">
+                                <div class="example-box-label">❌ 错误写法</div>
+                                <p>产假天数为 98 天，难产加 15 天。</p>
+                                <div class="example-problem">⚠️ 2016 年旧标准，无生效日期、无出处。若地区已延长至 178 天，模型仍自信回答"98 天" —— <strong>过时且错误</strong></div>
+                            </div>
+                            <div class="example-box ex-good">
+                                <div class="example-box-label">✅ 正确写法</div>
+                                <p><strong>产假天数</strong></p>
+                                <div class="example-meta-tags">
+                                    <span class="example-meta-tag">📍 适用地区：广东省</span>
+                                    <span class="example-meta-tag">📅 生效日期：2024-01-01</span>
+                                </div>
+                                <table class="example-mini-table">
+                                    <tr><th>类型</th><th>天数</th></tr>
+                                    <tr><td>正常产假</td><td>178 天（法定 98 + 省奖励 80）</td></tr>
+                                    <tr><td>难产</td><td>额外 +30 天</td></tr>
+                                </table>
+                                <p style="font-size:11px; color:#64748b;">📌 依据：《广东省人口与计划生育条例》（2023修正版）第三十条</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -2216,6 +2650,207 @@
                 </p>
             </div>
         </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- =========== 模块五：LLM+Wiki 和 RAG 实现原理的区别 ========= -->
+    <!-- ============================================================ -->
+    <div class="module module-5" id="module-2b">
+        <div class="module-header">
+            <div class="module-num" style="background: linear-gradient(135deg, #6366F1, #8B5CF6); font-size: 13px;">⑤</div>
+            <div class="module-title-group">
+                <div class="module-title">LLM+Wiki 和 RAG 实现原理的区别</div>
+                <div class="module-subtitle">两种知识问答架构的核心差异与适用场景</div>
+            </div>
+        </div>
+
+        <!-- 一句话解释 -->
+        <div class="card">
+            <h3>💡 LLM+Wiki 是什么？</h3>
+            <p><strong>LLM+Wiki</strong> = 将用户添加的原始文档，通过大模型编译成若干个 Wiki，模型只基于 Wiki 来回答用户的问题。</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px;">
+                <div style="background:#EFF6FF; border-radius:10px; padding:16px 18px; border-left:4px solid #3B82F6;">
+                    <div style="font-size:13px; font-weight:700; color:#1D4ED8; margin-bottom:6px;">📘 RAG 像什么？</div>
+                    <p style="font-size:14px; color:var(--gray-700); margin:0; line-height:1.8;">你有一个<strong>天才实习生</strong>，你把一屋子文件堆给他。每次你问问题，他就飞快地翻遍所有文件，把他觉得最相关的几页纸抽出来摆在桌上，然后基于这几页纸给你写答案。</p>
+                </div>
+                <div style="background:#F5F3FF; border-radius:10px; padding:16px 18px; border-left:4px solid #7C3AED;">
+                    <div style="font-size:13px; font-weight:700; color:#6D28D9; margin-bottom:6px;">📗 LLM+Wiki 像什么？</div>
+                    <p style="font-size:14px; color:var(--gray-700); margin:0; line-height:1.8;">你有一个<strong>学霸老师</strong>，他先帮你把一屋子文件整理成一本本条理清晰的笔记本（Wiki）。每次你问问题，他只翻对应的笔记本或者目录章节，他先读完之后再给你写答案。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- LLM+Wiki 完整流程 -->
+        <div class="card">
+            <h3>🔄 LLM+Wiki 工作流程</h3>
+
+            <div class="wiki-pipeline">
+                <div class="wiki-flow-visual">
+                    <div class="wiki-flow-node">
+                        <div class="wiki-node-circle">❓</div>
+                        <div class="wiki-node-label">STEP 1</div>
+                        <div class="wiki-node-name">用户提问</div>
+                    </div>
+                    <div class="wiki-flow-arrow">→</div>
+                    <div class="wiki-flow-node">
+                        <div class="wiki-node-circle">📄</div>
+                        <div class="wiki-node-label">STEP 2</div>
+                        <div class="wiki-node-name">在编译后的Wiki中匹配知识</div>
+                    </div>
+                    <div class="wiki-flow-arrow">→</div>
+                    <div class="wiki-flow-node">
+                        <div class="wiki-node-circle">📦</div>
+                        <div class="wiki-node-label">STEP 3</div>
+                        <div class="wiki-node-name">上下文拼装</div>
+                    </div>
+                    <div class="wiki-flow-arrow">→</div>
+                    <div class="wiki-flow-node">
+                        <div class="wiki-node-circle">🤖</div>
+                        <div class="wiki-node-label">STEP 4</div>
+                        <div class="wiki-node-name">模型生成</div>
+                    </div>
+                    <div class="wiki-flow-arrow">→</div>
+                    <div class="wiki-flow-node">
+                        <div class="wiki-node-circle">💬</div>
+                        <div class="wiki-node-label">STEP 5</div>
+                        <div class="wiki-node-name">输出回答</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心差异对比表 -->
+        <div class="card">
+            <h3>⚖️ RAG vs LLM+Wiki 应用对比</h3>
+            <div class="compare-table-wrap">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>对比维度</th>
+                            <th><span class="tag-rag">RAG</span> 检索增强生成</th>
+                            <th><span class="tag-wiki">LLM+Wiki</span> 大模型 + Wiki</th>
+                            <th style="background:#FFF7ED; color:#B45309;">💡 这意味着什么</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>知识库自进化</td>
+                            <td>架构本身不带自进化能力，需额外开发工程模块实现</td>
+                            <td>Karpathy 原生方案中自带的能力，回答可自动编译为 Wiki 回流到知识库</td>
+                            <td>LLM+Wiki 方案的实现成本显著更低，<strong style="color:#B45309;">开箱即用</strong></td>
+                        </tr>
+                        <tr>
+                            <td>幻觉风险</td>
+                            <td>只有生成答案时用到模型，一次幻觉风险</td>
+                            <td>入库和生成答案都用到模型，两次幻觉风险</td>
+                            <td>对<strong style="color:#B45309;">严谨性要求高</strong>的场景需谨慎，若采用 LLM+Wiki，建议增加 Wiki 内容的人工审核机制</td>
+                        </tr>
+                        <tr>
+                            <td>检索匹配精确度</td>
+                            <td>通过语义检索，模糊、同义表述的检索精准度更高</td>
+                            <td>Karpathy 原生方案用规则 + 关键词匹配，命中即整篇通读，匹配精度依赖关键词覆盖程度</td>
+                            <td>若采用 LLM+Wiki 方案，此短板可优化，<strong style="color:#B45309;">需关注</strong></td>
+                        </tr>
+                        <tr>
+                            <td>GPU 资源消耗</td>
+                            <td>GPU 消耗主要集中在生成答案环节，每次输入 token 量少</td>
+                            <td>GPU 消耗分布在 Wiki 生成、回答、自进化三个环节，每个环节都涉及更大量级的 token 处理</td>
+                            <td>LLM+Wiki 方案调用次数更多，如需更强的模型，会进一步提升资源需求</td>
+                        </tr>
+                        <tr>
+                            <td>模型能力要求</td>
+                            <td>只需根据几段话写答案，一般模型即可胜任</td>
+                            <td>Karpathy 原生方案编译、生成、多模态解析全栈用 Claude，模型能力本身就很强</td>
+                            <td>Wiki 方案通常需要更强的模型，进而影响 GPU 资源需求；且编译后的 Wiki 会持续膨胀，若<strong style="color:#B45309;">模型上下文窗口不够大，容易出现乱答或无法回答</strong></td>
+                        </tr>
+                        <tr>
+                            <td>知识管理效率</td>
+                            <td>上传即可用，但对知识质量有一定要求——需要减少重复、一篇只讲一件事</td>
+                            <td>模型可自动编译和改写原文，实现知识自生产，降低对原始文档质量的依赖</td>
+                            <td>RAG 入库简单但对内容治理要求高；Wiki 通过模型自生产<strong style="color:#B45309;">降低了知识内容治理的成本</strong></td>
+                        </tr>
+                        <tr>
+                            <td>原文追溯</td>
+                            <td>每段切片都可直接关联到原始文档的具体位置，追溯路径清晰</td>
+                            <td>Wiki 是模型重新编写的内容，和原文没有逐句对应关系，追溯到原文较困难</td>
+                            <td>若用 LLM+Wiki 的方案，需要用额外的机制保证来源映射，<strong style="color:#B45309;">需关注</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Badcase 追踪</td>
+                            <td>链路线性：检索 → 生成，两步即可定位问题出在"搜错了"还是"答错了"</td>
+                            <td>链路多分支：Wiki 编译、检索、生成、自进化都可能出错，且 Wiki 会被反复修改，复现更难</td>
+                            <td>LLM+Wiki 方案在定位问题上更复杂，严谨性要求高的场景<strong style="color:#B45309;">需关注</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 最佳实践案例 -->
+        <div class="card">
+            <h3>🏆 什么场景用哪个方案？</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:16px;">
+
+                <!-- RAG 最佳场景 -->
+                <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:12px; padding:20px;">
+                    <div style="font-size:16px; font-weight:700; color:#166534; margin-bottom:12px;">
+                        <span class="tag-rag" style="margin-right:8px;">RAG</span> 更适合的场景
+                    </div>
+                    <div style="font-size:14px; line-height:1.8; color:#374151;">
+                        <div style="margin-bottom:10px;">
+                            <strong>📚 大规模知识库问答</strong><br>
+                            <span style="color:#6B7280;">如企业内部几千份制度文档、产品手册、FAQ，知识量大且持续增长，需要快速检索定位。</span>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <strong>⚖️ 高严谨性场景</strong><br>
+                            <span style="color:#6B7280;">如法律法规咨询、合规审查、薪酬政策查询——要求回答可追溯到原文出处，对模型自由发挥容忍度极低。</span>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <strong>💰 资源敏感型项目</strong><br>
+                            <span style="color:#6B7280;">GPU 预算有限、对模型能力要求不高的场景，一般模型即可胜任，成本可控。</span>
+                        </div>
+                        <div>
+                            <strong>🔄 知识频繁更新</strong><br>
+                            <span style="color:#6B7280;">文档更新频繁（如每周更新的产品文档），RAG 上传即可用，无需等待模型重新编译。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LLM+Wiki 最佳场景 -->
+                <div style="background:#F5F3FF; border:1px solid #DDD6FE; border-radius:12px; padding:20px;">
+                    <div style="font-size:16px; font-weight:700; color:#5B21B6; margin-bottom:12px;">
+                        <span class="tag-wiki" style="margin-right:8px;">LLM+Wiki</span> 更适合的场景
+                    </div>
+                    <div style="font-size:14px; line-height:1.8; color:#374151;">
+                        <div style="margin-bottom:10px;">
+                            <strong>🎯 精品知识库运营</strong><br>
+                            <span style="color:#6B7280;">知识量精简但质量要求极高，如核心业务 SOP、专家经验库，适合模型深度编译和自进化。</span>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <strong>📝 原始文档质量参差不齐</strong><br>
+                            <span style="color:#6B7280;">源文档格式混乱、表述不规范，通过模型编译可自动"翻译"成结构化 Wiki，降低内容治理成本。</span>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <strong>🧠 需要深度理解的复杂问答</strong><br>
+                            <span style="color:#6B7280;">问题往往跨多个知识点，需要模型通读完整上下文后综合推理，而非简单的片段拼接。</span>
+                        </div>
+                        <div>
+                            <strong>🔁 知识自生产需求</strong><br>
+                            <span style="color:#6B7280;">希望系统在使用过程中自动积累和沉淀知识，让知识库越用越丰富，形成"飞轮效应"。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 混合使用提示 -->
+            <div style="margin-top:20px; padding:14px 18px; background:linear-gradient(135deg, #FFF7ED, #FEF3C7); border:1px solid #FDE68A; border-radius:10px;">
+                <div style="font-size:14px; line-height:1.8; color:#92400E;">
+                    <strong>💡 实际落地建议：</strong>两种方案并非非此即彼。实际业务中可以<strong>混合使用</strong>——用 RAG 处理大规模标准化知识的快速检索，用 LLM+Wiki 处理需要深度理解的精品知识场景，取长补短，效果最优。
+                </div>
+            </div>
+        </div>
+
     </div>
 
 
